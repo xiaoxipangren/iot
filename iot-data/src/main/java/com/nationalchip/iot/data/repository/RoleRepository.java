@@ -1,0 +1,14 @@
+package com.nationalchip.iot.data.repository;
+
+import com.nationalchip.iot.data.model.Role;
+
+public interface RoleRepository extends BaseRepository<Role,Long> {
+
+    Role findByName(String name);
+
+    void deleteByName(String name);
+
+    boolean existsByName(String name);
+
+
+}
