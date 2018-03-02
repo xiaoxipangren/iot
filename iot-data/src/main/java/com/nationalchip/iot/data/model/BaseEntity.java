@@ -30,28 +30,28 @@ public abstract class BaseEntity implements IEntity {
 
     @Override
     @Access(AccessType.PROPERTY)
-    @Column(name = "created_at", insertable = true, updatable = false,columnDefinition = "COMMENT '创建时间'")
+    @Column(name = "created_at", insertable = true, updatable = false)
     public Date getCreatedAt() {
         return createdAt;
     }
 
     @Override
     @Access(AccessType.PROPERTY)
-    @Column(name = "created_by", insertable = true, updatable = false, length = 40,columnDefinition = "COMMENT '创建者'")
+    @Column(name = "created_by", insertable = true, updatable = false, length = 40)
     public String getCreatedBy() {
         return createdBy;
     }
 
     @Override
     @Access(AccessType.PROPERTY)
-    @Column(name = "last_modified_at", insertable = true, updatable = true,columnDefinition = "COMMENT '最后修改时间'")
+    @Column(name = "last_modified_at", insertable = true, updatable = true)
     public Date getLastModifiedAt() {
         return lastModifiedAt;
     }
 
     @Override
     @Access(AccessType.PROPERTY)
-    @Column(name = "last_modified_by", insertable = true, updatable = true, length = 40,columnDefinition = "COMMENT '最后修改者'")
+    @Column(name = "last_modified_by", insertable = true, updatable = true, length = 40)
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }

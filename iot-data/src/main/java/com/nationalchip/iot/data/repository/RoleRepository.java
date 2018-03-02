@@ -2,7 +2,7 @@ package com.nationalchip.iot.data.repository;
 
 import com.nationalchip.iot.data.model.Role;
 
-public interface RoleRepository extends BaseRepository<Role,Long> {
+public interface RoleRepository extends BaseRepository<Role> {
 
     Role findByName(String name);
 

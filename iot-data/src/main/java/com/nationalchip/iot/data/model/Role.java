@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.model;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -11,11 +12,12 @@ import java.util.Set;
 @Table(name = "role")
 public class Role extends BaseEntity implements IRole {
 
+
     @NotNull
-    @Column(name="name",columnDefinition = "COMMENT '角色名'")
+    @Column(name="name")
     private String name;
 
-    @Column(name="description",columnDefinition = "COMMENT '角色描述'")
+    @Column(name="description")
     private String description;
 
 
@@ -67,4 +69,23 @@ public class Role extends BaseEntity implements IRole {
     }
 
 
+    @Override
+    public String getAuthority() {
+        return name.toUpperCase();
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
+    @Override
+    public Action getAction() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public String getTarget() {
+        throw  new NotImplementedException();
+    }
 }

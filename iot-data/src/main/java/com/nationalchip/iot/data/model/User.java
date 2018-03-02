@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.model;
 
 import org.eclipse.persistence.annotations.CascadeOnDelete;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Collections;
@@ -9,53 +10,65 @@ import java.util.HashSet;
 import java.util.Set;
 
 @MappedSuperclass
-@Table(name="tenant")
+@Table(name="user")
 @Entity
 public class User extends BaseEntity implements IUser {
 
-    @Column(columnDefinition = "COMMENT '密码'")
+    @Column(name = "password")
     private  String password;
 
-    @Column(columnDefinition = "COMMENT '用户名'")
+    @Column(name = "username",unique = true)
+
     private  String username;
 
 
 
-    @Column(columnDefinition = "COMMENT '租户名'")
+    @Column(name = "tenant",unique = true)
     private String tenant;
 
 
     @CascadeOnDelete
     @ManyToMany(targetEntity = Authority.class)
-    @JoinTable(name = "tenant_authority",
-            joinColumns = {@JoinColumn(name="tenant_id",nullable = false,updatable = false)},
+    @JoinTable(name = "user_authority",
+            joinColumns = {@JoinColumn(name="user_id",nullable = false,updatable = false)},
             inverseJoinColumns = {@JoinColumn(name="authority_id",nullable = false,updatable = false)})
     private Set<IAuthority> authorities;
 
 
     @CascadeOnDelete
     @ManyToMany(targetEntity = Role.class)
-    @JoinTable(name = "tenant_role",
-            joinColumns = {@JoinColumn(name="tenant_id",nullable = false,updatable = false)},
+    @JoinTable(name = "user_role",
+            joinColumns = {@JoinColumn(name="user_id",nullable = false,updatable = false)},
             inverseJoinColumns = {@JoinColumn(name="role_id",nullable = false,updatable = false)})
     private Set<IRole> roles;
 
 
     public User(){
-
+        this.accountNonExpired=true;
+        this.accountNonLocked=true;
+        this.credentialsNonExpired=true;
+        this.enabled=true;
     }
 
 
-    @Column
+    public User(String username,String password){
+        this();
+        this.username=username;
+        this.password=password;
+        this.tenant=username;
+    }
+
+
+    @Column(name = "account_nonexpired")
     private  boolean accountNonExpired;
 
-    @Column
+    @Column(name="account_nonlocked")
     private  boolean accountNonLocked;
 
-    @Column
+    @Column(name = "credentials_nonexpired")
     private  boolean credentialsNonExpired;
 
-    @Column
+    @Column(name = "enabled")
     private  boolean enabled;
 
     public void setPhone(String phone) {
@@ -70,13 +83,13 @@ public class User extends BaseEntity implements IUser {
         this.lastLogin = lastLogin;
     }
 
-    @Column
+    @Column(name = "phone")
     private String phone;
 
-    @Column
+    @Column(name = "email")
     private String email;
 
-    @Column
+    @Column(name = "last_login")
     private Date lastLogin;
 
     @Override
@@ -99,10 +112,19 @@ public class User extends BaseEntity implements IUser {
 
     @Override
     public Set<IAuthority> getAuthorities() {
-        Set<IAuthority> authorities = new HashSet<>();
+        Set<IAuthority> authorities = new HashSet<>(this.authorities);
 
-        authorities.stream().map(a -> authorities.add(a));
-        roles.stream().map(r -> r.getAuthorities().stream().map( a -> authorities.add(a)));
+        if(this.roles!=null){
+            this.roles.stream()
+                    .forEach(
+                            r -> {
+                                authorities.add(r);
+                                r.getAuthorities().stream().forEach( a -> authorities.add(a));
+
+                            }
+                    );
+        }
+
         return authorities;
     }
 
@@ -159,7 +181,7 @@ public class User extends BaseEntity implements IUser {
 
     @Override
     public String getTenant() {
-        return null;
+        return tenant;
     }
 
 
@@ -203,7 +225,16 @@ public class User extends BaseEntity implements IUser {
     }
 
 
+    public void setAuthorities(final Set<IAuthority> authorities) {
+        this.authorities = authorities;
+    }
+
+    public void setRoles(final Set<IRole> roles) {
+        this.roles = roles;
+    }
+
     public Set<IRole> getRoles() {
+
         if(this.roles == null)
             return Collections.emptySet();
         return Collections.unmodifiableSet(roles);

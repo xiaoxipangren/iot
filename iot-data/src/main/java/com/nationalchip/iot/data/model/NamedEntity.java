@@ -6,11 +6,11 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class NamedEntity extends TenantAwareEntity implements INamedEntity {
 
-    @Column(unique = true,columnDefinition = "COMMENT '名称'")
+    @Column(name="name",unique = true)
     private String name;
 
 
-    @Column(columnDefinition = "COMMENT '描述'")
+    @Column(name="description")
     private String description;
 
     public void setName(String name) {

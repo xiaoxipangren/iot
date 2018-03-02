@@ -12,8 +12,6 @@ import java.util.Optional;
 
 @NoRepositoryBean
 @Transactional(readOnly=true)
-public interface TenantAwareRepository<T extends TenantAwareEntity,I extends Serializable> extends PagingAndSortingRepository<T,I> {
-    Optional<T> findById(I id);
+public interface TenantAwareRepository<T extends TenantAwareEntity> extends IRepository<T> {
 
-    T getById(I id);
 }

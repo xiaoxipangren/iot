@@ -20,11 +20,11 @@ public class Authority extends BaseEntity implements IAuthority {
     private static final String SEPERATOR="_";
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "COMMENT '权限动作'")
+    @Column(name = "action")
     @NotNull
     private Action action;
 
-    @Column(columnDefinition = "COMMENT '权限目标'")
+    @Column(name = "target")
     @NotNull
     private String target;
 
@@ -73,7 +73,7 @@ public class Authority extends BaseEntity implements IAuthority {
 
     @Override
     public String toString() {
-        return String.join(SEPERATOR,action.toString().toUpperCase(),target.toLowerCase());
+        return String.join(SEPERATOR,action.toString().toUpperCase(),target.toUpperCase());
     }
 
     @Override

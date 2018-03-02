@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Multitenant(MultitenantType.SINGLE_TABLE)
 public abstract class TenantAwareEntity extends BaseEntity implements ITenantAwareEntity{
 
-    @Column(name = "tenant", nullable = false, insertable = false, updatable = false, length = 40,columnDefinition = "COMMENT '所属用户'")
+    @Column(name = "tenant", nullable = false, insertable = false, updatable = false, length = 40)
     @Size(min = 1, max = 40)
     @NotNull
     private String tenant;
