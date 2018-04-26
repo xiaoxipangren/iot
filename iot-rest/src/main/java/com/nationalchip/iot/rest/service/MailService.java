@@ -1,18 +1,11 @@
 package com.nationalchip.iot.rest.service;
 
-import com.nationalchip.iot.message.mail.IMail;
 import com.nationalchip.iot.message.mail.IMailProvider;
 import com.nationalchip.iot.message.mail.MailException;
 import com.nationalchip.iot.message.mail.SimpleMail;
 import com.nationalchip.iot.rest.exception.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 /**
  * @Author: zhenghq

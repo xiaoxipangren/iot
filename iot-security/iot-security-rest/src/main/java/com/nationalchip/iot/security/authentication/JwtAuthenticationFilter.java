@@ -1,10 +1,15 @@
 package com.nationalchip.iot.security.authentication;
 
+import com.nationalchip.iot.data.model.auth.IAuthority;
+import com.nationalchip.iot.data.model.auth.IUser;
+import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.security.configuration.RestConstant;
 import com.nationalchip.iot.cache.helper.KeyHelper;
 import com.nationalchip.iot.security.provider.IJwtProvider;
+import io.jsonwebtoken.Claims;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,6 +20,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -45,12 +53,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String prefix = RestConstant.REST_JWT_PREFIX;
         if(header!=null && header.startsWith(prefix)){
             String token=header.replace(prefix,"");
-            Authentication authentication = jwtProvider.parseToken(token);
+            Claims claims = jwtProvider.parseToken(token);
+            Authentication authentication = restoreAuthentication(claims);
+
             if(authentication != null) {
                 Object logouted = redisTemplate.opsForValue().get(KeyHelper.tokenExpirationKey(authentication.getName()));
 
                 if (logouted instanceof Boolean && (boolean) logouted) {
-                    filterChain.doFilter(request, response);
 
                     PrintWriter writer = response.getWriter();
                     writer.print("token已过期，请重新登录");
@@ -64,4 +73,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    private Authentication restoreAuthentication(Claims claims){
+        String username = claims.getSubject();
+        Set<IAuthority> authorities = (Set<IAuthority>) claims.get(IJwtProvider.AUTHORTIES);
+        User user = new User(username,"***",username);
+        user.setAuthorities(authorities);
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+
+        Date expiration = claims.getExpiration();
+        AuthenticationDetails details = new AuthenticationDetails(username,null,expiration);
+        authentication.setDetails(details);
+        return authentication;
+    }
+
 }

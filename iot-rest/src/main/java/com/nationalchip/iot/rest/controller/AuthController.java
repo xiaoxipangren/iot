@@ -7,7 +7,9 @@ import com.nationalchip.iot.data.model.Admin;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.data.model.hub.Developer;
+import com.nationalchip.iot.helper.RegexHelper;
 import com.nationalchip.iot.rest.exception.AuthException;
+import com.nationalchip.iot.rest.exception.RestException;
 import com.nationalchip.iot.rest.model.RestResult;
 import com.nationalchip.iot.rest.model.auth.*;
 import com.nationalchip.iot.rest.service.MailService;
@@ -26,17 +28,15 @@ import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(value = RestConstant.REST_BASE_MAPPING+RestConstant.REST_AUTH_MAPPING)
-public class AuthController {
+public class AuthController extends BaseController{
 
     private final static String USER_NAME="username";
     private final static String USER_PHONE="phone";
     private final static String USER_EMAIL="email";
     private static final String ACTIVATE_EMAIL_TITLE="国芯开发者账号激活";
+    private static final String ACTION_ACTIVATE="activate";
+    private static final String ACTION_RESETPWD="resetpwd";
 
-
-
-    @Autowired
-    private RestProperty restProperty;
     @Autowired
     private ISecurityContext systemSecurityContext;
     @Autowired
@@ -52,7 +52,7 @@ public class AuthController {
 
 
     @RequestMapping(value = RestConstant.REST_REGISTER_ACTION,method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
-    public ResponseEntity<RestResult> register(@RequestBody UserRegister user){
+    public ResponseEntity<RestResult> register(@RequestBody InputUser user){
 
         boolean result = registerUser(user);
 
@@ -60,72 +60,117 @@ public class AuthController {
     }
 
     @RequestMapping(value = RestConstant.REST_SENDMAIL_ACTION,method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
-    public ResponseEntity<Boolean> sendMail(@RequestBody UserMail user){
+    public ResponseEntity<RestResult> sendMail(@RequestBody InputUser user){
 
-        boolean result = sendActivateEmail(user.getUrl(),user.getUsername());
+        if(user.getSetMailAction().equals(ACTION_ACTIVATE)){
+            sendActivateEmail(user.getUrl(),user.getUsername());
+        }
+        else if(user.getSetMailAction().equals(ACTION_RESETPWD)){
+            sendResetPasswordEmail(user.getUrl(),user.getEmail());
+        }
 
-        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+        return ok("发送激活邮件成功",true);
     }
 
-    @RequestMapping(value = RestConstant.REST_ACTIVATE_ACTION)
-    public ResponseEntity<Boolean> activate(@RequestParam String username,@RequestParam String code){
+    @RequestMapping(value = RestConstant.REST_ACTIVATE_ACTION,method = RequestMethod.POST)
+    public ResponseEntity<RestResult> activate(@RequestBody InputUser user){
 
-        boolean result = activateUser(username,code);
-        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+        boolean result = activateUser(user.getCode());
+        return ok("激活成功");
     }
-
 
 
     @RequestMapping(value = RestConstant.REST_LOGIN_ACTION,method= RequestMethod.POST)
-    public ResponseEntity<UserInfo> login(@RequestBody UserLogin login){
+    public ResponseEntity<RestResult> login(@RequestBody InputUser login){
 
         UserInfo user = authService.login(login.getUsername(),login.getPassword());
 
-        return new ResponseEntity<UserInfo>(user, HttpStatus.OK);
+        return ok("登录成功",user);
     }
 
 
     @RequestMapping(value = "/logout")
-    public ResponseEntity<Boolean> logout(@RequestHeader(RestConstant.REST_JWT_HEADER) String token ){
+    public ResponseEntity<RestResult> logout(){
 
-        if(token==null){
-            return new ResponseEntity<Boolean>(false,HttpStatus.BAD_REQUEST);
-        }
+        boolean result = authService.logout();
 
-        token = token.replace(RestConstant.REST_JWT_PREFIX,"");
-
-        boolean result = authService.logout(token);
-
-        return new ResponseEntity<Boolean>(result, HttpStatus.OK);
+        return ok(result);
     }
-
-
-    public ResponseEn
-
 
 
     @RequestMapping(value = RestConstant.REST_EXISTS_ACTION+"/{prop}/{value:.+}")
-    public ResponseEntity<UserExists> exists(@PathVariable String prop, @PathVariable String value){
+    public ResponseEntity<RestResult> exists(@PathVariable String prop, @PathVariable String value){
         boolean result = false;
         if(prop.toLowerCase().equals(USER_NAME)){
-            result = authService.usernameExists(value);
+            result = userManager.userExists(value);
         }
         else if(prop.toLowerCase().equals(USER_EMAIL)){
-            result = authService.emailExists(value);
+            result = userManager.userExistsByEmail(value);
         }
         else if(prop.toLowerCase().equals(USER_PHONE)){
-            result = authService.phoneExists(value);
+            result = userManager.userExistsByPhone(value);
         }
         else{
-            return new ResponseEntity<UserExists>(new UserExists(false),HttpStatus.NOT_FOUND);
+            throw new RestException(String.format("无法识别的参数：%s",prop),HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity<UserExists>(new UserExists(result),HttpStatus.OK);
+        return ok(new UserExists(result));
     }
 
 
+    @RequestMapping(value ="/changepwd",method = RequestMethod.POST)
+    public ResponseEntity<RestResult> changePassword(@RequestBody InputUser changePwd){
+        try{
+            userManager.changePassword(changePwd.getPassword(),changePwd.getNewPwd());
+            return ok("密码修改成功",true);
+        }
+        catch (Exception e){
+            throw new AuthException(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+    }
 
-    private boolean registerUser(UserRegister user){
+
+    @RequestMapping(value = RestConstant.REST_RESETPWD_ACTION,method=RequestMethod.POST)
+    public ResponseEntity<RestResult> resetPassword(@RequestBody InputUser user){
+        if(redisTemplate.hasKey(user.getCode())){
+            String username = (String)redisTemplate.opsForValue().get(user.getCode());
+            if(username!=null){
+                try{
+                    userManager.resetPassword(username,user.getNewPwd());
+                }
+                catch (Exception e){
+                    throw new AuthException("重置密码失败");
+                }
+                return ok("重置密码成功",true);
+            }
+            else{
+                throw new AuthException(String.format("重置码错误"),HttpStatus.BAD_REQUEST);
+            }
+        }
+        else{
+            throw new AuthException(String.format("重置码已过期"),HttpStatus.BAD_REQUEST);
+        }
+
+    }
+
+    @RequestMapping(value = "/changemail")
+    public ResponseEntity<RestResult> changeEmail(InputUser user){
+        String email = user.getEmail();
+        if(!RegexHelper.isEmail(email)){
+            throw new AuthException(String.format("新邮箱地址不合法，修改失败"));
+        }
+
+        try{
+            userManager.changeEmail(email);
+            return ok("邮箱修改成功",true);
+        }
+        catch (Exception e){
+            throw new AuthException(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    private boolean registerUser(InputUser user){
         try{
             systemSecurityContext.runAsSystem(()->{
 
@@ -153,10 +198,32 @@ public class AuthController {
             return true;
         }
         catch (Exception e){
-            throw new AuthException(e.getMessage());
+            throw new RestException(e.getMessage());
         }
     }
 
+
+    private boolean sendResetPasswordEmail(String url,String email){
+
+        if(!RegexHelper.isEmail(email))
+            throw new AuthException(String.format("邮箱%s格式不正确",email),HttpStatus.BAD_REQUEST);
+
+        User user=null;
+        try{
+            user =(User) userManager.loadUserByEmail(email);
+            if(user==null)
+                throw new AuthException(String.format("邮箱%s未注册",email));
+        }catch (Exception e){
+            throw new AuthException(e.getMessage());
+        }
+
+        String content = generateResetPasswordContent(user.getUsername(),url);
+        mailService.sendSimple(email,ACTIVATE_EMAIL_TITLE,content,true);
+        return true;
+
+
+
+    }
 
     private boolean sendActivateEmail(String url,String username){
 
@@ -164,7 +231,7 @@ public class AuthController {
         try{
             user =(User) userManager.loadUserByUsername(username);
         }catch (Exception e){
-            throw new AuthException(e.getMessage());
+            throw new RestException(e.getMessage());
         }
 
         Status status =user.getStatus();
@@ -180,53 +247,55 @@ public class AuthController {
     }
 
     private String generateActivateContent(String username,String url){
-        String key = KeyHelper.activateAccountKey(username);
-        String code = generateCacheCode(key);
-        url = generateClickUrl(url,username,code);
+        String code = generateCacheCode(username);
+        url = generateClickUrl(url,code);
         return String.format("尊敬的国芯开发者%s<br>你好！<br>请<a href='%s'>点此</a>以激活账号，或复制如下链接到浏览器中打开：<br>%s。",username,url,url);
 
     }
 
-    private String generateCacheCode(String key){
+    private String generateCacheCode(String value){
         String code = UUID.randomUUID().toString().replace("-","").toLowerCase();
-        redisTemplate.opsForValue().set(key,code,validationExpiration, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(code,value,validationExpiration, TimeUnit.SECONDS);
         return code;
     }
 
-    private String generateClickUrl(String url, String username, String code){
+    private String generateClickUrl(String url, String code){
         StringBuilder sb = new StringBuilder(url);
-        return sb.append(String.format("?username=%s&code=%s",username,code))
+        return sb.append(String.format("?code=%s",code))
                 .toString();
     }
 
-    private boolean activateUser(String username,String code){
+    private boolean activateUser(String code){
 
-        String key = KeyHelper.activateAccountKey(username);
-
-        if(redisTemplate.hasKey(key)){
-            String cacheCode = (String)redisTemplate.opsForValue().get(key);
-            if(cacheCode!=null && cacheCode.equals(code)){
+        if(redisTemplate.hasKey(code)){
+            String username = (String)redisTemplate.opsForValue().get(code);
+            if(username!=null){
                 try{
-                    userManager.activeUser(username);
+                    userManager.activateUser(username);
                 }
                 catch (Exception e){
-                    throw new AuthException("激活失败");
+                    throw new RestException("激活失败");
                 }
                 return true;
             }
             else{
-                throw new AuthException(String.format("激活码错误"),HttpStatus.BAD_REQUEST);
+                throw new RestException(String.format("激活码错误"),HttpStatus.BAD_REQUEST);
             }
         }
         else{
-            throw new AuthException(String.format("激活码已过期"),HttpStatus.BAD_REQUEST);
+            throw new RestException(String.format("激活码已过期"),HttpStatus.BAD_REQUEST);
         }
 
     }
 
 
-    private ResponseEntity<RestResult> ok(String message){
-        return new ResponseEntity<RestResult>(new RestResult(message),HttpStatus.OK);
+    private String generateResetPasswordContent(String username,String url){
+        String code = generateCacheCode(username);
+        url = generateClickUrl(url,code);
+
+        return String.format("尊敬的国芯开发者%s<br>你好！<br>请<a href='%s'>点此</a>以重置密码，或复制如下链接到浏览器中打开：<br>%s。",username,url,url);
+
     }
+
 
 }

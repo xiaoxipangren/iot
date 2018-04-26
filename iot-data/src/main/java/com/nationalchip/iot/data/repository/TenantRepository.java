@@ -1,12 +1,16 @@
 package com.nationalchip.iot.data.repository;
 
+import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.User;
 
+/**
+ * Repository的泛型参数必须为Entity class，而不能是interface
+ */
 public interface TenantRepository extends BaseRepository<User> {
 
-    User findByUsername(String username);
-
-    User findByEmail(String email);
+    IUser findByUsername(String username);
+    IUser findByEmail(String email);
+    IUser findByPhone(String phone);
 
     void deleteByUsername(String username);
 

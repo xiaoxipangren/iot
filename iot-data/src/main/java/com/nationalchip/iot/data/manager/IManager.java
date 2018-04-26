@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.model.BaseEntity;
+import com.nationalchip.iot.data.model.IEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,7 +15,7 @@ import java.util.List;
  * @Date: 2/28/18 3:39 PM
  * @Modified:
  */
-public interface IManager<T extends BaseEntity> {
+public interface IManager<T extends IEntity> {
     T get(Long id);
     Iterable<T> getAll();
     Iterable<T> get(Iterable<Long> ids);

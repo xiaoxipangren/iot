@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.repository;
 
 import com.nationalchip.iot.data.model.BaseEntity;
+import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.model.TenantAwareEntity;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -15,6 +16,6 @@ import java.util.Optional;
  * @Modified:
  */
 @NoRepositoryBean
-public interface BaseRepository<T extends BaseEntity>  extends IRepository<T> {
+public interface BaseRepository<T extends IEntity>  extends IRepository<T> {
 
 }

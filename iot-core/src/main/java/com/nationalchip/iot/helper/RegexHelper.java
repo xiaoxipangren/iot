@@ -16,4 +16,10 @@ public class RegexHelper {
         Matcher m = p.matcher(email);
         return m.matches();
     }
+
+    public static boolean isPhone(String phone){
+        Pattern p = Pattern.compile("^1\\d{10}$");
+        Matcher matcher = p.matcher(phone);
+        return matcher.matches();
+    }
 }

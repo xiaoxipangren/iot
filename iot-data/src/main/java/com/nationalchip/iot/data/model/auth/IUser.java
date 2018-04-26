@@ -17,4 +17,5 @@ public interface IUser extends UserDetails,IEntity {
     Set<IRole> getRoles();
     boolean addRole(IRole role);
     boolean removeRole(IRole role);
+    boolean isInRole(IRole role);
 }

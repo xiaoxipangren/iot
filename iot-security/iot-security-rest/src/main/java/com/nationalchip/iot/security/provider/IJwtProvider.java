@@ -1,8 +1,10 @@
 package com.nationalchip.iot.security.provider;
 
+import io.jsonwebtoken.Claims;
 import org.springframework.security.core.Authentication;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @Author: zhenghq
@@ -11,9 +13,13 @@ import java.util.Date;
  * @Modified:
  */
 public interface IJwtProvider {
-    String generateToken(Authentication authentication);
+    public static final String AUTHORTIES="authorties";
+    public static final String DISABLED="disabled";
 
-    Authentication parseToken(String token);
+    String generateToken(String subject,Claims claims);
 
-    Date getExpiration(String token);
+    Claims parseToken(String token);
+
+    String refreshToken(String oldToken);
+
 }

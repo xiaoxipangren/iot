@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.nationalchip.iot.App;
+import com.nationalchip.iot.rest.model.auth.InputUser;
 import com.nationalchip.iot.rest.model.auth.UserInfo;
-import com.nationalchip.iot.rest.model.auth.UserLogin;
-import com.nationalchip.iot.rest.model.auth.UserRegister;
 import com.nationalchip.iot.security.configuration.RestConstant;
 import com.nationalchip.iot.security.configuration.RestSecurityProperty;
 import org.junit.Before;
@@ -21,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author: zhenghq
@@ -60,7 +58,7 @@ public class AuthControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
 
-        UserRegister register = newUser(0);
+        InputUser register = newUser(0);
         String requestJson = ow.writeValueAsString(register);
 
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders
@@ -75,7 +73,7 @@ public class AuthControllerTest {
         System.out.println(response);
 
 
-        UserLogin login = new UserLogin();
+        InputUser login = new InputUser();
         login.setUsername(username);
         login.setPassword(password);
 
@@ -116,8 +114,8 @@ public class AuthControllerTest {
 
     }
 
-    private UserRegister newUser(int type){
-        UserRegister user = new UserRegister();
+    private InputUser newUser(int type){
+        InputUser user = new InputUser();
         user.setUsername(username);
         user.setPassword(password);
         user.setEmail(email);

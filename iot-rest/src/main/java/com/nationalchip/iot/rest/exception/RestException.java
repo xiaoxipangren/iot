@@ -1,6 +1,7 @@
 package com.nationalchip.iot.rest.exception;
 
 import com.nationalchip.iot.exception.UncheckedException;
+import com.nationalchip.iot.rest.model.RestResult;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -14,8 +15,13 @@ public class RestException extends UncheckedException {
 
     public RestException(){
         super();
+        this.httpStatus=HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
+    public RestException(String message){
+        super(message);
+        this.httpStatus=HttpStatus.INTERNAL_SERVER_ERROR;
+    }
 
     public HttpStatus getHttpStatus() {
         return httpStatus;
@@ -27,7 +33,7 @@ public class RestException extends UncheckedException {
 
 
     public RestException(String message,HttpStatus httpStatus){
-        super(message);
+        this(message);
         this.httpStatus=httpStatus;
     }
 

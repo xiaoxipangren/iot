@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.model.auth.*;
+import com.nationalchip.iot.data.repository.IRepository;
 import com.nationalchip.iot.data.repository.RoleRepository;
 import com.nationalchip.iot.data.repository.TenantRepository;
 import com.nationalchip.iot.helper.RegexHelper;
@@ -16,17 +17,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.NotSupportedException;
 
 @Component
 @Transactional(readOnly = true)
-public class UserManager extends BaseManager<User> implements UserDetailsManager{
-
-    @Autowired
-    private RoleRepository roleRepository;
-
+public class UserManager extends BaseManager<User> implements IUserManager{
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -62,7 +61,7 @@ public class UserManager extends BaseManager<User> implements UserDetailsManager
 
     @Override
     public void deleteUser(String username) {
-        ((TenantRepository)getRepository()).deleteByUsername(username);
+        repository().deleteByUsername(username);
     }
 
     @Override
@@ -78,7 +77,16 @@ public class UserManager extends BaseManager<User> implements UserDetailsManager
         }
     }
 
-    public void resetPassword(String username,String password){
+    @Override
+    public void activateUser(String username) {
+        User user = loadUser(username);
+        if(user.getStatus()==Status.REGISTERED){
+            user.setStatus(Status.ACTIVED);
+            update(user);
+        }
+    }
+
+    public void resetPassword(String username, String password){
         User user = loadUser(username);
         user.setPassword(passwordEncoder.encode(password));
         update(user);
@@ -91,8 +99,7 @@ public class UserManager extends BaseManager<User> implements UserDetailsManager
             throw new EntityExistsException(String.format("邮箱%s已绑定",email));
         }
 
-        String username = tenantAware.getCurrentTenant();
-        User user = loadUser(username);
+        User user = loadCurrentUser();
         user.setEmail(email);
         update(user);
     }
@@ -103,105 +110,116 @@ public class UserManager extends BaseManager<User> implements UserDetailsManager
             throw new EntityExistsException(String.format("手机%s已绑定",phone));
         }
 
-        String username = tenantAware.getCurrentTenant();
-        User user = loadUser(username);
+        User user = loadCurrentUser();
         user.setPhone(phone);
         update(user);
-    }
-
-    public void activeUser(String username){
-        User user = loadUser(username);
-        if(user.getStatus()==Status.REGISTERED){
-            user.setStatus(Status.ACTIVED);
-            update(user);
-        }
     }
 
 
     @Override
     public boolean userExists(String username) {
-        return ((TenantRepository)getRepository()).existsByUsername(username);
+        return repository().existsByUsername(username);
     }
 
 
     public boolean userExistsByPhone(String phone){
-        return ((TenantRepository)getRepository()).existsByPhone(phone);
+        return repository().existsByPhone(phone);
 
+    }
+
+    @Override
+    public IUser loadUserByPhone(String phone) {
+        IUser user =  repository().findByPhone(phone);
+        if(user == null)
+            throw new EntityNotFoundException(String.format("手机%未绑定",phone));
+        return user;
+    }
+
+    @Override
+    public boolean isInRole(IRole role) {
+        User user = loadCurrentUser();
+        return user.isInRole(role);
+
+    }
+
+    @Override
+    public void addToRole(IRole role) {
+        User user = loadCurrentUser();
+        user.addRole(role);
+
+        update(user);
+    }
+
+    @Override
+    public void removeFromRole(IRole role) {
+        User user = loadCurrentUser();
+        user.removeRole(role);
+        update(user);
     }
 
     public boolean userExistsByEmail(String email){
-        return ((TenantRepository)getRepository()).existsByEmail(email);
+        return repository().existsByEmail(email);
 
     }
 
+    @Override
+    public IUser loadUserByEmail(String email) {
+        IUser user = repository().findByEmail(email);
+        if(user == null)
+            throw new EntityNotFoundException(String.format("邮箱%未绑定",email));
+        return user;
+    }
 
-    /**
-     * FIXME:
-     * 支持email或者username登录
-      * @param username
-     * @return
-     * @throws UsernameNotFoundException
-     */
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User tenant = null;
+        IUser user = null;
         if(RegexHelper.isEmail(username)){
-            tenant = ((TenantRepository)getRepository()).findByEmail(username);
+            user = repository().findByEmail(username);
+            if(user==null)
+                throw new EntityNotFoundException(String.format("邮箱%s未注册",username));
         }
-        else {
-           tenant = ((TenantRepository)getRepository()).findByUsername(username);
+        else if(RegexHelper.isPhone(username)){
+            user = repository().findByPhone(username);
+            if(user==null)
+                throw new EntityNotFoundException(String.format("手机号%s未注册",username));
         }
-
-
-        if(tenant==null)
-            throw new UsernameNotFoundException(String.format("用户%s不存在",username));
-
-        return tenant;
-    }
-
-    public boolean addToRole(Long tenantId,Long roleId){
-        User tenant = ((TenantRepository)getRepository()).findOne(tenantId);
-
-        if(tenant == null){
-            throw new EntityNotFoundException(String.format("用户不存在"));
+        else{
+            user = repository().findByUsername(username);
+            if(user==null)
+                throw new UsernameNotFoundException(String.format("用户%s不存在",username));
         }
-
-        IRole role = roleRepository.findOne(roleId);
-        if(role == null)
-            throw new EntityNotFoundException(String.format("角色不存在"));
-
-        tenant.addRole(role);
-        update(tenant);
-
-
-        return true;
+        return user;
     }
 
-    private User loadUser(String username){ return (User) loadUserByUsername(username);
-    }
-
-    public RoleRepository getRoleRepository() {
-        return roleRepository;
-    }
-
-    public void setRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    public PasswordEncoder getPasswordEncoder() {
-        return passwordEncoder;
-    }
 
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ITenantAware getTenantAware() {
-        return tenantAware;
-    }
 
     public void setTenantAware(ITenantAware tenantAware) {
         this.tenantAware = tenantAware;
+    }
+
+
+    private TenantRepository repository(){
+        IRepository<User> repository = getRepository();
+
+        if(getRepository() instanceof TenantRepository){
+            return (TenantRepository)repository;
+        }
+        else
+            throw new NotImplementedException();
+
+    }
+
+    private User loadCurrentUser(){
+        String username = tenantAware.getCurrentTenant();
+        return loadUser(username);
+    }
+    private User loadUser(String username){
+        return (User) loadUserByUsername(username);
     }
 
 }

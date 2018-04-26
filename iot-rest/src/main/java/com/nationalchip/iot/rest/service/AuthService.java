@@ -1,29 +1,25 @@
 package com.nationalchip.iot.rest.service;
 
-import com.nationalchip.iot.context.ISecurityContext;
+import com.nationalchip.iot.cache.helper.KeyHelper;
 import com.nationalchip.iot.data.manager.UserManager;
-import com.nationalchip.iot.data.model.Admin;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.data.model.auth.User;
-import com.nationalchip.iot.data.model.hub.Developer;
-import com.nationalchip.iot.rest.exception.AuthException;
 import com.nationalchip.iot.rest.model.auth.UserInfo;
-import com.nationalchip.iot.rest.model.auth.UserRegister;
-import com.nationalchip.iot.cache.helper.KeyHelper;
-import com.nationalchip.iot.helper.RegexHelper;
+import com.nationalchip.iot.security.authentication.AuthenticationDetails;
 import com.nationalchip.iot.security.provider.IJwtProvider;
+import com.nationalchip.iot.security.provider.JwtProvider;
 import com.nationalchip.iot.tenancy.ITenantAware;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -65,11 +61,14 @@ public class AuthService {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username,password);
         Authentication authentication = authenticationManager.authenticate(token);
 
-        //auth登录后保存登录状态没有任何意义，只需返回token即可
-        //SecurityContextHolder.getContext().setAuthentication(authentication);
-
 
         User user = (User) authentication.getPrincipal();
+        Claims claims = new DefaultClaims();
+
+        claims.put(JwtProvider.AUTHORTIES,user.getAuthorities());
+        claims.put(JwtProvider.DISABLED,!user.isEnabled());
+
+
         Status status = user.getStatus();
         String jwt="";
         switch (status){
@@ -77,131 +76,43 @@ public class AuthService {
                 jwt="";
                 break;
             case ACTIVED:
-                jwt = jwtProvider.generateToken(authentication);
+                jwt = jwtProvider.generateToken(user.getUsername(),claims);
                 break;
             case PENDING:
                 jwt="";
                 break;
             default:
-                jwt = jwtProvider.generateToken(authentication);
+                jwt = jwtProvider.generateToken(user.getUsername(),claims);
                 break;
 
         }
-
 
         return new UserInfo(user.getUsername(),status,jwt);
 
     }
 
-    public boolean logout(String token){
+    public boolean logout(){
         String username = tenantAware.getCurrentTenant();
 
-        Date expiration = jwtProvider.getExpiration(token);
-
-        //redis的过期时间与token的过期时间相同
-        redisTemplate.opsForValue().set(KeyHelper.tokenExpirationKey(username),true,expiration.getTime()-System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-        return true;
-    }
-
-    public boolean changePassword(String oldPwd,String newPwd){
-        try{
-            userManager.changePassword(oldPwd,newPwd);
-            return true;
-        }
-        catch (Exception e){
-            throw new AuthException(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public boolean sendResetPasswordEmail(String url,String email){
-
-        if(!RegexHelper.isEmail(email))
-            throw new AuthException(String.format("邮箱%s格式不正确",email),HttpStatus.BAD_REQUEST);
-
-        User user=null;
-        try{
-            user =(User) userManager.loadUserByUsername(email);
-            if(user==null)
-                throw new AuthException(String.format("邮箱%s未注册",email));
-        }catch (Exception e){
-            throw new AuthException(e.getMessage());
-        }
-
-        String content = generateResetPasswordContent(user.getUsername(),url);
-        mailService.sendSimple(email,ACTIVATE_EMAIL_TITLE,content,true);
-        return true;
-
-
-
-    }
-
-    public boolean resetPassword(String username,String newPwd, String code){
-        String key  = KeyHelper.resetPasswordKey(username);
-        if(redisTemplate.hasKey(key)){
-            String cacheCode = (String)redisTemplate.opsForValue().get(key);
-            if(cacheCode!=null && cacheCode.equals(code)){
-                try{
-                    userManager.resetPassword(username,newPwd);
-                }
-                catch (Exception e){
-                    throw new AuthException("重置密码失败");
-                }
-                return true;
+        Date expiration = null;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication !=null){
+            if(authentication.getDetails() instanceof AuthenticationDetails){
+                expiration = ((AuthenticationDetails)authentication.getDetails()).getExpiration();
             }
-            else{
-                throw new AuthException(String.format("重置码错误"),HttpStatus.BAD_REQUEST);
-            }
+        }
+
+        if(expiration!=null){
+            redisTemplate.opsForValue().set(KeyHelper.tokenExpirationKey(username),true,expiration.getTime()-System.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }
         else{
-            throw new AuthException(String.format("重置码已过期"),HttpStatus.BAD_REQUEST);
+            redisTemplate.opsForValue().set(KeyHelper.tokenExpirationKey(username),true);
         }
-
-
+        return true;
     }
 
-    public boolean changeEmail(String email){
-
-        if(!RegexHelper.isEmail(email)){
-            throw new AuthException(String.format("新邮箱地址不合法，修改失败"));
-        }
-
-        try{
-            userManager.changeEmail(email);
-            return true;
-        }
-        catch (Exception e){
-            throw new AuthException(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    public boolean usernameExists(String username){
-        return userManager.userExists(username);
-    }
-
-    public boolean phoneExists(String phone){
-        return userManager.userExistsByPhone(phone);
-    }
-
-    public boolean emailExists(String email){
-        return userManager.userExistsByEmail(email);
-    }
-
-    public String refresh(String token){
+    public String refreshToken(String token){
         return null;
-    }
-
-    private void exists(User user){
-        if(user==null)
-            throw new AuthException(String.format("用户%s不存在",user.getUsername()));
-    }
-
-    private String generateResetPasswordContent(String username,String url){
-        String key = KeyHelper.resetPasswordKey(username);
-        String code = generateCacheCode(key);
-        url = generateClickUrl(url,username,code);
-
-        return String.format("尊敬的国芯开发者%s<br>你好！<br>请<a href='%s'>点此</a>以重置密码，或复制如下链接到浏览器中打开：<br>%s。",username,url,url);
-
     }
 
 

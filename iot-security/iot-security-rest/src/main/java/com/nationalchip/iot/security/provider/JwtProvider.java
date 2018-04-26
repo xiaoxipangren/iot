@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * @Author: zhenghq
@@ -33,67 +34,40 @@ public class  JwtProvider implements IJwtProvider{
 
     private Date expiration;
 
-    private static final String AUTHORTIES="authorties";
-    private static final String DISABLED="disabled";
 
 
-    public String generateToken(Authentication authentication){
 
-        if(authentication==null)
-            return null;
+    public String generateToken(String subject, Claims claims){
 
-
-        User user = (User) authentication.getPrincipal();
 
         long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject(user.getTenant())
+                .setSubject(subject)
                 .setIssuedAt(new Date(now))
                 .setIssuer(restSecurityProperty.getJwt().getIssuer())
                 .setExpiration(new Date(now+ Duration.parse(restSecurityProperty.getJwt().getExpiration()).toMillis()))
-                .claim(AUTHORTIES,user.getAuthorities())
-                .claim(DISABLED,false)
+                .addClaims(claims)
                 .signWith(SignatureAlgorithm.valueOf(restSecurityProperty.getJwt().getAlg()), restSecurityProperty.getJwt().getSecret())
                 .compact();
     }
 
 
-    public Authentication parseToken(String token){
+    public Claims parseToken(String token){
         try{
             Claims claims = Jwts.parser().setSigningKey(restSecurityProperty.getJwt().getSecret())
                     .parseClaimsJws(token).getBody();
             if(validate(claims)){
-                String tenant = claims.getSubject();
-
-                User user = new User();
-                user.setTenant(tenant);
-                user.setUsername(tenant);
-
-                Object authorities = claims.get(AUTHORTIES);
-                if(authorities!=null)
-                    user.setAuthorities(new HashSet<IAuthority>((Collection<? extends IAuthority>) authorities));
-
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
-
-                return authentication;
-
+                return claims;
             }
         }catch (Exception e){
             return null;
         }
-
-
         return null;
-
     }
 
     @Override
-    public Date getExpiration(String token) {
-        if(expiration!=null)
-            return expiration;
-        Claims claims = Jwts.parser().setSigningKey(restSecurityProperty.getJwt().getSecret())
-                .parseClaimsJws(token).getBody();
-        return  claims.getExpiration();
+    public String refreshToken(String oldToken) {
+        return null;
     }
 
 

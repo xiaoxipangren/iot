@@ -116,7 +116,7 @@ public class UserManagerTest {
     @Test
     public void activeUser() throws Exception {
         User user = prepare();
-        userManager.activeUser(username);
+        userManager.activateUser(username);
 
         assertEquals(false,user==testUser);
         assertEquals(Status.ACTIVED,user.getStatus());

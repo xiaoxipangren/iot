@@ -2,6 +2,7 @@ package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.model.auth.IRole;
 import com.nationalchip.iot.data.model.auth.IUser;
+import com.nationalchip.iot.data.model.auth.User;
 import org.springframework.security.provisioning.UserDetailsManager;
 
 /**
@@ -10,7 +11,7 @@ import org.springframework.security.provisioning.UserDetailsManager;
  * @Date: 4/26/18 1:09 PM
  * @Modified:
  */
-public interface IUserManager extends IManager<IUser>,UserDetailsManager{
+public interface IUserManager extends IManager<User>,UserDetailsManager{
     void activateUser(String username);
     void resetPassword(String username,String password);
 

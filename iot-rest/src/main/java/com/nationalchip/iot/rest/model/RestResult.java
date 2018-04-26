@@ -1,10 +1,6 @@
 package com.nationalchip.iot.rest.model;
 
-import com.nationalchip.iot.rest.exception.AuthException;
 import com.nationalchip.iot.rest.exception.RestException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.MultiValueMap;
 
 /**
  * @Author: zhenghq
@@ -77,26 +73,32 @@ public class RestResult {
         this.data = data;
     }
 
-    public static ResponseEntity<RestResult> success(String message){
-        return new ResponseEntity<RestResult>(new RestResult(message),HttpStatus.OK);
+    public static RestResult success(String message){
+        return new RestResult(message);
     }
 
-    public static ResponseEntity<RestResult> success(Object data){
-        return new ResponseEntity<RestResult>(new RestResult(data),HttpStatus.OK);
+    public static RestResult success(Object data){
+       return new RestResult(data);
     }
 
-    public static ResponseEntity<RestResult> success(String message,Object data){
-        return new ResponseEntity<RestResult>(new RestResult(message,data),HttpStatus.OK);
+    public static RestResult success(String message,Object data){
+        return new RestResult(message,data);
     }
 
-    public static ResponseEntity<RestResult> success(String message,Object data,int code){
+    public static RestResult success(String message,Object data,int code){
         RestResult restResult = new RestResult(message,data);
         restResult.setCode(code);
-        return new ResponseEntity<RestResult>(restResult,HttpStatus.OK);
+        return new RestResult(restResult);
     }
 
-    public static ResponseEntity<RestResult> error(RestException e){
-        return new ResponseEntity<RestResult>(new RestResult(e),e.getHttpStatus());
+    public static RestResult error(String message,int errorCode){
+        RestResult restResult = new RestResult(message);
+        restResult.setCode(errorCode);
+        restResult.setSuccess(false);
+        return restResult;
     }
 
+    public static RestResult error(RestException ex){
+        return new RestResult(ex);
+    }
 }

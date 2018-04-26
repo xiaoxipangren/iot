@@ -22,6 +22,8 @@ public class RestConstant {
 
     public static final String REST_SENDMAIL_ACTION="/sendmail";
 
+    public static final String REST_RESETPWD_ACTION="/resetpwd";
+
 
 
     public static final String REST_JWT_HEADER="Authorization";

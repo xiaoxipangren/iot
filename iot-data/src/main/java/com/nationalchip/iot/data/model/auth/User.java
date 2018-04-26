@@ -273,6 +273,14 @@ public class User extends BaseEntity implements IUser {
         return this.roles.remove(role);
     }
 
+    @Override
+    public boolean isInRole(IRole role) {
+        if(role == null || this.roles==null)
+            return false;
+
+        return this.roles.contains(role);
+    }
+
     public String getAvatar() {
         return avatar;
     }

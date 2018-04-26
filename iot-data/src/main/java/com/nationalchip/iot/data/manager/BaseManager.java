@@ -1,11 +1,13 @@
 package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.model.BaseEntity;
+import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.repository.IRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +18,19 @@ import java.util.List;
  * @Date: 2/28/18 3:42 PM
  * @Modified:
  */
-public abstract class BaseManager<T extends BaseEntity> implements IManager<T> {
+
+public abstract class BaseManager<T extends IEntity> implements IManager<T> {
 
     @Autowired
     private IRepository<T> repository;
 
+    public BaseManager(){
+
+    }
+
+    public BaseManager(IRepository repository){
+        this.repository=repository;
+    }
 
     public IRepository<T> getRepository() {
         return repository;

@@ -23,6 +23,6 @@ public class ControllerExceptionAdvice {
     @ExceptionHandler(RestException.class)
     @ResponseBody
     public ResponseEntity<RestResult> restExceptionHandle(RestException ex){
-        return RestResult.error(ex);
+        return new ResponseEntity<>(RestResult.error(ex),ex.getHttpStatus());
     }
 }
