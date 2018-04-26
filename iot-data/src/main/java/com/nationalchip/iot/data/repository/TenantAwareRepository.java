@@ -12,6 +12,6 @@ import java.util.Optional;
 
 @NoRepositoryBean
 @Transactional(readOnly=true)
-public interface TenantAwareRepository<T extends TenantAwareEntity> extends IRepository<T> {
-
+public interface TenantAwareRepository<T extends TenantAwareEntity> extends BaseRepository<T> {
+    T findByTenant(String tenant);
 }

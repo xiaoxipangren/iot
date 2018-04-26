@@ -1,6 +1,6 @@
 package com.nationalchip.iot.data.repository;
 
-import com.nationalchip.iot.data.model.Role;
+import com.nationalchip.iot.data.model.auth.Role;
 
 public interface RoleRepository extends BaseRepository<Role> {
 

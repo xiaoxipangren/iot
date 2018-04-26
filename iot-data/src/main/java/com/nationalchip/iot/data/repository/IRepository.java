@@ -11,7 +11,5 @@ import java.util.Optional;
 @NoRepositoryBean
 @Transactional(readOnly=true)
 public interface IRepository<T extends BaseEntity> extends PagingAndSortingRepository<T,Long> {
-    Optional<T> findById(long id);
-
-    T getById(long id);
+    Optional<T> findById(Long id);
 }

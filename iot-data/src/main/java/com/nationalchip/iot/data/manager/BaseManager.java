@@ -3,6 +3,9 @@ package com.nationalchip.iot.data.manager;
 import com.nationalchip.iot.data.model.BaseEntity;
 import com.nationalchip.iot.data.repository.IRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,11 @@ import java.util.List;
  * @Date: 2/28/18 3:42 PM
  * @Modified:
  */
-public abstract class BaseManager<T extends BaseEntity> implements IManager<T,Long> {
+public abstract class BaseManager<T extends BaseEntity> implements IManager<T> {
+
+    @Autowired
+    private IRepository<T> repository;
+
 
     public IRepository<T> getRepository() {
         return repository;
@@ -23,12 +30,45 @@ public abstract class BaseManager<T extends BaseEntity> implements IManager<T,Lo
         this.repository = repository;
     }
 
-    @Autowired
-    private IRepository<T> repository;
+
+    @Override
+    public Iterable<T> get(Iterable<Long> ids) {
+        return repository.findAll();
+    }
+
+    @Override
+    public Iterable<T> getAll(Sort sort) {
+        return repository.findAll();
+    }
+
+    @Override
+    public Page<T> getAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return repository.exists(id);
+    }
+
+    @Override
+    public long count() {
+        return repository.count();
+    }
+
+    @Override
+    public void delete(Iterable<T> entities) {
+        repository.delete(entities);
+    }
+
+    @Override
+    public void deleteAll() {
+        repository.deleteAll();
+    }
 
     @Override
     public T get(Long id) {
-        return repository.getById(id);
+        return repository.findOne(id);
     }
 
     @Override

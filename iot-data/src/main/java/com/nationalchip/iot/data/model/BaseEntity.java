@@ -1,5 +1,6 @@
 package com.nationalchip.iot.data.model;
 
+import com.nationalchip.iot.data.annotation.Comment;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -45,6 +46,7 @@ public abstract class BaseEntity implements IEntity {
     @Override
     @Access(AccessType.PROPERTY)
     @Column(name = "last_modified_at", insertable = true, updatable = true)
+    @Comment("最后修改日期")
     public Date getLastModifiedAt() {
         return lastModifiedAt;
     }
@@ -52,6 +54,7 @@ public abstract class BaseEntity implements IEntity {
     @Override
     @Access(AccessType.PROPERTY)
     @Column(name = "last_modified_by", insertable = true, updatable = true, length = 40)
+    @Comment("最后修改者")
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }

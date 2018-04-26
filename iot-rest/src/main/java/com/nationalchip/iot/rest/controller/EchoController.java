@@ -1,6 +1,5 @@
 package com.nationalchip.iot.rest.controller;
 
-import com.nationalchip.iot.rest.model.UserInfo;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-@RequestMapping(value = "/api/v1/echo")
+@RequestMapping(value = "/rest/v1/echo")
 public class EchoController {
 
     @RequestMapping(value = "/echo/{content}")
@@ -30,6 +29,13 @@ public class EchoController {
     public ResponseEntity<String> modify(@PathVariable String content){
 
         return new ResponseEntity<String>(content+System.currentTimeMillis(),HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/test/{content}")
+    public ResponseEntity<String> test(@PathVariable String content){
+
+        return new ResponseEntity<String>(content,HttpStatus.OK);
     }
 }
 

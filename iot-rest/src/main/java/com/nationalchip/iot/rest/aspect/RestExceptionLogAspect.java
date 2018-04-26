@@ -3,7 +3,7 @@ package com.nationalchip.iot.rest.aspect;
 import com.nationalchip.iot.annotation.AutoLogger;
 import com.nationalchip.iot.aspect.AbstractExceptionLogAspect;
 import com.nationalchip.iot.exception.UncheckedException;
-import com.nationalchip.iot.util.Constant;
+import com.nationalchip.iot.constant.Constant;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;

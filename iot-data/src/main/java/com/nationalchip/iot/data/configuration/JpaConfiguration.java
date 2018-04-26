@@ -47,7 +47,7 @@ public class JpaConfiguration extends JpaBaseConfiguration {
 
     @Override
     protected AbstractJpaVendorAdapter createJpaVendorAdapter() {
-        return new JpaVendorAdapter();
+        return new JpaVendorAdapter(true);
     }
 
     @Override
@@ -63,8 +63,12 @@ public class JpaConfiguration extends JpaBaseConfiguration {
         //properties.put(PersistenceUnitProperties.DDL_GENERATION, "none");
         properties.put(PersistenceUnitProperties.DDL_GENERATION, "create-tables");
 
-        // Embeed into logging
-        properties.put(PersistenceUnitProperties.LOGGING_LOGGER, "JavaLogger");
+        /**
+         * 取消以下注释可以关闭控制台输出sql语句
+         */
+
+//        // Embeed into logging
+//        properties.put(PersistenceUnitProperties.LOGGING_LOGGER, "JavaLogger");
 
         // Ensure that we flush only at the end of the transaction
         properties.put(PersistenceUnitProperties.PERSISTENCE_CONTEXT_FLUSH_MODE, "COMMIT");

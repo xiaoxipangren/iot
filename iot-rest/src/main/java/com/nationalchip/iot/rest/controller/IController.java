@@ -16,7 +16,5 @@ public interface IController<T extends BaseEntity> {
 
     T find(Long id);
 
-    T create()
-
 
 }

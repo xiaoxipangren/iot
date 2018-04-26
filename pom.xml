@@ -6,11 +6,14 @@
   <artifactId>iot</artifactId>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>iot-security</module>
     <module>iot-data</module>
     <module>iot-core</module>
     <module>iot-rest</module>
     <module>iot-autoconfigure</module>
+    <module>iot-test</module>
+    <module>iot-cache</module>
+    <module>iot-security</module>
+      <module>iot-message</module>
   </modules>
   <packaging>pom</packaging>
 

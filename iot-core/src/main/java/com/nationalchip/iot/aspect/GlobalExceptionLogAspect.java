@@ -1,12 +1,7 @@
 package com.nationalchip.iot.aspect;
 
-import com.nationalchip.iot.annotation.AutoLogger;
-import com.nationalchip.iot.exception.UncheckedException;
-import com.nationalchip.iot.util.Constant;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterThrowing;
+import com.nationalchip.iot.constant.Constant;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +24,8 @@ public class GlobalExceptionLogAspect extends AbstractExceptionLogAspect{
 //
 //    @Pointcut("execution( * com.nationalchip.iot..*.*(..)) "
 //            +"&& !@within(com.nationalchip.iot.annotation.Direct) "
-//            +"&& !@within(org.springframework.context.annotation.Configuration) "
-//            +"&& !@within(org.springframework.boot.context.properties.ConfigurationProperties) ")
+//            +"&& !@within(org.springframework.security.annotation.Configuration) "
+//            +"&& !@within(org.springframework.boot.security.properties.ConfigurationProperties) ")
 //    public void exceptionLog(){ }
 //
 //    @AfterThrowing(pointcut = "exceptionLog()",throwing = "e")
