@@ -1,9 +1,6 @@
 package com.nationalchip.iot.data.model.ota;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.IVisionedEntity;
-import com.nationalchip.iot.data.model.ota.ArchiveEntity;
-import com.nationalchip.iot.data.model.ota.IArchiveEntity;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;

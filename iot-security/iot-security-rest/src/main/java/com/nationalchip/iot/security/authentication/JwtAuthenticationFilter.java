@@ -1,10 +1,8 @@
 package com.nationalchip.iot.security.authentication;
 
-import com.nationalchip.iot.data.model.auth.IAuthority;
-import com.nationalchip.iot.data.model.auth.IUser;
-import com.nationalchip.iot.data.model.auth.User;
-import com.nationalchip.iot.security.configuration.RestConstant;
 import com.nationalchip.iot.cache.helper.KeyHelper;
+import com.nationalchip.iot.data.model.auth.IAuthority;
+import com.nationalchip.iot.security.configuration.RestConstant;
 import com.nationalchip.iot.security.provider.IJwtProvider;
 import io.jsonwebtoken.Claims;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -77,10 +74,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private Authentication restoreAuthentication(Claims claims){
         String username = claims.getSubject();
         Set<IAuthority> authorities = (Set<IAuthority>) claims.get(IJwtProvider.AUTHORTIES);
-        User user = new User(username,"***",username);
-        user.setAuthorities(authorities);
 
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username,null,authorities);
 
         Date expiration = claims.getExpiration();
         AuthenticationDetails details = new AuthenticationDetails(username,null,expiration);

@@ -1,4 +1,4 @@
-package com.nationalchip.iot.data.model;
+package com.nationalchip.iot.data.model.ota;
 
 /**
  * @Author: zhenghq

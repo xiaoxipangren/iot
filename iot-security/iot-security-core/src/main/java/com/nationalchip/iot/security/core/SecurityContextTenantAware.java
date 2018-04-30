@@ -2,8 +2,10 @@ package com.nationalchip.iot.security.core;
 
 import com.nationalchip.iot.data.model.auth.Role;
 import com.nationalchip.iot.data.model.auth.User;
+import com.nationalchip.iot.security.authentication.AuthenticationDetails;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import com.nationalchip.iot.tenancy.TenantRunner;
+import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -30,9 +32,14 @@ public class SecurityContextTenantAware implements ITenantAware {
     public String getCurrentTenant() {
         final SecurityContext context = SecurityContextHolder.getContext();
         if (context.getAuthentication() != null) {
-            final Object principal = context.getAuthentication().getPrincipal();
-            if (principal instanceof User) {
-                return ((User) principal).getTenant();
+            Authentication authentication = context.getAuthentication();
+            final Object principal = authentication.getPrincipal();
+            if (principal instanceof String) {
+                return (String)principal;
+            }
+            if(authentication.getDetails() instanceof AuthenticationDetails){
+                AuthenticationDetails details = (AuthenticationDetails)authentication.getDetails();
+                return details.getTenant();
             }
         }
         return null;

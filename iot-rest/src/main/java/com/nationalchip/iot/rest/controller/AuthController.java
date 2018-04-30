@@ -1,9 +1,10 @@
 package com.nationalchip.iot.rest.controller;
 
-import com.nationalchip.iot.cache.helper.KeyHelper;
 import com.nationalchip.iot.context.ISecurityContext;
+import com.nationalchip.iot.data.manager.IUserManager;
 import com.nationalchip.iot.data.manager.UserManager;
 import com.nationalchip.iot.data.model.Admin;
+import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.data.model.hub.Developer;
@@ -14,8 +15,9 @@ import com.nationalchip.iot.rest.model.RestResult;
 import com.nationalchip.iot.rest.model.auth.*;
 import com.nationalchip.iot.rest.service.MailService;
 import com.nationalchip.iot.security.configuration.RestConstant;
-import com.nationalchip.iot.rest.configuration.RestProperty;
 import com.nationalchip.iot.rest.service.AuthService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,7 +42,7 @@ public class AuthController extends BaseController{
     @Autowired
     private ISecurityContext systemSecurityContext;
     @Autowired
-    private UserManager userManager;
+    private IUserManager userManager;
     @Autowired
     private MailService mailService;
     @Autowired
@@ -50,9 +52,10 @@ public class AuthController extends BaseController{
     @Value("${iot.rest.activation.expiration}")
     private int validationExpiration;
 
-
+    @ApiOperation(value ="注册新用户",notes = "根据输入的用户名、邮箱和密码注册新用户")
+    @ApiImplicitParam(name = "user",value = "注册用户",paramType = "body",dataType = "InputUser")
     @RequestMapping(value = RestConstant.REST_REGISTER_ACTION,method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
-    public ResponseEntity<RestResult> register(@RequestBody InputUser user){
+    public ResponseEntity<RestResult> register(@RequestBody RegisterUser user){
 
         boolean result = registerUser(user);
 
@@ -170,7 +173,7 @@ public class AuthController extends BaseController{
     }
 
 
-    private boolean registerUser(InputUser user){
+    private boolean registerUser(RegisterUser user){
         try{
             systemSecurityContext.runAsSystem(()->{
 
@@ -208,9 +211,9 @@ public class AuthController extends BaseController{
         if(!RegexHelper.isEmail(email))
             throw new AuthException(String.format("邮箱%s格式不正确",email),HttpStatus.BAD_REQUEST);
 
-        User user=null;
+        IUser user=null;
         try{
-            user =(User) userManager.loadUserByEmail(email);
+            user = userManager.loadUserByEmail(email);
             if(user==null)
                 throw new AuthException(String.format("邮箱%s未注册",email));
         }catch (Exception e){
@@ -227,9 +230,9 @@ public class AuthController extends BaseController{
 
     private boolean sendActivateEmail(String url,String username){
 
-        User user=null;
+        IUser user=null;
         try{
-            user =(User) userManager.loadUserByUsername(username);
+            user =(IUser) userManager.loadUserByUsername(username);
         }catch (Exception e){
             throw new RestException(e.getMessage());
         }
