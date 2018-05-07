@@ -13,8 +13,7 @@
     <module>iot-test</module>
     <module>iot-cache</module>
     <module>iot-security</module>
-      <module>iot-message</module>
-    <module>iot-data</module>
+    <module>iot-message</module>
   </modules>
   <packaging>pom</packaging>
 

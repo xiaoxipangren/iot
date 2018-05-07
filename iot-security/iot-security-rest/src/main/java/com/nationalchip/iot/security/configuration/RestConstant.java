@@ -16,7 +16,7 @@ public class RestConstant {
 
     public static final String REST_REGISTER_ACTION="/register";
 
-    public static final String REST_ACTIVATE_ACTION ="/activate";
+    public static final String REST_VALIDATE_ACTION ="/validate";
 
     public static final String REST_EXISTS_ACTION="/exists";
 

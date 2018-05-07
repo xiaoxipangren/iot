@@ -1,23 +1,17 @@
 package com.nationalchip.iot.rest.controller;
 
-import com.nationalchip.iot.context.ISecurityContext;
+import com.nationalchip.iot.data.builder.IBuilderFactory;
+import com.nationalchip.iot.data.builder.IUserBuilder;
 import com.nationalchip.iot.data.manager.IUserManager;
-import com.nationalchip.iot.data.manager.UserManager;
-import com.nationalchip.iot.data.model.Admin;
 import com.nationalchip.iot.data.model.auth.IUser;
-import com.nationalchip.iot.data.model.auth.Status;
-import com.nationalchip.iot.data.model.auth.User;
-import com.nationalchip.iot.data.model.hub.Developer;
 import com.nationalchip.iot.helper.RegexHelper;
 import com.nationalchip.iot.rest.exception.AuthException;
 import com.nationalchip.iot.rest.exception.RestException;
 import com.nationalchip.iot.rest.model.RestResult;
 import com.nationalchip.iot.rest.model.auth.*;
+import com.nationalchip.iot.rest.service.AuthService;
 import com.nationalchip.iot.rest.service.MailService;
 import com.nationalchip.iot.security.configuration.RestConstant;
-import com.nationalchip.iot.rest.service.AuthService;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -35,12 +29,13 @@ public class AuthController extends BaseController{
     private final static String USER_NAME="username";
     private final static String USER_PHONE="phone";
     private final static String USER_EMAIL="email";
-    private static final String ACTIVATE_EMAIL_TITLE="国芯开发者账号激活";
-    private static final String ACTION_ACTIVATE="activate";
+    private static final String VALIDATE_EMAIL_TITLE ="国芯开发者账号激活验证码";
+    private static final String RESETPWD_EMAIL_TITLE ="国芯开发者账号重置密码验证码";
+    private static final String ACTION_VALIDATE="validate";
     private static final String ACTION_RESETPWD="resetpwd";
 
     @Autowired
-    private ISecurityContext systemSecurityContext;
+    private IBuilderFactory builderFactory;
     @Autowired
     private IUserManager userManager;
     @Autowired
@@ -52,34 +47,35 @@ public class AuthController extends BaseController{
     @Value("${iot.rest.activation.expiration}")
     private int validationExpiration;
 
-    @ApiOperation(value ="注册新用户",notes = "根据输入的用户名、邮箱和密码注册新用户")
-    @ApiImplicitParam(name = "user",value = "注册用户",paramType = "body",dataType = "InputUser")
+//    @ApiOperation(value ="注册新用户",notes = "根据输入的用户名、邮箱和密码注册新用户")
+//    @ApiImplicitParam(name = "user",value = "注册用户",paramType = "body",dataType = "InputUser")
     @RequestMapping(value = RestConstant.REST_REGISTER_ACTION,method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
     public ResponseEntity<RestResult> register(@RequestBody RegisterUser user){
-
+        validateCode(user.getEmail(),ACTION_VALIDATE,user.getCode());
         boolean result = registerUser(user);
-
         return ok("注册成功");
+
     }
 
-    @RequestMapping(value = RestConstant.REST_SENDMAIL_ACTION,method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
-    public ResponseEntity<RestResult> sendMail(@RequestBody InputUser user){
+    @RequestMapping(value = RestConstant.REST_VALIDATE_ACTION,method = RequestMethod.POST)
+    public ResponseEntity<RestResult> validateCode(@RequestBody UserEmail email){
+        return ResponseEntity.ok(new RestResult(validateCode(email.getEmail(),email.getAction(),email.getCode())));
+    }
 
-        if(user.getSetMailAction().equals(ACTION_ACTIVATE)){
-            sendActivateEmail(user.getUrl(),user.getUsername());
+
+
+    @RequestMapping(value = RestConstant.REST_SENDMAIL_ACTION,method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
+    public ResponseEntity<RestResult> sendMail(@RequestBody UserEmail email){
+
+
+        if(email.getAction().toLowerCase().equals(ACTION_VALIDATE)){
+            sendValidateEmail(email.getEmail(),email.getUsername());
         }
-        else if(user.getSetMailAction().equals(ACTION_RESETPWD)){
-            sendResetPasswordEmail(user.getUrl(),user.getEmail());
+        else if(email.getAction().equals(ACTION_RESETPWD)){
+            sendResetPasswordEmail(email.getEmail());
         }
 
         return ok("发送激活邮件成功",true);
-    }
-
-    @RequestMapping(value = RestConstant.REST_ACTIVATE_ACTION,method = RequestMethod.POST)
-    public ResponseEntity<RestResult> activate(@RequestBody InputUser user){
-
-        boolean result = activateUser(user.getCode());
-        return ok("激活成功");
     }
 
 
@@ -108,10 +104,10 @@ public class AuthController extends BaseController{
             result = userManager.userExists(value);
         }
         else if(prop.toLowerCase().equals(USER_EMAIL)){
-            result = userManager.userExistsByEmail(value);
+            result = userManager.existsByEmail(value);
         }
         else if(prop.toLowerCase().equals(USER_PHONE)){
-            result = userManager.userExistsByPhone(value);
+            result = userManager.existsByPhone(value);
         }
         else{
             throw new RestException(String.format("无法识别的参数：%s",prop),HttpStatus.BAD_REQUEST);
@@ -134,26 +130,15 @@ public class AuthController extends BaseController{
 
 
     @RequestMapping(value = RestConstant.REST_RESETPWD_ACTION,method=RequestMethod.POST)
-    public ResponseEntity<RestResult> resetPassword(@RequestBody InputUser user){
-        if(redisTemplate.hasKey(user.getCode())){
-            String username = (String)redisTemplate.opsForValue().get(user.getCode());
-            if(username!=null){
-                try{
-                    userManager.resetPassword(username,user.getNewPwd());
-                }
-                catch (Exception e){
-                    throw new AuthException("重置密码失败");
-                }
-                return ok("重置密码成功",true);
-            }
-            else{
-                throw new AuthException(String.format("重置码错误"),HttpStatus.BAD_REQUEST);
-            }
+    public ResponseEntity<RestResult> resetPassword(@RequestBody PwdReset reset){
+        validateCode(reset.getEmail(),ACTION_RESETPWD,reset.getCode());
+        try{
+            userManager.resetPassword(reset.getEmail(),reset.getPassword());
         }
-        else{
-            throw new AuthException(String.format("重置码已过期"),HttpStatus.BAD_REQUEST);
+        catch (Exception e){
+            throw new AuthException("重置密码失败");
         }
-
+        return ok("重置密码成功",true);
     }
 
     @RequestMapping(value = "/changemail")
@@ -164,7 +149,11 @@ public class AuthController extends BaseController{
         }
 
         try{
-            userManager.changeEmail(email);
+
+            IUserBuilder builder=builderFactory.user();
+            builder.email(user.getEmail());
+            userManager.update(builder);
+            //userManager.changeEmail(email);
             return ok("邮箱修改成功",true);
         }
         catch (Exception e){
@@ -174,29 +163,17 @@ public class AuthController extends BaseController{
 
 
     private boolean registerUser(RegisterUser user){
+
         try{
-            systemSecurityContext.runAsSystem(()->{
 
-                User u=null;
-                int type = user.getType();
-                switch (type){
-                    case 0:
-                        u = new Developer(user.getUsername(),user.getPassword());
-                        break;
-                    case 1:
-                        u = new Admin(user.getUsername(),user.getPassword());
-                        break;
-                    default:
-                        u = new Developer(user.getUsername(),user.getPassword());
+            IUserBuilder builder = builderFactory.user();
+            builder.email(user.getEmail())
+                    .password(user.getPassword())
+                    .phone(user.getPhone())
+                    .type(user.getType())
+                    .name(user.getUsername());
 
-                }
-                u.setEmail(user.getEmail());
-                u.setPhone(user.getPhone());
-                u.setStatus(Status.REGISTERED);
-
-                userManager.createUser(u);
-                return null;
-            });
+            userManager.create(builder);
 
             return true;
         }
@@ -206,59 +183,56 @@ public class AuthController extends BaseController{
     }
 
 
-    private boolean sendResetPasswordEmail(String url,String email){
+    private boolean sendResetPasswordEmail(String email){
 
         if(!RegexHelper.isEmail(email))
             throw new AuthException(String.format("邮箱%s格式不正确",email),HttpStatus.BAD_REQUEST);
 
         IUser user=null;
         try{
-            user = userManager.loadUserByEmail(email);
+            user = userManager.findByEmail(email);
             if(user==null)
                 throw new AuthException(String.format("邮箱%s未注册",email));
         }catch (Exception e){
             throw new AuthException(e.getMessage());
         }
 
-        String content = generateResetPasswordContent(user.getUsername(),url);
-        mailService.sendSimple(email,ACTIVATE_EMAIL_TITLE,content,true);
+        String content = generateResetPasswordContent(user.getUsername(),email);
+        mailService.sendSimple(email, RESETPWD_EMAIL_TITLE,content,true);
         return true;
 
 
 
     }
 
-    private boolean sendActivateEmail(String url,String username){
+    private boolean sendValidateEmail(String email,String username){
 
-        IUser user=null;
-        try{
-            user =(IUser) userManager.loadUserByUsername(username);
-        }catch (Exception e){
-            throw new RestException(e.getMessage());
+        if(!RegexHelper.isEmail(email))
+            throw new AuthException(String.format("邮箱%s格式不正确",email),HttpStatus.BAD_REQUEST);
+
+        if(userManager.existsByEmail(email)){
+            throw new AuthException(String.format("邮箱%s已被绑定",email),HttpStatus.BAD_REQUEST);
         }
 
-        Status status =user.getStatus();
-        if(status==Status.REGISTERED){
-            String content = generateActivateContent(user.getUsername(),url);
-            mailService.sendSimple(user.getEmail(),ACTIVATE_EMAIL_TITLE,content,true);
-            return true;
-        }
-        else{
-            return false;
-        }
+
+
+        String content = generateValidateContent(email,username);
+
+        mailService.sendSimple(email, VALIDATE_EMAIL_TITLE,content,true);
+
+        return true;
 
     }
 
-    private String generateActivateContent(String username,String url){
-        String code = generateCacheCode(username);
-        url = generateClickUrl(url,code);
-        return String.format("尊敬的国芯开发者%s<br>你好！<br>请<a href='%s'>点此</a>以激活账号，或复制如下链接到浏览器中打开：<br>%s。",username,url,url);
+    private String generateValidateContent(String email,String username){
+        String code = generateCacheCode(generateCacheKey(email,ACTION_VALIDATE));
+        return String.format("尊敬的国芯开发者%s<br>你好！<br>欢迎注册成为国芯开发者，您的邮箱激活验证码为<br>%s<br>，请将其复制到注册页面，完成注册流程。",username,code);
 
     }
 
-    private String generateCacheCode(String value){
-        String code = UUID.randomUUID().toString().replace("-","").toLowerCase();
-        redisTemplate.opsForValue().set(code,value,validationExpiration, TimeUnit.SECONDS);
+    private String generateCacheCode(String key){
+        String code = UUID.randomUUID().toString().replace("-","").toLowerCase().substring(0,4);
+        redisTemplate.opsForValue().set(key.toLowerCase(),code,validationExpiration, TimeUnit.SECONDS);
         return code;
     }
 
@@ -292,13 +266,26 @@ public class AuthController extends BaseController{
     }
 
 
-    private String generateResetPasswordContent(String username,String url){
-        String code = generateCacheCode(username);
-        url = generateClickUrl(url,code);
+    private String generateResetPasswordContent(String username,String email){
+        String code = generateCacheCode(generateCacheKey(email,ACTION_RESETPWD));
 
-        return String.format("尊敬的国芯开发者%s<br>你好！<br>请<a href='%s'>点此</a>以重置密码，或复制如下链接到浏览器中打开：<br>%s。",username,url,url);
+        return String.format("尊敬的国芯开发者%s<br>你好！<br>重置密码的验证码为<br>%s<br>请输入到重置密码页面以完成密码重置流程。",username,code);
 
     }
 
+
+    private String generateCacheKey(String email,String prefix){
+        return String.format("%s-%s",prefix,email);
+    }
+
+    private boolean validateCode(String email,String prefix,String code){
+        String key = generateCacheKey(email,prefix);
+        if(!redisTemplate.hasKey(key))
+            throw new AuthException("验证码已过期");
+        String cacheCode = (String)redisTemplate.opsForValue().get(key);
+        if(cacheCode == null)
+            throw new AuthException("验证码不存在");
+        return cacheCode.equalsIgnoreCase(code);
+    }
 
 }

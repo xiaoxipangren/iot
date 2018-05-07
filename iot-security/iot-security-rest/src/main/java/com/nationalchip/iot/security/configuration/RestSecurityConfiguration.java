@@ -41,7 +41,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String AUTH_REGISTER_MAPPING=AUTH_MAPPING+RestConstant.REST_REGISTER_ACTION;
     private static final String AUTH_LOGIN_MAPPING=AUTH_MAPPING+RestConstant.REST_LOGIN_ACTION;
-    private static final String AUTH_VALIDATE_MAPPING=AUTH_MAPPING+RestConstant.REST_ACTIVATE_ACTION;
+    private static final String AUTH_VALIDATE_MAPPING=AUTH_MAPPING+RestConstant.REST_VALIDATE_ACTION;
     private static final String AUTH_EXISTS_MAPPING=AUTH_MAPPING+RestConstant.REST_EXISTS_ACTION+"/**";
     private static final String AUTH_SENDMAIL_MAPPING=AUTH_MAPPING+RestConstant.REST_SENDMAIL_ACTION;
     private static final String AUTH_RESETPWD_MAPPING=AUTH_MAPPING+RestConstant.REST_RESETPWD_ACTION;

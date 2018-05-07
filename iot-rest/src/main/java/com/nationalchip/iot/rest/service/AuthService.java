@@ -1,9 +1,8 @@
 package com.nationalchip.iot.rest.service;
 
 import com.nationalchip.iot.cache.helper.KeyHelper;
-import com.nationalchip.iot.data.manager.UserManager;
+import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
-import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.rest.model.auth.UserInfo;
 import com.nationalchip.iot.security.authentication.AuthenticationDetails;
 import com.nationalchip.iot.security.provider.IJwtProvider;
@@ -38,9 +37,6 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UserManager userManager;
-
-    @Autowired
     private IJwtProvider jwtProvider;
 
 
@@ -48,8 +44,6 @@ public class AuthService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
-    private MailService mailService;
 
     @Autowired
     private ITenantAware tenantAware;
@@ -62,7 +56,7 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(token);
 
 
-        User user = (User) authentication.getPrincipal();
+        IUser user = (IUser) authentication.getPrincipal();
         Claims claims = new DefaultClaims();
 
         claims.put(JwtProvider.AUTHORTIES,user.getAuthorities());

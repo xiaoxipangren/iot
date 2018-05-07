@@ -10,7 +10,7 @@
     <artifactId>iot-data-api</artifactId>
     <packaging>jar</packaging>
 
-    <name>iot-data</name>
+    <name>iot-data-api</name>
     <url>http://maven.apache.org</url>
     <build>
         <plugins>

@@ -3,12 +3,14 @@ package com.nationalchip.iot.data.repository;
 import com.nationalchip.iot.data.model.IEntity;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
+/**
+ * @Author: zhenghq
+ * @Description:
+ * @Date: 2/28/18 3:36 PM
+ * @Modified:
+ */
 @NoRepositoryBean
-@Transactional(readOnly=true)
 public interface IRepository<T extends IEntity> extends PagingAndSortingRepository<T,Long> {
-    Optional<T> findById(Long id);
+    T findById(Long id);
 }

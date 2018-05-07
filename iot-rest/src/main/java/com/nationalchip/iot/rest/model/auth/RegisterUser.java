@@ -12,6 +12,15 @@ public class RegisterUser {
     private String email;
     private String phone;
     private int type;
+    private String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getUsername() {
         return username;

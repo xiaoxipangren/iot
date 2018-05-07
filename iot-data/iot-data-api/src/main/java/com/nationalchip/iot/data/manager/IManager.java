@@ -1,6 +1,8 @@
 package com.nationalchip.iot.data.manager;
 
+import com.nationalchip.iot.data.builder.IBuilder;
 import com.nationalchip.iot.data.model.IEntity;
+import com.nationalchip.iot.data.repository.IRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,12 +20,14 @@ public interface IManager<T extends IEntity> {
     Iterable<T> getAll(Sort sort);
     Page<T> getAll(Pageable pageable);
 
-
-
     boolean exists(Long id);
 
     T update(T t);
     T create(T t);
+
+    T create(IBuilder<T> builder);
+    T update(IBuilder<T> builder);
+
 
     long count();
 
