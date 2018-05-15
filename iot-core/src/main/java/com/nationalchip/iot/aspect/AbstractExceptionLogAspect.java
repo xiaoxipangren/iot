@@ -42,11 +42,11 @@ public abstract class AbstractExceptionLogAspect{
 
     protected void logDetail(UncheckedException exception,Logger logger,boolean repeat){
         if(repeat || !exception.logged())
-            LogHelper.error(logger,exception.getMessage(),exception);
+            LogHelper.warn(logger,exception.getMessage(),exception);
     }
 
     private void log(String log,Logger logger){
-        LogHelper.error(logger,log);
+        LogHelper.warn(logger,log);
     }
 
 }

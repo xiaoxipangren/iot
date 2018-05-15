@@ -32,4 +32,15 @@ public class LogHelper {
         if(logger.isErrorEnabled())
             logger.error(log,e);
     }
+
+    public static void warn(Logger logger,String log){
+        if(logger.isErrorEnabled())
+            logger.warn(log);
+    }
+
+    public static void warn(Logger logger,String log,Throwable e){
+        if(logger.isDebugEnabled())
+            logger.warn(log,e);
+    }
+
 }

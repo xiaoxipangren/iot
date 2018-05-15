@@ -3,6 +3,7 @@ package com.nationalchip.iot.data.configuration;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
@@ -33,6 +34,8 @@ import java.util.Map;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class JpaConfiguration extends JpaBaseConfiguration {
 
+    @Value("${iot.data.jpa.show-sql}")
+    private boolean showSql;
 
     @Autowired
     protected JpaConfiguration(DataSource dataSource, JpaProperties properties, ObjectProvider<JtaTransactionManager> jtaTransactionManager, ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
@@ -59,16 +62,12 @@ public class JpaConfiguration extends JpaBaseConfiguration {
         // needed for reports
         properties.put(PersistenceUnitProperties.ALLOW_NATIVE_SQL_QUERIES, "true");
 
-        // flyway
         //properties.put(PersistenceUnitProperties.DDL_GENERATION, "none");
         properties.put(PersistenceUnitProperties.DDL_GENERATION, "create-tables");
 
-        /**
-         * 取消以下注释可以关闭控制台输出sql语句
-         */
 
-//        // Embeed into logging
-//        properties.put(PersistenceUnitProperties.LOGGING_LOGGER, "JavaLogger");
+        // 使用SLF4J记录sql
+        properties.put(PersistenceUnitProperties.LOGGING_LOGGER, "com.nationalchip.iot.data.configuration.Slf4jLogger");
 
         // Ensure that we flush only at the end of the transaction
         properties.put(PersistenceUnitProperties.PERSISTENCE_CONTEXT_FLUSH_MODE, "COMMIT");
@@ -78,9 +77,13 @@ public class JpaConfiguration extends JpaBaseConfiguration {
         // Batch size
         properties.put(PersistenceUnitProperties.BATCH_WRITING_SIZE, "500");
 
-        properties.put(PersistenceUnitProperties.LOGGING_LEVEL,"FINE");
 
-        properties.put(PersistenceUnitProperties.LOGGING_PARAMETERS,"true");
+        if(showSql){
+            properties.put(PersistenceUnitProperties.LOGGING_LEVEL,"FINE");
+
+            properties.put(PersistenceUnitProperties.LOGGING_PARAMETERS,"true");
+        }
+
 
         return properties;
     }

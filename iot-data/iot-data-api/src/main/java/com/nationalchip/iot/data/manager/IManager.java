@@ -2,7 +2,6 @@ package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.builder.IBuilder;
 import com.nationalchip.iot.data.model.IEntity;
-import com.nationalchip.iot.data.repository.IRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;

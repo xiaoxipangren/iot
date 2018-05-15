@@ -1,6 +1,5 @@
 package com.nationalchip.iot.data.model.auth;
 
-import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.model.INamedEntity;
 
 import java.util.Collection;

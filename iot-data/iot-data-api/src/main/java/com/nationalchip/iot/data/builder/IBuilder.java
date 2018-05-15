@@ -1,7 +1,6 @@
 package com.nationalchip.iot.data.builder;
 
 import com.nationalchip.iot.data.model.IEntity;
-import org.springframework.hateoas.Identifiable;
 
 import java.util.Optional;
 
