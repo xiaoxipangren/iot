@@ -1,5 +1,7 @@
 package com.nationalchip.iot.rest.model.auth;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * @Author: zhenghq
  * @Description:
@@ -7,6 +9,7 @@ package com.nationalchip.iot.rest.model.auth;
  * @Modified:
  */
 public class UserExists {
+    @ApiModelProperty("用户是否存在")
     private boolean existed;
 
     public boolean isExisted() {

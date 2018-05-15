@@ -6,6 +6,7 @@ import com.nationalchip.iot.rest.exception.RestException;
 import com.nationalchip.iot.rest.model.RestResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,4 +26,5 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<RestResult> restExceptionHandle(RestException ex){
         return new ResponseEntity<>(RestResult.error(ex),ex.getHttpStatus());
     }
+
 }

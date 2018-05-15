@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
 
@@ -54,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Authentication authentication = restoreAuthentication(claims);
 
             if(authentication != null) {
-                Object logouted = redisTemplate.opsForValue().get(KeyHelper.tokenExpirationKey(authentication.getName()));
+                Object logouted = redisTemplate.opsForValue().get(token);
 
                 if (logouted instanceof Boolean && (boolean) logouted) {
 
@@ -73,7 +74,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private Authentication restoreAuthentication(Claims claims){
         String username = claims.getSubject();
-        Set<IAuthority> authorities = (Set<IAuthority>) claims.get(IJwtProvider.AUTHORTIES);
+        Collection<IAuthority> authorities = (Collection<IAuthority>) claims.get(IJwtProvider.AUTHORTIES);
 
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username,null,authorities);
 

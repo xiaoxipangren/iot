@@ -2,11 +2,15 @@ package com.nationalchip.iot.message.mail;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.integration.mail.MailReceiver;
+import org.springframework.integration.mail.Pop3MailReceiver;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.mail.MessagingException;
+import javax.mail.MethodNotSupportedException;
 import javax.mail.internet.MimeMessage;
 
 /**
@@ -23,6 +27,8 @@ public class MailProvider implements IMailProvider {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    private MailReceiver receiver;
 
     @Override
     public void send(IMail mail) {
@@ -43,6 +49,6 @@ public class MailProvider implements IMailProvider {
 
     @Override
     public Iterable<IMail> receive(String folder) {
-        return null;
+        throw new NotImplementedException();
     }
 }

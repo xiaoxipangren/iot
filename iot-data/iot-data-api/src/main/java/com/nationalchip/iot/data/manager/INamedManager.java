@@ -11,4 +11,5 @@ import com.nationalchip.iot.data.model.INamedEntity;
  */
 public interface INamedManager<T extends INamedEntity> extends IManager<T> {
     T update(INamedBuilder<T> builder);
+    boolean existsByName(String name);
 }

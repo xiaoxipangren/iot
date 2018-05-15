@@ -20,10 +20,18 @@ public abstract class BaseController {
         return new ResponseEntity<>(RestResult.error(message,HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    protected ResponseEntity<RestResult> error(String message,HttpStatus status){
+        return new ResponseEntity<>(RestResult.error(message, status.value()), status);
+    }
+
     protected ResponseEntity<RestResult> ok(Object data){
         return ResponseEntity.ok(RestResult.success(data));
     }
     protected ResponseEntity<RestResult> ok(String message,Object data){
         return ResponseEntity.ok(RestResult.success(message,data));
+    }
+
+    protected ResponseEntity<RestResult> ok(String message,Object data,HttpStatus status){
+        return new ResponseEntity<>(RestResult.success(message, data, status.value()), status);
     }
 }

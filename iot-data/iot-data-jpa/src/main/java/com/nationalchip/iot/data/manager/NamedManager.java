@@ -5,6 +5,7 @@ import com.nationalchip.iot.data.builder.INamedBuilder;
 import com.nationalchip.iot.data.model.INamedEntity;
 import com.nationalchip.iot.data.repository.INamedRepository;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
@@ -49,6 +50,15 @@ public abstract class NamedManager<T extends INamedEntity,E extends T> extends B
 
     @Override
     protected void preCreate(T t) {
+        String name = t.getName();
+        if(existsByName(name)){
+            throw new EntityExistsException(String.format("名称为%s的%s实体已存在",name,t.getClass().getName()));
+        }
+    }
 
+    @Override
+    public boolean existsByName(String name) {
+
+        return ((INamedRepository<T>)getRepository()).existsByName(name);
     }
 }

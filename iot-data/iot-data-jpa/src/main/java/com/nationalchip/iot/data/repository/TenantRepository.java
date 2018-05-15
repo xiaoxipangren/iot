@@ -12,12 +12,10 @@ public interface TenantRepository extends INamedRepository<User> {
     IUser findByEmail(String email);
     IUser findByPhone(String phone);
 
-    void deleteByName(String username);
-
-    boolean existsByName(String username);
+    void deleteByEmail(String email);
+    void deleteByPhone(String phone);
 
     boolean existsByEmail(String email);
-
     boolean existsByPhone(String phone);
 
 }

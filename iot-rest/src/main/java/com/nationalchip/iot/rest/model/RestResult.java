@@ -88,7 +88,7 @@ public class RestResult {
     public static RestResult success(String message,Object data,int code){
         RestResult restResult = new RestResult(message,data);
         restResult.setCode(code);
-        return new RestResult(restResult);
+        return restResult;
     }
 
     public static RestResult error(String message,int errorCode){

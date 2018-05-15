@@ -10,6 +10,7 @@
     <artifactId>iot-rest</artifactId>
     <packaging>jar</packaging>
 
+
     <name>iot-rest</name>
     <url>http://maven.apache.org</url>
     <build>
@@ -21,6 +22,78 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>com.nationalchip.iot</groupId>
+                            <artifactId>iot-data-jpa</artifactId>
+                            <version>${project.version}</version>
+                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
+                            <includes>*.properties</includes>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.nationalchip.iot</groupId>
+                            <artifactId>iot-cache</artifactId>
+                            <version>${project.version}</version>
+                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
+                            <includes>*.properties</includes>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.nationalchip.iot</groupId>
+                            <artifactId>iot-message</artifactId>
+                            <version>${project.version}</version>
+                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
+                            <includes>*.properties</includes>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>com.nationalchip.iot</groupId>
+                            <artifactId>iot-security-rest</artifactId>
+                            <version>${project.version}</version>
+                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
+                            <includes>*.properties</includes>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <configuration>
+                    <tasks>
+                        <copy todir="${project.build.directory}/properties">
+                            <fileset dir="${project.build.outputDirectory}" includes="*.properties" />
+                        </copy>
+                        <concat destfile="${project.build.directory}/application.properties" force="yes" encoding="utf-8">
+                            <fileset dir="${project.build.directory}/properties">
+                                <include name="*.properties"></include>
+                            </fileset>
+                        </concat>
+                    </tasks>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -47,18 +120,18 @@
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>io.springfox</groupId>-->
-            <!--<artifactId>springfox-swagger2</artifactId>-->
-            <!--<version>2.8.0</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>io.springfox</groupId>-->
-            <!--<artifactId>springfox-swagger-ui</artifactId>-->
-            <!--<version>2.8.0</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.8.0</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!--start iot-->
 
@@ -94,4 +167,5 @@
         </dependency>
         <!--end iot-->
     </dependencies>
+
 </project>

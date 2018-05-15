@@ -11,12 +11,12 @@ public class KeyHelper {
         return String.format("%s-token-expired",username);
     }
 
-    public static String resetPasswordKey(String username){
-        return String.format("%s-reset-password",username);
+    public static String resetPasswordKey(String email){
+        return String.format("%s-reset-password",email);
     }
 
-    public static String activateAccountKey(String username){
-        return String.format("%s-activate-account",username);
+    public static String validateEmailKey(String email){
+        return String.format("%s-validate-email",email);
     }
 }
 

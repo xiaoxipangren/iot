@@ -195,11 +195,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
     @Override
     protected void preCreate(IUser iUser) {
-
-    }
-
-    @Override
-    protected void postCreate(IUser iUser) {
+        super.preCreate(iUser);
         User user = (User)iUser;
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setStatus(Status.ACTIVED);

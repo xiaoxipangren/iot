@@ -36,9 +36,9 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
         T t = builder.create();
 
         preCreate(t);
+        t = repository.save((E)t);
         postCreate(t);
-
-        return repository.save((E)t);
+        return t;
     }
 
     protected abstract void preCreate(final T t);

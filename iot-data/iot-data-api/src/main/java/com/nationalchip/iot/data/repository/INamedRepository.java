@@ -12,4 +12,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface INamedRepository<T extends INamedEntity> extends IRepository<T> {
     T findByName(String name);
+    boolean existsByName(String name);
+    void deleteByName(String name);
 }

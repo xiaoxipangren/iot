@@ -6,9 +6,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RoleRepository extends INamedRepository<Role> {
 
-    void deleteByName(String name);
-
-    boolean existsByName(String name);
-
 
 }
