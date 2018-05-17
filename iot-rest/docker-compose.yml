@@ -1,0 +1,35 @@
+version: "3.4"
+services:
+    web:
+        image: iot-rest:1.0-SNAPSHOT
+
+        #默认绑定到8080端口
+        ports:
+            - "8080:8080"
+        volumes:
+            - type: bind
+              source: ./
+              target: /log
+            - type: bind
+              source: ./
+              target: /config
+        depends_on:
+          - db
+          - cache
+        networks:
+            - iot
+    db:
+        image: mysql:5.7
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=iot
+        networks:
+          - iot
+    cache:
+        image: redis
+        networks:
+          - iot
+networks:
+    iot:
+        driver:
+            bridge

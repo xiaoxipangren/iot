@@ -15,6 +15,10 @@ import java.util.Map;
  * @Date: 5/15/18 8:22 PM
  * @Modified:
  */
+
+/**
+ * 该类用于将EclipseLink日志通过Slf4j输出，统一整个系统的日志
+ */
 public class Slf4jLogger extends AbstractSessionLog {
 
     public static final String ECLIPSELINK_NAMESPACE = "org.eclipse.persistence.logging";

@@ -23,10 +23,13 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
+            <!--打fatjar包-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <!--将所有的子模块的默认配置文件unpack并copy到target/properties目录下-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -36,29 +39,21 @@
                             <groupId>com.nationalchip.iot</groupId>
                             <artifactId>iot-data-jpa</artifactId>
                             <version>${project.version}</version>
-                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
-                            <includes>*.properties</includes>
                         </artifactItem>
                         <artifactItem>
                             <groupId>com.nationalchip.iot</groupId>
                             <artifactId>iot-cache</artifactId>
                             <version>${project.version}</version>
-                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
-                            <includes>*.properties</includes>
                         </artifactItem>
                         <artifactItem>
                             <groupId>com.nationalchip.iot</groupId>
                             <artifactId>iot-message</artifactId>
                             <version>${project.version}</version>
-                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
-                            <includes>*.properties</includes>
                         </artifactItem>
                         <artifactItem>
                             <groupId>com.nationalchip.iot</groupId>
                             <artifactId>iot-security-rest</artifactId>
                             <version>${project.version}</version>
-                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
-                            <includes>*.properties</includes>
                         </artifactItem>
                     </artifactItems>
                 </configuration>
@@ -68,18 +63,25 @@
                         <goals>
                             <goal>unpack</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/properties</outputDirectory>
+                            <includes>*.properties</includes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.8</version>
                 <configuration>
                     <tasks>
+                        <!--将properties文件复制到target/properties-->
                         <copy todir="${project.build.directory}/properties">
                             <fileset dir="${project.build.outputDirectory}" includes="*.properties" />
                         </copy>
-                        <concat destfile="${project.build.directory}/application.properties" force="yes" encoding="utf-8">
+                        <!--将所有的properties文件合并为target/application.properties，将配置文件外部化-->
+                        <concat destfile="${project.build.directory}/${application.default}.properties" force="yes" encoding="utf-8">
                             <fileset dir="${project.build.directory}/properties">
                                 <include name="*.properties"></include>
                             </fileset>
@@ -95,32 +97,48 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>com.spotify</groupId>-->
-                <!--<artifactId>dockerfile-maven-plugin</artifactId>-->
-                <!--<version>1.4.0</version>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>default</id>-->
-                        <!--<goals>-->
-                            <!--<goal>build</goal>-->
-                            <!--<goal>push</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-                <!--<configuration>-->
-                    <!--<repository>spotify/foobar</repository>-->
-                    <!--<tag>${project.version}</tag>-->
-                    <!--<buildArgs>-->
-                        <!--<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
-                    <!--</buildArgs>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <repository>${artifactId}</repository>
+                            <tag>${project.version}</tag>
+                            <buildArgs>
+                                <!--注意docker要求所有路径为相对路径-->
+                                <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                                <CONFIG_FILE>target/${application.default}.properties</CONFIG_FILE>
+                            </buildArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tag-image</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>tag</goal>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <repository>${aliyun.registry}/${artifactId}</repository>
+                            <tag>${project.version}</tag>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <aliyun.registry>registry.cn-hangzhou.aliyuncs.com/nationalchip</aliyun.registry>
+        <devops.registry>registry.nationalchip.com</devops.registry>
+        <application.default>application-default</application.default>
     </properties>
 
     <dependencies>
@@ -161,6 +179,7 @@
             <artifactId>iot-cache</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>com.nationalchip.iot</groupId>
             <artifactId>iot-security-core</artifactId>

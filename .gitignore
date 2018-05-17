@@ -57,3 +57,7 @@ local.properties
 # Maven
 maven.properties
 /*/maven.properties
+
+#log
+*.log
+*.log.*

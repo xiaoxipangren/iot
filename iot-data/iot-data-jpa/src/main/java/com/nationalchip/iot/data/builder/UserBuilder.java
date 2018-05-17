@@ -55,6 +55,7 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder> implements IUserBu
                 break;
             default:
                 user = new Developer(getName().get(),password);
+                break;
 
         }
         user.setEmail(email);

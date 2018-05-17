@@ -77,6 +77,7 @@ public class JpaConfiguration extends JpaBaseConfiguration {
         // Batch size
         properties.put(PersistenceUnitProperties.BATCH_WRITING_SIZE, "500");
 
+        properties.put("javax.persistence.schema-generation.database.action","CREATE");
 
         if(showSql){
             properties.put(PersistenceUnitProperties.LOGGING_LEVEL,"FINE");
