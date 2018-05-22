@@ -1,7 +1,7 @@
 version: "3.4"
 services:
     web:
-        image: iot-rest:1.0-SNAPSHOT
+        image: registry.cn-hangzhou.aliyuncs.com/nationalchip/iot-rest:1.0-SNAPSHOT
 
         #默认绑定到8080端口
         ports:

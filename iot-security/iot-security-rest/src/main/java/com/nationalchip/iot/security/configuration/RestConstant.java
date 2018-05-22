@@ -12,6 +12,8 @@ public class RestConstant {
 
     public static final String REST_AUTH_MAPPING="/auth";
 
+    public static final String REST_USER_MAPPING="/user";
+
     public static final String REST_LOGIN_ACTION="/login";
 
     public static final String REST_REGISTER_ACTION="/register";

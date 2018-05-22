@@ -42,8 +42,6 @@ public class AuthService {
     @Autowired
     private IJwtProvider jwtProvider;
 
-
-
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
