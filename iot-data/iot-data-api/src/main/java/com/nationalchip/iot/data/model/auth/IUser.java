@@ -12,7 +12,6 @@ public interface IUser extends UserDetails,INamedEntity {
     Date getLastLogin();
     String getPhone();
     String getEmail();
-    String getTenant();
     Status getStatus();
     String getAvatar();
     Set<IRole> getRoles();

@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.model.ota;
 
 import com.nationalchip.iot.data.annotation.Comment;
+import com.nationalchip.iot.data.model.ArchiveEntity;
 
 import javax.persistence.*;
 
@@ -18,7 +19,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "rollout")
 @MappedSuperclass
-public class Rollout extends ArchiveEntity{
+public class Rollout extends ArchiveEntity {
     @Comment("更新对象")
     @ManyToOne(targetEntity = Target.class,fetch = FetchType.EAGER,optional = false)
     @JoinColumn(name = "target_id",nullable = false,foreignKey = @ForeignKey())

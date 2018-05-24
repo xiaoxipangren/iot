@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -31,14 +32,15 @@ import java.util.Map;
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = { "com.nationalchip.iot.data" })
 @EnableTransactionManagement
+@EnableConfigurationProperties(DataProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class JpaConfiguration extends JpaBaseConfiguration {
+public class DataConfiguration extends JpaBaseConfiguration {
 
     @Value("${iot.data.jpa.show-sql}")
     private boolean showSql;
 
     @Autowired
-    protected JpaConfiguration(DataSource dataSource, JpaProperties properties, ObjectProvider<JtaTransactionManager> jtaTransactionManager, ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
+    protected DataConfiguration(DataSource dataSource, JpaProperties properties, ObjectProvider<JtaTransactionManager> jtaTransactionManager, ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
         super(dataSource, properties, jtaTransactionManager, transactionManagerCustomizers);
     }
 

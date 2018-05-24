@@ -38,13 +38,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String AUTH_MAPPING=RestConstant.REST_BASE_MAPPING+RestConstant.REST_AUTH_MAPPING;
+    private static final String USER_MAPPING=RestConstant.REST_BASE_MAPPING+RestConstant.REST_USER_MAPPING;
 
-    private static final String AUTH_REGISTER_MAPPING=AUTH_MAPPING+RestConstant.REST_REGISTER_ACTION;
+    private static final String USER_REGISTER_MAPPING =USER_MAPPING+RestConstant.REST_REGISTER_ACTION;
     private static final String AUTH_LOGIN_MAPPING=AUTH_MAPPING+RestConstant.REST_LOGIN_ACTION;
-    private static final String AUTH_VALIDATE_MAPPING=AUTH_MAPPING+RestConstant.REST_VALIDATE_ACTION;
-    private static final String AUTH_EXISTS_MAPPING=AUTH_MAPPING+RestConstant.REST_EXISTS_ACTION+"/**";
-    private static final String AUTH_SENDMAIL_MAPPING=AUTH_MAPPING+RestConstant.REST_SENDMAIL_ACTION;
-    private static final String AUTH_RESETPWD_MAPPING=AUTH_MAPPING+RestConstant.REST_RESETPWD_ACTION;
+    private static final String USER_VALIDATE_MAPPING =USER_MAPPING+RestConstant.REST_VALIDATE_ACTION;
+    private static final String USER_EXISTS_MAPPING =USER_MAPPING+RestConstant.REST_EXISTS_ACTION+"/**";
+    private static final String USER_SENDMAIL_MAPPING =USER_MAPPING+RestConstant.REST_SENDMAIL_ACTION;
+    private static final String USER_RESETPWD_MAPPING =USER_MAPPING+RestConstant.REST_RESETPWD_ACTION;
 
 
     @AutoLogger
@@ -79,7 +80,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //禁用session
                 .authorizeRequests()
-                .antMatchers(AUTH_LOGIN_MAPPING,AUTH_REGISTER_MAPPING,AUTH_VALIDATE_MAPPING,AUTH_SENDMAIL_MAPPING,AUTH_EXISTS_MAPPING,AUTH_RESETPWD_MAPPING).permitAll()
+                .antMatchers(AUTH_LOGIN_MAPPING, USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING, USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING).permitAll()
                 .antMatchers(RestConstant.REST_BASE_MAPPING+"/**").authenticated().and()
                 .addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter.class);
 
@@ -89,7 +90,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //注册、登录、发送邮件、验证邮箱无需验证token
-        web.ignoring().antMatchers(AUTH_LOGIN_MAPPING,AUTH_REGISTER_MAPPING,AUTH_VALIDATE_MAPPING,AUTH_SENDMAIL_MAPPING,AUTH_EXISTS_MAPPING,AUTH_RESETPWD_MAPPING);
+        web.ignoring().antMatchers(AUTH_LOGIN_MAPPING, USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING, USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING);
     }
 
 

@@ -1,4 +1,4 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 /**
  * @Author: zhenghq
@@ -6,6 +6,6 @@ package com.nationalchip.iot.data.model.ota;
  * @Date: 3/8/18 12:59 PM
  * @Modified:
  */
-public interface IArchiveEntity {
+public interface IArchivedEntity extends INamedEntity{
     boolean isDeleted();
 }

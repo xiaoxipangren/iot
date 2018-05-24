@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.model.ota;
 
 import com.nationalchip.iot.data.annotation.Comment;
+import com.nationalchip.iot.data.model.VisionedEntity;
 
 import javax.persistence.*;
 import java.util.Set;

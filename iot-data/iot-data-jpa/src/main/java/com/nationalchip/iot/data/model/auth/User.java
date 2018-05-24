@@ -31,17 +31,9 @@ public class User extends NamedEntity implements IUser {
     private  String password;
 
 
-    @Comment("登录名，一般来说，用户名和登录名是一样的")
-    @Column(name = "tenant",unique = true)
-    private String tenant;
-
-
-
     @Comment("用户头像")
     @Column(name = "avatar")
     private String avatar;
-
-
 
     @CascadeOnDelete
     @ManyToMany(targetEntity = Authority.class)
@@ -88,13 +80,8 @@ public class User extends NamedEntity implements IUser {
         this();
         setName(username);
         this.password=password;
-        this.tenant=username;
     }
 
-    public User(String username,String password,String tenant){
-        this(username,password);
-        this.tenant=tenant;
-    }
 
 
     @Column(name = "account_nonexpired")
@@ -222,10 +209,6 @@ public class User extends NamedEntity implements IUser {
         return this.email;
     }
 
-    @Override
-    public String getTenant() {
-        return tenant;
-    }
 
 
     public boolean addAuthority(final IAuthority authority){
@@ -298,14 +281,10 @@ public class User extends NamedEntity implements IUser {
         return Collections.unmodifiableSet(roles);
     }
 
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
 
 
     public static User SystemUser(String tenant){
         User user = new User(DataConstant.SYSTEM_USER,"***");
-        user.setTenant(tenant);
         return user;
     }
 }

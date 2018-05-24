@@ -1,4 +1,4 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 import com.nationalchip.iot.data.annotation.Comment;
 
@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  */
 
 @MappedSuperclass
-public abstract class VisionedEntity extends ArchiveEntity implements IArchiveEntity,IVisionedEntity {
+public abstract class VisionedEntity extends ArchiveEntity implements IVersionedEntity {
 
     @Comment("版本号")
     @Column(name = "version")

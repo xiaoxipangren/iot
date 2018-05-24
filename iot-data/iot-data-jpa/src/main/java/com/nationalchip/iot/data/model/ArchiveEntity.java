@@ -1,7 +1,6 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.NamedEntity;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -14,7 +13,7 @@ import javax.persistence.MappedSuperclass;
  */
 
 @MappedSuperclass
-public abstract class ArchiveEntity extends NamedEntity implements IArchiveEntity {
+public abstract class ArchiveEntity extends NamedEntity implements IArchivedEntity {
     public boolean isDeleted() {
         return deleted;
     }

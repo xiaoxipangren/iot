@@ -1,4 +1,4 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 /**
  * @Author: zhenghq
@@ -6,6 +6,6 @@ package com.nationalchip.iot.data.model.ota;
  * @Date: 3/8/18 1:46 PM
  * @Modified:
  */
-public interface IVisionedEntity {
+public interface IVersionedEntity extends IArchivedEntity {
     String getVersion();
 }

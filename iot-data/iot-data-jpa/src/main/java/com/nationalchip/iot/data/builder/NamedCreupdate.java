@@ -17,7 +17,7 @@ public abstract class NamedCreupdate<T extends INamedBuilder<? extends INamedEnt
     @Override
     public T name(String name) {
         this.name=name;
-        return (T)this;
+        return self();
     }
 
     public Optional<String> getName(){
@@ -33,6 +33,6 @@ public abstract class NamedCreupdate<T extends INamedBuilder<? extends INamedEnt
     @Override
     public T description(String description) {
         this.description=description;
-        return (T)this;
+        return self();
     }
 }

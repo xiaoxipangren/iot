@@ -1,14 +1,11 @@
 package com.nationalchip.iot.data.manager;
 
-import com.nationalchip.iot.data.builder.IBuilder;
-import com.nationalchip.iot.data.builder.IUserBuilder;
-import com.nationalchip.iot.data.builder.UserBuilder;
 import com.nationalchip.iot.data.model.auth.IRole;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.data.repository.IRepository;
-import com.nationalchip.iot.data.repository.TenantRepository;
+import com.nationalchip.iot.data.repository.UserRepository;
 import com.nationalchip.iot.helper.RegexHelper;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -218,11 +215,11 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     }
 
 
-    private TenantRepository repository(){
+    private UserRepository repository(){
         IRepository<User> repository = getRepository();
 
-        if(getRepository() instanceof TenantRepository){
-            return (TenantRepository)repository;
+        if(getRepository() instanceof UserRepository){
+            return (UserRepository)repository;
         }
         else
             throw new NotImplementedException();

@@ -1,18 +1,17 @@
 package com.nationalchip.iot.data.model;
 
+import com.nationalchip.iot.data.manager.SystemManagerHolder;
+import com.nationalchip.iot.data.manager.TenantAwareHolder;
 import org.eclipse.persistence.annotations.Multitenant;
 import org.eclipse.persistence.annotations.MultitenantType;
 import org.eclipse.persistence.annotations.TenantDiscriminatorColumn;
 
 import javax.persistence.Column;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-/**
- * FIXME:
- * 利用prepersist添加tenant信息
- */
 
 @MappedSuperclass
 @TenantDiscriminatorColumn(name="tenant",length = 40)
@@ -27,6 +26,18 @@ public abstract class TenantAwareEntity extends BaseEntity implements ITenantAwa
     public TenantAwareEntity(){
 
     }
+
+    @PrePersist
+    void prePersist() {
+        final String currentTenant = SystemManagerHolder.getInstance().currentTenant();
+        if (currentTenant == null) {
+            throw new EntityNotFoundException("Tenant "
+                    + TenantAwareHolder.getInstance().getTenantAware().getCurrentTenant()
+                    + " does not exists, cannot create entity " + this.getClass() + " with id " + super.getId());
+        }
+        setTenant(currentTenant.toUpperCase());
+    }
+
 
     public TenantAwareEntity(String tenant){
         this.tenant=tenant;

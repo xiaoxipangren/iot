@@ -17,11 +17,15 @@ public abstract class BaseCreupdate<T extends IBuilder<? extends IEntity>> imple
     @Override
     public T id(long id) {
         this.id=id;
-        return (T)this;
+        return self();
     }
 
     public Optional<Long> getId(){
         return Optional.ofNullable(id);
+    }
+
+    protected T self(){
+        return (T)this;
     }
 
 }
