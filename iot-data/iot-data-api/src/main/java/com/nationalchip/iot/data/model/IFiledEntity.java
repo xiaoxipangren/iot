@@ -7,6 +7,8 @@ package com.nationalchip.iot.data.model;
  * @Modified:
  */
 
+import java.io.InputStream;
+
 /**
  * 需要与文件系统相关联的实体
  */
@@ -14,4 +16,5 @@ public interface IFiledEntity extends IVersionedEntity {
     String getFileName();
     String getSha1();
     long getSize();
+    InputStream getContent();
 }

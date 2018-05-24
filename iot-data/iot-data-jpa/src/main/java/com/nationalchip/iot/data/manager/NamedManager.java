@@ -61,4 +61,14 @@ public abstract class NamedManager<T extends INamedEntity,E extends T> extends B
 
         return ((INamedRepository<T>)getRepository()).existsByName(name);
     }
+
+    @Override
+    public void deleteByName(String name) {
+        ((INamedRepository<T>)getRepository()).deleteByName(name);
+    }
+
+    @Override
+    public T findByName(String name) {
+        return ((INamedRepository<T>)getRepository()).findByName(name);
+    }
 }

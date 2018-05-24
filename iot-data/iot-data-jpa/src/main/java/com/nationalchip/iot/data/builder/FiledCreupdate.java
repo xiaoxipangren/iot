@@ -2,6 +2,7 @@ package com.nationalchip.iot.data.builder;
 
 import com.nationalchip.iot.data.model.IFiledEntity;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -14,6 +15,13 @@ public abstract class FiledCreupdate<T extends IFiledBuilder<? extends IFiledEnt
     private String sha1;
     private String fileName;
     private Long size;
+    private InputStream content;
+
+    @Override
+    public T content(InputStream content) {
+        this.content=content;
+        return self();
+    }
 
     @Override
     public T sha1(String sha1) {
@@ -43,5 +51,9 @@ public abstract class FiledCreupdate<T extends IFiledBuilder<? extends IFiledEnt
     }
     public Optional<Long> getSize(){
         return Optional.ofNullable(size);
+    }
+
+    public Optional<InputStream> getContent() {
+        return Optional.ofNullable(content);
     }
 }

@@ -10,4 +10,5 @@ import com.nationalchip.iot.data.model.IResource;
  */
 public interface IResourceBuilder extends IFiledBuilder<IResource> {
     IResourceBuilder guide(String guide);
+    IResourceBuilder category(String category);
 }

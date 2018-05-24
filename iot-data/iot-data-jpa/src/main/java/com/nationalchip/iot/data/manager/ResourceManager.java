@@ -2,8 +2,8 @@ package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.model.IResource;
 import com.nationalchip.iot.data.model.Resource;
-import com.nationalchip.iot.data.repository.IRepository;
 import com.nationalchip.iot.data.repository.ResourceRepository;
+import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -12,31 +12,22 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @Date: 5/24/18 4:33 PM
  * @Modified:
  */
-public class ResourceManager extends ArchiveManager<IResource,Resource> implements IResourceManager {
-    @Override
-    public boolean existsBySha1(String sha1) {
-        return repository().existsBySha1(sha1);
-    }
+
+@Component
+public class ResourceManager extends FiledManager<IResource,Resource> implements IResourceManager {
+
 
     @Override
-    public IResource findBySha1(String sha1) {
-        return repository().findBySha1(sha1);
-    }
+    public Iterable<IResource> findByCategory(String catetory) {
 
-    @Override
-    public void deleteBySha1(String sha1) {
-        repository().deleteBySha1(sha1);
+        return convert(repository().findByCategory(catetory));
     }
-
 
     private ResourceRepository repository(){
-        IRepository<Resource> repository = getRepository();
-
-        if(repository instanceof ResourceRepository){
-            return (ResourceRepository) repository;
+        if(getRepository() instanceof ResourceRepository){
+            return (ResourceRepository)getRepository();
         }
-        else
-            throw new NotImplementedException();
+        throw new NotImplementedException();
     }
 
 }

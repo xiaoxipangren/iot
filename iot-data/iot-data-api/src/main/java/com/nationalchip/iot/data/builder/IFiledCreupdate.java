@@ -2,6 +2,8 @@ package com.nationalchip.iot.data.builder;
 
 import com.nationalchip.iot.data.model.IFiledEntity;
 
+import java.io.InputStream;
+
 /**
  * @Author: zhenghq
  * @Description:
@@ -12,4 +14,5 @@ public interface IFiledCreupdate<T extends IFiledBuilder<? extends IFiledEntity>
     T sha1(String sha1);
     T fileName(String fileName);
     T size(Long size);
+    T content(InputStream content);
 }

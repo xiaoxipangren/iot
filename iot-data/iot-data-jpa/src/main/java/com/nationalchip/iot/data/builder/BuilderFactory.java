@@ -15,4 +15,9 @@ public class BuilderFactory implements IBuilderFactory {
     public IUserBuilder user() {
         return new UserBuilder();
     }
+
+    @Override
+    public IResourceBuilder resource() {
+        return new ResourceBuilder();
+    }
 }

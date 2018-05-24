@@ -1,6 +1,8 @@
 package com.nationalchip.iot.data.repository;
 
 import com.nationalchip.iot.data.model.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Repository;
  * @Modified:
  */
 @Repository
-public interface ResourceRepository extends IFileRepository<Resource> {
+public interface ResourceRepository extends IFiledRepository<Resource> {
 
+    Iterable<Resource> findByCategory(String category);
 }

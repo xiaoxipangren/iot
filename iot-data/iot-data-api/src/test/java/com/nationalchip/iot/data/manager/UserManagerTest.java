@@ -171,9 +171,9 @@
 //    }
 //
 //    @Test
-//    public void get() throws Exception {
+//    public void getBySha1() throws Exception {
 //        when(tenantRepository.findOne(Matchers.anyLong())).thenReturn(testUser);
-//        assertEquals(testUser,userManager.get(23L));
+//        assertEquals(testUser,userManager.getBySha1(23L));
 //    }
 //
 //    @Test

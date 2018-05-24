@@ -31,7 +31,7 @@ import java.util.List;
  */
 
 @Component
-public class FsResourceRepository implements IResourceRepository {
+public class FsResourceRepository implements IFsRepository {
 
     @AutoLogger
     private Logger logger;
@@ -43,7 +43,7 @@ public class FsResourceRepository implements IResourceRepository {
     private static final String TEMP_FILE_SUFFIX = "resource";
 
     @Override
-    public IResource create(InputStream content, String sha1) {
+    public String create(InputStream content, String sha1) {
 
         final MessageDigest mdSha1;
 
@@ -54,25 +54,22 @@ public class FsResourceRepository implements IResourceRepository {
         }
 
         final File file = createTempFile();
-        final Resource resource = store(content, sha1, file, mdSha1);
+        final String hash = store(content, sha1, file, mdSha1);
         renameFileToSHA1Naming(file, sha1);
 
-        return resource;
+        return hash;
     }
 
 
-    private Resource store(InputStream content,String sha1,File file,MessageDigest mdSha1){
-        Resource resource;
+    private String store(InputStream content,String sha1,File file,MessageDigest mdSha1){
+        String  sha1Hash;
         try (final DigestOutputStream outputstream = openFileOutputStream(file, mdSha1)) {
             final long size = ByteStreams.copy(content, outputstream);
             outputstream.flush();
 
-            final String sha1Hash = BaseEncoding.base16().lowerCase().encode(mdSha1.digest());
+            sha1Hash = BaseEncoding.base16().lowerCase().encode(mdSha1.digest());
             checkHashes(sha1, sha1Hash);
 
-            resource = new Resource();
-            resource.setSha1(sha1);
-            resource.setSize(size);
 
         } catch (final IOException e) {
             throw new ResourceStoreException(e.getMessage(), e);
@@ -82,12 +79,12 @@ public class FsResourceRepository implements IResourceRepository {
             }
             throw e;
         }
-        return resource;
+        return sha1Hash;
     }
 
     private void checkHashes(final String providedHash, final String hash) {
 
-        if (providedHash != null && !hash.equals(providedHash)) {
+        if (providedHash != null && !providedHash.equals(hash)) {
             throw new HashNotMatchedException("原始Hash " + providedHash
                     + " 与计算的Hash " + hash+"不匹配",
                     HashNotMatchedException.SHA1);
@@ -117,7 +114,7 @@ public class FsResourceRepository implements IResourceRepository {
             try {
                 Files.move(file, fileSHA1Naming);
             } catch (final IOException e) {
-                throw new ResourceStoreException("无法存货粗文件 " + fileSHA1Naming, e);
+                throw new ResourceStoreException("无法存储文件 " + fileSHA1Naming, e);
             }
         }
 
@@ -141,12 +138,12 @@ public class FsResourceRepository implements IResourceRepository {
     }
 
     @Override
-    public void delete(String sha1) {
+    public void deleteBySha1(String sha1) {
         FileUtils.deleteQuietly(getFile(sha1));
     }
 
     @Override
-    public File get(String sha1) {
+    public File getBySha1(String sha1) {
         return getFile(sha1);
     }
 }

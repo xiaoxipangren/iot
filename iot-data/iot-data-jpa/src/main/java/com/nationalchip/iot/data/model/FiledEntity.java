@@ -1,9 +1,11 @@
 package com.nationalchip.iot.data.model;
 
 import com.nationalchip.iot.data.annotation.Comment;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import java.io.InputStream;
 
 /**
  * @Author: zhenghq
@@ -52,4 +54,16 @@ public class FiledEntity extends VisionedEntity implements IFiledEntity {
     public long getSize() {
         return size;
     }
+
+    public void setConent(InputStream conent) {
+        this.conent = conent;
+    }
+
+    @Override
+    public InputStream getContent() {
+        return conent;
+    }
+
+    @Transient
+    private InputStream conent;
 }

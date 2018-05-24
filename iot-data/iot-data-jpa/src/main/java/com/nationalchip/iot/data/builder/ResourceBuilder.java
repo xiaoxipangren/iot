@@ -13,9 +13,17 @@ public class ResourceBuilder extends FiledCreupdate<IResourceBuilder> implements
 
     private String guide;
 
+    private String category;
+
     @Override
     public IResourceBuilder guide(String guide) {
         this.guide=guide;
+        return self();
+    }
+
+    @Override
+    public IResourceBuilder category(String category) {
+        this.category=category;
         return self();
     }
 
@@ -28,6 +36,12 @@ public class ResourceBuilder extends FiledCreupdate<IResourceBuilder> implements
         getSha1().ifPresent(sha1 -> resource.setSha1(sha1));
         getVersion().ifPresent(version -> resource.setVersion(version));
         isDeleted().ifPresent(deleted -> resource.setDeleted(deleted));
+        getContent().ifPresent(content -> resource.setConent(content));
+
+        if(guide!=null)
+            resource.setGuide(guide);
+        if(category!=null)
+            resource.setCategory(category);
 
         return resource;
     }
@@ -41,5 +55,9 @@ public class ResourceBuilder extends FiledCreupdate<IResourceBuilder> implements
         getSha1().ifPresent(sha1 -> resource.setSha1(sha1));
         getVersion().ifPresent(version -> resource.setVersion(version));
         isDeleted().ifPresent(deleted -> resource.setDeleted(deleted));
+        if(guide!=null)
+            resource.setGuide(guide);
+        if(category!=null)
+            resource.setCategory(category);
     }
 }

@@ -11,11 +11,11 @@ import java.io.InputStream;
  * @Date: 5/23/18 2:41 PM
  * @Modified:
  */
-public interface IResourceRepository {
+public interface IFsRepository {
 
-    IResource create(InputStream content,String sha1);
+    String create(InputStream content,String sha1);
 
-    void delete(String sha1);
+    void deleteBySha1(String sha1);
 
-    File get(String sha1);
+    File getBySha1(String sha1);
 }

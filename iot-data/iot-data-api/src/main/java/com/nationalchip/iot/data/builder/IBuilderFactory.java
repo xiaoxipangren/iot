@@ -8,4 +8,5 @@ package com.nationalchip.iot.data.builder;
  */
 public interface IBuilderFactory {
     IUserBuilder user();
+    IResourceBuilder resource();
 }

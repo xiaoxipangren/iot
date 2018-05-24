@@ -10,7 +10,7 @@ import com.nationalchip.iot.data.repository.IArchiveRepository;
  * @Date: 5/24/18 3:40 PM
  * @Modified:
  */
-public abstract class ArchiveManager<T extends IArchivedEntity,E extends T> extends NamedManager<T,E> implements IArchivedManager<T> {
+public abstract class ArchivedManager<T extends IArchivedEntity,E extends T> extends NamedManager<T,E> implements IArchivedManager<T> {
     @Override
     public void softDelete(Long id) {
         T entity = ((IArchiveRepository<T>)getRepository()).findById(id);
