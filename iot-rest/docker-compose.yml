@@ -19,7 +19,7 @@ services:
         networks:
             - iot
     db:
-        image: mysql:5.7
+        image: mdelapenya/mysql-utf8
         environment:
             - MYSQL_ROOT_PASSWORD=root
             - MYSQL_DATABASE=iot
