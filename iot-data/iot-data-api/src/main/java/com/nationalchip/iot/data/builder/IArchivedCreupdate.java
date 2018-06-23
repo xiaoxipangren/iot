@@ -8,6 +8,7 @@ import com.nationalchip.iot.data.model.IArchivedEntity;
  * @Date: 5/24/18 4:57 PM
  * @Modified:
  */
-public interface IArchivedCreupdate<T extends IArchivedBuilder<? extends IArchivedEntity>> extends INamedCreupdate<T>  {
+public interface IArchivedCreupdate<T extends IArchivedBuilder<E>,E extends IArchivedEntity> extends INamedCreupdate<T,E>  {
     T deleted(boolean deleted);
+    T tag(String tag);
 }

@@ -1,7 +1,7 @@
 //package com.nationalchip.iot.data.repository;
 //
 //import com.nationalchip.iot.data.configuration.JpaConfiguration;
-//import com.nationalchip.iot.data.model.auth.User;
+//import com.nationalchip.iot.data.resource.auth.User;
 //import org.junit.Before;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;

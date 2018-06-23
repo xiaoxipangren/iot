@@ -1,7 +1,9 @@
 package com.nationalchip.iot.data.builder;
 
+import com.nationalchip.iot.data.model.FiledEntity;
 import com.nationalchip.iot.data.model.IFiledEntity;
 
+import javax.swing.text.html.parser.Entity;
 import java.io.InputStream;
 import java.util.Optional;
 
@@ -11,15 +13,14 @@ import java.util.Optional;
  * @Date: 5/24/18 5:11 PM
  * @Modified:
  */
-public abstract class FiledCreupdate<T extends IFiledBuilder<? extends IFiledEntity>>  extends VersionedCreupdate<T> implements IFiledCreupdate<T> {
+public abstract class FiledCreupdate<T extends IFiledBuilder<E>,E extends IFiledEntity>  extends VersionedCreupdate<T,E> implements IFiledCreupdate<T,E> {
     private String sha1;
     private String fileName;
     private Long size;
-    private InputStream content;
+    private InputStream stream;
 
-    @Override
-    public T content(InputStream content) {
-        this.content=content;
+    public T stream(InputStream stream) {
+        this.stream =stream;
         return self();
     }
 
@@ -53,7 +54,22 @@ public abstract class FiledCreupdate<T extends IFiledBuilder<? extends IFiledEnt
         return Optional.ofNullable(size);
     }
 
-    public Optional<InputStream> getContent() {
-        return Optional.ofNullable(content);
+    public Optional<InputStream> getStream() {
+        return Optional.ofNullable(stream);
+    }
+
+
+    @Override
+    protected void apply(E entity) {
+        super.apply(entity);
+        this.<FiledEntity>tryCast(entity).ifPresent(
+                e ->{
+                    getFileName().ifPresent(fileName -> e.setFileName(fileName));
+                    getSha1().ifPresent(sha1 -> e.setSha1(sha1));
+                    getStream().ifPresent(stream -> e.setStream(stream));
+                    getSize().ifPresent(size -> e.setSize(size));
+                }
+        );
+
     }
 }

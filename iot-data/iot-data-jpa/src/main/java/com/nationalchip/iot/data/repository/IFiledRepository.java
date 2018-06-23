@@ -10,7 +10,7 @@ import org.springframework.data.repository.NoRepositoryBean;
  * @Modified:
  */
 @NoRepositoryBean
-public interface IFiledRepository<T extends IFiledEntity> extends IVisionedRepository<T> {
+public interface IFiledRepository<T extends IFiledEntity> extends IVersionedRepository<T> {
 
     T findBySha1(String sha1);
     boolean existsBySha1(String sha1);

@@ -13,11 +13,11 @@ import org.springframework.data.domain.Sort;
  * @Modified:
  */
 public interface IManager<T extends IEntity> {
-    T get(Long id);
-    Iterable<T> getAll();
-    Iterable<T> get(Iterable<Long> ids);
-    Iterable<T> getAll(Sort sort);
-    Page<T> getAll(Pageable pageable);
+    T findOne(Long id);
+    Iterable<T> findAll();
+    Iterable<T> find(Iterable<Long> ids);
+    Iterable<T> findAll(Sort sort);
+    Page<T> findAll(Pageable pageable);
 
     boolean exists(Long id);
 

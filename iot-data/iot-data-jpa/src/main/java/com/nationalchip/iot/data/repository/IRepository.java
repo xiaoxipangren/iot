@@ -13,4 +13,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 @NoRepositoryBean
 public interface IRepository<T extends IEntity> extends PagingAndSortingRepository<T,Long> {
     T findById(Long id);
+
+
 }

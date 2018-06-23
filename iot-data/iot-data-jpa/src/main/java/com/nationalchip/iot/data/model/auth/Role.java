@@ -1,15 +1,11 @@
 package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.configuration.DataConstant;
-import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.BaseEntity;
 import com.nationalchip.iot.data.model.NamedEntity;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
-import org.springframework.security.access.prepost.PreAuthorize;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity

@@ -13,4 +13,5 @@ public interface IUserBuilder extends INamedBuilder<IUser> {
     IUserBuilder email(String email);
     IUserBuilder type(int type);
     IUserBuilder password(String password);
+    IUserBuilder avatar(String avatar);
 }

@@ -1,7 +1,5 @@
 package com.nationalchip.iot.data.manager;
 
-import com.nationalchip.iot.data.builder.IBuilder;
-import com.nationalchip.iot.data.builder.IFiledBuilder;
 import com.nationalchip.iot.data.model.FiledEntity;
 import com.nationalchip.iot.data.model.IFiledEntity;
 import com.nationalchip.iot.data.repository.IFiledRepository;
@@ -22,33 +20,43 @@ public abstract class FiledManager<T extends IFiledEntity,E extends T> extends A
     private IFsRepository fsRepository;
 
     @Override
-    public File getBySha1(String sha1) {
-        return fsRepository.getBySha1(sha1);
+    public File getFile(String sha1) {
+        return fsRepository.getFile(sha1);
     }
 
+
     @Override
-    public T create(IBuilder<T> builder) {
+    protected void preCreate(T t) {
+        super.preCreate(t);
+        saveFile(t);
 
-        IFiledBuilder<T> filedBuilder=(IFiledBuilder)builder;
-        FiledEntity entity = (FiledEntity) filedBuilder.create();
-        String hash = fsRepository.create(entity.getContent(),entity.getSha1());
-        entity.setSha1(hash);
-        T t =(T)entity;
-        preCreate(t);
-        getRepository().save((E)t);
-        postCreate(t);
+    }
 
-        return t;
+
+    private void saveFile (T t){
+        FiledEntity entity = (FiledEntity) t;
+        if(entity.getStream()!=null){
+            String hash = fsRepository.create(entity.getStream(),entity.getSha1());
+            entity.setSha1(hash);
+        }
+    }
+
+
+    @Override
+    protected void postUpdate(T t) {
+        super.postUpdate(t);
+        saveFile(t);
     }
 
     @Override
     public boolean existsBySha1(String sha1) {
-        return repository().existsBySha1(sha1);
+        return repository().existsBySha1(sha1) && fsRepository.existsBySha1(sha1);
     }
 
     @Override
     public void deleteBySha1(String sha1) {
         repository().deleteBySha1(sha1);
+        fsRepository.deleteBySha1(sha1);
     }
 
     @Override
@@ -56,7 +64,7 @@ public abstract class FiledManager<T extends IFiledEntity,E extends T> extends A
         return repository().findBySha1(sha1);
     }
 
-    private IFiledRepository<T> repository(){
-        return (IFiledRepository<T>)getRepository();
+    private IFiledRepository<E> repository(){
+        return (IFiledRepository<E>)getRepository();
     }
 }

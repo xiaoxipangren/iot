@@ -10,9 +10,9 @@ import java.io.InputStream;
  * @Date: 5/24/18 5:00 PM
  * @Modified:
  */
-public interface IFiledCreupdate<T extends IFiledBuilder<? extends IFiledEntity>>  extends IVersionedCreupdate<T>{
+public interface IFiledCreupdate<T extends IFiledBuilder<E>,E extends IFiledEntity>  extends IVersionedCreupdate<T,E>{
     T sha1(String sha1);
     T fileName(String fileName);
     T size(Long size);
-    T content(InputStream content);
+    T stream(InputStream stream);
 }

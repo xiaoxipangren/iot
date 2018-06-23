@@ -1,7 +1,7 @@
 //package com.nationalchip.iot.data.manager;
 //
-//import com.nationalchip.iot.data.model.auth.Status;
-//import com.nationalchip.iot.data.model.auth.User;
+//import com.nationalchip.iot.data.resource.auth.Status;
+//import com.nationalchip.iot.data.resource.auth.User;
 //import com.nationalchip.iot.data.repository.TenantRepository;
 //import com.nationalchip.iot.tenancy.ITenantAware;
 //import org.junit.Before;
@@ -171,9 +171,9 @@
 //    }
 //
 //    @Test
-//    public void getBySha1() throws Exception {
+//    public void getFile() throws Exception {
 //        when(tenantRepository.findOne(Matchers.anyLong())).thenReturn(testUser);
-//        assertEquals(testUser,userManager.getBySha1(23L));
+//        assertEquals(testUser,userManager.getFile(23L));
 //    }
 //
 //    @Test

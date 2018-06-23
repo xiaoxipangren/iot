@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.builder;
 
 import com.nationalchip.iot.data.model.IVersionedEntity;
+import com.nationalchip.iot.data.model.VersionedEntity;
 
 import java.util.Optional;
 
@@ -10,7 +11,7 @@ import java.util.Optional;
  * @Date: 5/24/18 5:07 PM
  * @Modified:
  */
-public abstract class VersionedCreupdate<T extends IVersionedBuilder<? extends IVersionedEntity>> extends ArchivedCreupdate<T> implements IVersionedCreupdate<T>{
+public abstract class VersionedCreupdate<T extends IVersionedBuilder<E>, E extends IVersionedEntity> extends ArchivedCreupdate<T,E> implements IVersionedCreupdate<T,E>{
     private String version;
 
     @Override
@@ -21,5 +22,13 @@ public abstract class VersionedCreupdate<T extends IVersionedBuilder<? extends I
 
     public Optional<String> getVersion(){
         return Optional.ofNullable(version);
+    }
+
+    @Override
+    protected void apply(E entity) {
+        super.apply(entity);
+
+        this.<VersionedEntity>tryCast(entity).ifPresent(e->getVersion().ifPresent(v-> e.setVersion(v)));
+
     }
 }

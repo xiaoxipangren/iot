@@ -13,6 +13,9 @@ services:
             - type: bind
               source: ./
               target: /config
+            - type: bind
+              source: ./repo
+              target: /repo
         depends_on:
           - db
           - cache

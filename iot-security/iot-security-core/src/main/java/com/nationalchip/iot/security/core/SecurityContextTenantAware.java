@@ -1,11 +1,11 @@
 package com.nationalchip.iot.security.core;
 
+import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Role;
 import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.security.authentication.AuthenticationDetails;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import com.nationalchip.iot.tenancy.TenantRunner;
-import org.springframework.beans.factory.annotation.Autowire;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -13,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.stereotype.Component;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,7 +69,7 @@ public class SecurityContextTenantAware implements ITenantAware {
                 .asList(Role.SystemRole());
         private final Authentication delegate;
 
-        private final User systemPrincipal;
+        private final IUser systemPrincipal;
 
 
         private AuthenticationDelegate(final Authentication delegate, final String tenant) {

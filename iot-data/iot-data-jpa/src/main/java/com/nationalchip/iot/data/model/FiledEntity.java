@@ -1,10 +1,10 @@
 package com.nationalchip.iot.data.model;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import org.springframework.data.annotation.Transient;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.io.InputStream;
 
 /**
@@ -14,7 +14,7 @@ import java.io.InputStream;
  * @Modified:
  */
 @MappedSuperclass
-public class FiledEntity extends VisionedEntity implements IFiledEntity {
+public abstract class FiledEntity extends VersionedEntity implements IFiledEntity {
 
     @Column(name="filename")
     @Comment("上传时的文件名")
@@ -55,15 +55,15 @@ public class FiledEntity extends VisionedEntity implements IFiledEntity {
         return size;
     }
 
-    public void setConent(InputStream conent) {
-        this.conent = conent;
+    public void setStream(InputStream stream) {
+        this.stream = stream;
     }
 
     @Override
-    public InputStream getContent() {
-        return conent;
+    public InputStream getStream() {
+        return stream;
     }
 
     @Transient
-    private InputStream conent;
+    private InputStream stream;
 }

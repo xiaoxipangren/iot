@@ -4,6 +4,8 @@ import com.nationalchip.iot.data.model.auth.IRole;
 import com.nationalchip.iot.data.model.auth.IUser;
 import org.springframework.security.provisioning.UserDetailsManager;
 
+import java.io.InputStream;
+
 /**
  * @Author: zhenghq
  * @Description:
@@ -24,7 +26,14 @@ public interface IUserManager extends UserDetailsManager,INamedManager<IUser>{
     boolean existsByPhone(String phone);
     IUser findByPhone(String phone);
 
+    void changeAvatar(String avatar);
+
+
     boolean isInRole(IRole role);
     void addToRole(IRole role);
     void removeFromRole(IRole role);
+
+    String changeAvatar(InputStream stream);
+
+
 }

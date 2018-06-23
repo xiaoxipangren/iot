@@ -22,8 +22,32 @@ public class DataProperties {
         this.fs = fs;
     }
 
-    public class Fs{
+    public static class Fs{
         private String repo;
+
+        private String avatar;
+
+        private String statics;
+
+        private String image;
+
+        private String news;
+
+        public String getNews() {
+            return news;
+        }
+
+        public void setNews(String news) {
+            this.news = news;
+        }
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String image) {
+            this.image = image;
+        }
 
         public String getRepo() {
             return repo;
@@ -31,6 +55,25 @@ public class DataProperties {
 
         public void setRepo(String repo) {
             this.repo = repo;
+        }
+
+
+
+
+        public String getAvatar() {
+            return avatar;
+        }
+
+        public void setAvatar(String avatar) {
+            this.avatar = avatar;
+        }
+
+        public String getStatics() {
+            return statics;
+        }
+
+        public void setStatics(String statics) {
+            this.statics = statics;
         }
     }
 }

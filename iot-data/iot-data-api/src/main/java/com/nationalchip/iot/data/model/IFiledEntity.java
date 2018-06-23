@@ -16,5 +16,5 @@ public interface IFiledEntity extends IVersionedEntity {
     String getFileName();
     String getSha1();
     long getSize();
-    InputStream getContent();
+    InputStream getStream();
 }

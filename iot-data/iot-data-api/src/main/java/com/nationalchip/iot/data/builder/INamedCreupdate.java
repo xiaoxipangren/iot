@@ -10,7 +10,7 @@ import com.nationalchip.iot.data.model.INamedEntity;
  */
 
 
-public interface INamedCreupdate<T extends INamedBuilder<? extends INamedEntity>> extends ICreupdate<T>{
+public interface INamedCreupdate<T extends INamedBuilder<E>,E extends INamedEntity> extends ICreupdate<T,E>{
     T name(String name);
     T description(String description);
 }

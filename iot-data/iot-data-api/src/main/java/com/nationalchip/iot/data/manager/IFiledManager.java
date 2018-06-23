@@ -16,6 +16,6 @@ public interface IFiledManager<T extends IFiledEntity> extends IArchivedManager<
     void deleteBySha1(String sha1);
     T findBySha1(String sha1);
 
-    File getBySha1(String sha1);
+    File getFile(String sha1);
 
 }

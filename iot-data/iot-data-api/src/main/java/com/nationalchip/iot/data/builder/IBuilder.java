@@ -10,9 +10,9 @@ import java.util.Optional;
  * @Date: 5/2/18 9:22 AM
  * @Modified:
  */
-public interface IBuilder<E extends IEntity>{
-    IBuilder<E> id(long id);
+public interface IBuilder<T extends IEntity>{
+    IBuilder<T> id(long id);
     Optional<Long> getId();
-    E create();
-    void update(final E e);
+    T create();
+    void update(final T t);
 }

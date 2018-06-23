@@ -1,16 +1,20 @@
 package com.nationalchip.iot.data.manager;
 
+import com.google.common.collect.Lists;
 import com.nationalchip.iot.data.builder.IBuilder;
 import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.repository.IRepository;
+import com.nationalchip.iot.helper.TypeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author: zhenghq
@@ -33,30 +37,52 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
     @Override
     public T create(IBuilder<T> builder) {
+
+        checkExisted(builder,true);
+
         T t = builder.create();
 
         preCreate(t);
+
         t = repository.save((E)t);
+
         postCreate(t);
+
         return t;
     }
 
-    protected abstract void preCreate(final T t);
+    protected void checkExisted(IBuilder<T> builder,boolean throwIfExisted){
+        Optional<Long> id = builder.getId();
 
-    protected abstract void postCreate(final T t);
+        if(id.isPresent()){
+            Long idL = id.get();
+            boolean existed=exists(idL);
+            if(existed && throwIfExisted){
+                throw existsException("id",idL+"", getGenericTypeName(1));
+            }
+
+            if(!existed && !throwIfExisted){
+                throw notFoundException("id",idL+"", getGenericTypeName(1));
+            }
+        }
+
+
+
+    }
+
+    protected  void preCreate(final T t){};
+
+    protected  void postCreate(final T t){};
 
 
     protected T loadEntity(IBuilder<T> builder){
-        Optional<Long> id = builder.getId();
-
-        if(id.isPresent()) {
-            T t = repository.findById(id.get());
-
-            if (t == null)
-                throw new EntityNotFoundException(String.format("%s entity with id %d is not found.", t.getClass().getName(), id));
-            return t;
+        checkExisted(builder,false);
+        if(builder.getId().isPresent()){
+            return repository.findById(builder.getId().get());
         }
+
         return null;
+
     }
 
 
@@ -72,12 +98,12 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
         return t;
     }
 
-    protected abstract void postUpdate(final T t);
+    protected void postUpdate(final T t){};
 
 
     public  IRepository<E> getRepository() {
 
-        return repository;
+        return  repository;
     }
 
     public void setRepository(IRepository<E> repository) {
@@ -86,19 +112,19 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
 
     @Override
-    public Iterable<T> get(Iterable<Long> ids) {
+    public Iterable<T> find(Iterable<Long> ids) {
 
         return convert(repository.findAll(ids));
     }
 
     @Override
-    public Iterable<T> getAll(Sort sort) {
+    public Iterable<T> findAll(Sort sort) {
 
-        return convert(repository.findAll());
+        return convert(repository.findAll(sort));
     }
 
     @Override
-    public Page<T> getAll(Pageable pageable) {
+    public Page<T> findAll(Pageable pageable) {
 
         return repository.findAll(pageable).map(source -> source);
     }
@@ -124,8 +150,13 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
     }
 
     @Override
-    public T get(Long id) {
-        return repository.findOne(id);
+    public T findOne(Long id) {
+
+        T t = repository.findOne(id);
+        if(t == null){
+            throw new EntityNotFoundException();
+        }
+        return t;
     }
 
     @Override
@@ -134,7 +165,7 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
     }
 
     @Override
-    public Iterable<T> getAll() {
+    public Iterable<T> findAll() {
         return convert(repository.findAll());
     }
 
@@ -154,6 +185,23 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
         entities.forEach(e -> list.add(e));
         return list;
+    }
+
+    protected List<T> toList(Iterable<T> iterable){
+        List<T> list = Lists.newArrayList();
+        iterable.forEach(i -> list.add(i));
+        return list;
+    }
+
+    protected EntityExistsException existsException(String filed, String identity,String type){
+        return new EntityExistsException(String.format("%s为%s的%s实体已存在",filed,identity,type));
+    }
+    protected EntityNotFoundException notFoundException(String filed, String identity,String type){
+        return new EntityNotFoundException(String.format("%s为%s的%s实体不存在",filed,identity,type));
+    }
+
+    protected String getGenericTypeName(int index){
+        return TypeHelper.getGenericTypes(getClass())[index].getTypeName();
     }
 
 }

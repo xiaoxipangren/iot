@@ -1,23 +1,17 @@
 package com.nationalchip.iot.security.provider;
 
-import com.nationalchip.iot.data.model.auth.IAuthority;
-import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.security.configuration.RestSecurityProperty;
 import com.nationalchip.iot.security.exception.JwtDisabledException;
 import com.nationalchip.iot.security.exception.JwtExpiratedException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Map;
 
 /**
  * @Author: zhenghq
@@ -59,9 +53,11 @@ public class  JwtProvider implements IJwtProvider{
             if(validate(claims)){
                 return claims;
             }
-        }catch (Exception e){
-            return null;
+        }catch (ExpiredJwtException e){
+           throw new  JwtExpiratedException();
         }
+
+
         return null;
     }
 

@@ -1,8 +1,8 @@
 package com.nationalchip.iot.rest.controller;
 
-import com.nationalchip.iot.rest.model.RestResult;
-import com.nationalchip.iot.rest.model.auth.LoginUser;
-import com.nationalchip.iot.rest.model.auth.UserInfo;
+import com.nationalchip.iot.rest.resource.AuthResource;
+import com.nationalchip.iot.rest.resource.Response;
+import com.nationalchip.iot.rest.resource.auth.UserInfo;
 import com.nationalchip.iot.rest.service.AuthService;
 import com.nationalchip.iot.security.configuration.RestConstant;
 import io.swagger.annotations.Api;
@@ -10,13 +10,14 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = RestConstant.REST_BASE_MAPPING+RestConstant.REST_AUTH_MAPPING)
 @Api(tags = "鉴权API")
-public class AuthController extends BaseController{
+public class AuthController{
 
     @Autowired
     private AuthService authService;
@@ -26,12 +27,12 @@ public class AuthController extends BaseController{
             response = UserInfo.class)
     @ApiImplicitParam(name="loginUser",value = "登录信息",paramType = "body",
             dataType = "LoginUser",required = true)
-    @RequestMapping(value = RestConstant.REST_LOGIN_ACTION,method= RequestMethod.POST)
-    public ResponseEntity<RestResult> login(@RequestBody LoginUser loginUser){
+    @PostMapping
+    public ResponseEntity<Response> login(@RequestParam("username")final String username, @RequestParam("password")final String password){
 
-        UserInfo user = authService.login(loginUser.getUsername(),loginUser.getPassword());
+        AuthResource authResource = authService.login(username,password);
 
-        return ok("登录成功",user);
+        return Response.created("登录成功",authResource);
     }
 
 
@@ -39,14 +40,14 @@ public class AuthController extends BaseController{
     @ApiImplicitParams({@ApiImplicitParam(name="Authorization",value = "认证头",paramType = "header",
             dataType = "String",required = true),@ApiImplicitParam(name="Authorization",value = "认证头",paramType = "header",
             dataType = "String",required = true)})
-    @RequestMapping(value = "/logout",method = {RequestMethod.POST ,RequestMethod.GET})
-    public ResponseEntity<RestResult> logout(@RequestHeader(RestConstant.REST_JWT_HEADER) String token){
+    @DeleteMapping
+    public ResponseEntity<Response> logout(@RequestHeader(RestConstant.REST_JWT_HEADER) String token){
 
         token=token.replace(RestConstant.REST_JWT_PREFIX,"");
 
         boolean result = authService.logout(token);
 
-        return ok(result);
+        return Response.deleted("注销成功",result);
     }
 
 }

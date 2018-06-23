@@ -1,5 +1,8 @@
 package com.nationalchip.iot.data.manager;
 
+import com.nationalchip.iot.common.io.IFileRepository;
+import com.nationalchip.iot.common.io.IOHelper;
+import com.nationalchip.iot.data.configuration.DataProperties;
 import com.nationalchip.iot.data.model.auth.IRole;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
@@ -9,6 +12,7 @@ import com.nationalchip.iot.data.repository.UserRepository;
 import com.nationalchip.iot.helper.RegexHelper;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +24,19 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 
 @Component
 @Transactional(readOnly = true)
 public class UserManager extends NamedManager<IUser,User> implements IUserManager{
+
+    @Autowired
+    @Qualifier("hashFileRepository")
+    private IFileRepository fileRepository;
+
+    @Autowired
+    private DataProperties dataProperties;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -49,6 +62,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
         user.setStatus(Status.REGISTERED);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setAvatar("avatar.jpg");
         create(user);
     }
 
@@ -66,7 +80,10 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     public void changePassword(String oldPassword, String newPassword) {
         String username = tenantAware.getCurrentTenant();
         User user = loadUser(username);
-        if(user.getPassword().equals(passwordEncoder.encode(oldPassword))){
+
+
+
+        if(passwordEncoder.matches(oldPassword,user.getPassword()   )){
             user.setPassword(passwordEncoder.encode(newPassword));
             update(user);
         }
@@ -134,23 +151,43 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     }
 
     @Override
-    public boolean isInRole(IRole role) {
+    public void changeAvatar(String avatar) {
         User user = loadCurrentUser();
+        user.setAvatar(avatar);
+        update(user);
+    }
+
+    @Override
+    public boolean isInRole(IRole role) {
+        IUser user = loadCurrentUser();
         return user.isInRole(role);
 
     }
 
     @Override
     public void addToRole(IRole role) {
-        User user = loadCurrentUser();
+        IUser user = loadCurrentUser();
         user.addRole(role);
 
         update(user);
     }
 
     @Override
-    public void removeFromRole(IRole role) {
+    public String changeAvatar(InputStream stream) {
+        String sha1 = fileRepository.store( stream,null,dataProperties.getFs().getRepo(),dataProperties.getFs().getImage(),dataProperties.getFs().getAvatar());
+        String avatar = Paths.get(dataProperties.getFs().getAvatar(), IOHelper.hashPath(sha1),sha1).toString();
+
         User user = loadCurrentUser();
+        user.setAvatar(avatar);
+
+        update(user);
+
+        return avatar;
+    }
+
+    @Override
+    public void removeFromRole(IRole role) {
+        IUser user = loadCurrentUser();
         user.removeRole(role);
         update(user);
     }
@@ -198,11 +235,6 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         user.setStatus(Status.ACTIVED);
     }
 
-    @Override
-    protected void postUpdate(IUser iUser) {
-        User user = (User)iUser;
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-    }
 
 
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
@@ -215,7 +247,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     }
 
 
-    private UserRepository repository(){
+    public UserRepository repository(){
         IRepository<User> repository = getRepository();
 
         if(getRepository() instanceof UserRepository){

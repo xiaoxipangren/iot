@@ -8,6 +8,6 @@ import com.nationalchip.iot.data.model.IVersionedEntity;
  * @Date: 5/24/18 4:59 PM
  * @Modified:
  */
-public interface IVersionedCreupdate<T extends IVersionedBuilder<? extends IVersionedEntity>> extends IArchivedCreupdate<T> {
+public interface IVersionedCreupdate<T extends IVersionedBuilder<E>,E extends IVersionedEntity> extends IArchivedCreupdate<T,E> {
     T version(String version);
 }

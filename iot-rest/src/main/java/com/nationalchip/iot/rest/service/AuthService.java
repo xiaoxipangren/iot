@@ -4,11 +4,12 @@ import com.nationalchip.iot.cache.helper.KeyHelper;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.rest.exception.AuthException;
-import com.nationalchip.iot.rest.model.auth.UserInfo;
+import com.nationalchip.iot.rest.resource.AuthAssembler;
+import com.nationalchip.iot.rest.resource.AuthResource;
+import com.nationalchip.iot.rest.resource.auth.UserInfo;
 import com.nationalchip.iot.security.authentication.AuthenticationDetails;
 import com.nationalchip.iot.security.provider.IJwtProvider;
 import com.nationalchip.iot.security.provider.JwtProvider;
-import com.nationalchip.iot.tenancy.ITenantAware;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,8 @@ public class AuthService {
 
 
 
-    public UserInfo login(String username, String password){
+
+    public AuthResource login(String username, String password){
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username,password);
         Authentication authentication=null;
         try {
@@ -92,9 +94,11 @@ public class AuthService {
 
         }
 
+        AuthAssembler authAssembler = new AuthAssembler();
+        AuthResource authResource = authAssembler.toResource(user);
 
-
-        return new UserInfo(user.getUsername(),status,jwt);
+        authResource.setToken(jwt);
+        return authResource;
 
     }
 

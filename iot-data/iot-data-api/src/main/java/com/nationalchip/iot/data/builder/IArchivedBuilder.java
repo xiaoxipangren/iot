@@ -13,4 +13,7 @@ import java.util.Optional;
 public interface IArchivedBuilder<T extends IArchivedEntity> extends INamedBuilder<T> {
     IArchivedBuilder<T> deleted(boolean deleted);
     Optional<Boolean> isDeleted();
+
+    IArchivedBuilder<T> tag(String tag);
+    Optional<String> getTag();
 }

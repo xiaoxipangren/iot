@@ -27,7 +27,7 @@ public final class TenantAwareHolder {
     }
 
     /**
-     * @return the {@link TenantAware} service
+     * @return the {@link ITenantAware} service
      */
     public ITenantAware getTenantAware() {
         return tenantAware;

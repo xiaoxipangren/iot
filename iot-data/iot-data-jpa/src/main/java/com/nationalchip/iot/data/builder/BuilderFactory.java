@@ -17,7 +17,12 @@ public class BuilderFactory implements IBuilderFactory {
     }
 
     @Override
-    public IResourceBuilder resource() {
-        return new ResourceBuilder();
+    public IAssetBuilder asset() {
+        return new AssetBuilder();
+    }
+
+    @Override
+    public INewsBuilder news() {
+        return new NewsBuilder();
     }
 }

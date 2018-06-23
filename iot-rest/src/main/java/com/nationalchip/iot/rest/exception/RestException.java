@@ -1,7 +1,6 @@
 package com.nationalchip.iot.rest.exception;
 
 import com.nationalchip.iot.exception.UncheckedException;
-import com.nationalchip.iot.rest.model.RestResult;
 import org.springframework.http.HttpStatus;
 
 /**

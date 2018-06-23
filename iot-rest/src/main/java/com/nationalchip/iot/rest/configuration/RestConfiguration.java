@@ -2,6 +2,8 @@ package com.nationalchip.iot.rest.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.nationalchip.iot.data.configuration.DataProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +19,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.nio.file.Paths;
+
 /**
  * @Author: zhenghq
  * @Description:
@@ -29,6 +33,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableConfigurationProperties(RestProperty.class)
 @PropertySource(value = "classpath:iot-rest-default.properties",encoding = "utf-8")
 public class RestConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    private DataProperties dataProperties;
 
     @Override
     public void addCorsMappings(CorsRegistry registry){
@@ -48,7 +55,23 @@ public class RestConfiguration extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/"+dataProperties.getFs().getImage()+"**")
+                .addResourceLocations("classpath:/static/") //注意resourceLocations一定要以/结尾
+                .addResourceLocations("file:"+ appendFsSplitter(Paths.get(dataProperties.getFs().getRepo(),dataProperties.getFs().getImage()).toString()));
+
+
+
+
     }
+
+    private String appendFsSplitter(String path){
+        if(!path.endsWith("/")){
+            path=path+"/";
+        }
+        return path;
+    }
+
+
 
     @Bean
     public Docket restDocket(){

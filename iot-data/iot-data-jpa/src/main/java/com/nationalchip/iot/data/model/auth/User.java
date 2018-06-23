@@ -31,6 +31,7 @@ public class User extends NamedEntity implements IUser {
     private  String password;
 
 
+
     @Comment("用户头像")
     @Column(name = "avatar")
     private String avatar;
@@ -76,7 +77,7 @@ public class User extends NamedEntity implements IUser {
     }
 
 
-    public User(String username,String password){
+    public User(String username, String password){
         this();
         setName(username);
         this.password=password;
@@ -283,8 +284,8 @@ public class User extends NamedEntity implements IUser {
 
 
 
-    public static User SystemUser(String tenant){
-        User user = new User(DataConstant.SYSTEM_USER,"***");
+    public static IUser SystemUser(String tenant){
+        IUser user = new User(DataConstant.SYSTEM_USER,"***");
         return user;
     }
 }

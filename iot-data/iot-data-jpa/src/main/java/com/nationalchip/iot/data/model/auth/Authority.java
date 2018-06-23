@@ -35,7 +35,7 @@ public class Authority extends BaseEntity implements IAuthority {
 
     @CascadeOnDelete
     @ManyToMany(mappedBy = "authorities",targetEntity = User.class,fetch = FetchType.LAZY)
-    private Set<User> users;
+    private Set<IUser> users;
 
 
     @CascadeOnDelete
@@ -76,7 +76,7 @@ public class Authority extends BaseEntity implements IAuthority {
 
     @Override
     public String toString() {
-        return String.join(DataConstant.SEPERATOR,operation.toString().toUpperCase(),target.toUpperCase());
+        return String.join(DataConstant.SEPERATOR,operation.getName().toUpperCase(),target.toUpperCase());
     }
 
     @Override

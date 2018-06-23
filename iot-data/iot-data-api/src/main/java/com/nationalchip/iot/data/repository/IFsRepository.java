@@ -1,7 +1,5 @@
 package com.nationalchip.iot.data.repository;
 
-import com.nationalchip.iot.data.model.IResource;
-
 import java.io.File;
 import java.io.InputStream;
 
@@ -17,5 +15,7 @@ public interface IFsRepository {
 
     void deleteBySha1(String sha1);
 
-    File getBySha1(String sha1);
+    boolean existsBySha1(String sha1);
+
+    File getFile(String sha1);
 }

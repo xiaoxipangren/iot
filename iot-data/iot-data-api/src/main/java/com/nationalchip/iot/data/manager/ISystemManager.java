@@ -1,6 +1,5 @@
 package com.nationalchip.iot.data.manager;
 
-import com.sun.istack.internal.NotNull;
 
 import java.util.function.Consumer;
 
@@ -12,6 +11,6 @@ import java.util.function.Consumer;
  */
 public interface ISystemManager {
     String currentTenant();
-    void deleteTenant(@NotNull String tenant);
+    void deleteTenant(String tenant);
     void forEachTenant(Consumer<String> consumer);
 }

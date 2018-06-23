@@ -11,40 +11,48 @@ import com.nationalchip.iot.data.model.hub.Developer;
  * @Date: 5/2/18 1:55 PM
  * @Modified:
  */
-public class UserBuilder extends NamedCreupdate<IUserBuilder> implements IUserBuilder {
+public class UserBuilder extends NamedCreupdate<IUserBuilder,IUser> implements IUserBuilder {
 
     private String phone;
     private String email;
     private int type;
     private String password;
+    private String avatar;
 
     @Override
     public IUserBuilder phone(String phone) {
         this.phone=phone;
 
-        return this;
+        return self();
     }
 
     @Override
     public IUserBuilder email(String email) {
         this.email=email;
-        return this;
+        return self();
     }
 
     @Override
     public IUserBuilder type(int type) {
         this.type=type;
-        return this;
+        return self();
     }
 
     @Override
     public IUserBuilder password(String password) {
         this.password=password;
-        return this;
+        return self();
     }
 
     @Override
-    public IUser create() {
+    public IUserBuilder avatar(String avatar) {
+        this.avatar=avatar;
+        return self();
+    }
+
+
+    @Override
+    protected User newInstance() {
         User user = null;
         switch (type){
             case 0:
@@ -58,29 +66,27 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder> implements IUserBu
                 break;
 
         }
-        user.setEmail(email);
-        user.setPhone(phone);
-        user.setPassword(password);
-
         return user;
     }
 
 
-
-
     @Override
-    public void update(final IUser iUser) {
-        User user = (User) iUser;
+    protected void apply(IUser entity) {
+        super.apply(entity);
+        this.<User>tryCast(entity).ifPresent(
+                user ->{
+                    if(password!=null){
+                        user.setPassword(password);
+                    }
+                    if(phone!=null){
+                        user.setPhone(phone);
+                    }
+                    if(email!=null)
+                        user.setEmail(email);
+                    if(avatar!=null)
+                        user.setAvatar(avatar);
 
-        if(password!=null){
-            user.setPassword(password);
-        }
-        if(phone!=null){
-            user.setPhone(phone);
-        }
-        if(email!=null)
-            user.setEmail(email);
-
-
+                }
+        );
     }
 }

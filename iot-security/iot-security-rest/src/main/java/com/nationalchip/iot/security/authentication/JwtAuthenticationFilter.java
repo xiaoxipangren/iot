@@ -3,12 +3,16 @@ package com.nationalchip.iot.security.authentication;
 import com.nationalchip.iot.cache.helper.KeyHelper;
 import com.nationalchip.iot.data.model.auth.IAuthority;
 import com.nationalchip.iot.security.configuration.RestConstant;
+import com.nationalchip.iot.security.exception.JwtDisabledException;
+import com.nationalchip.iot.security.exception.JwtExpiratedException;
 import com.nationalchip.iot.security.provider.IJwtProvider;
 import io.jsonwebtoken.Claims;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -51,22 +55,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String prefix = RestConstant.REST_JWT_PREFIX;
         if(header!=null && header.startsWith(prefix)){
             String token=header.replace(prefix,"");
-            Claims claims = jwtProvider.parseToken(token);
-            Authentication authentication = restoreAuthentication(claims);
+            try{
+                Claims claims = jwtProvider.parseToken(token);
+                Authentication authentication = restoreAuthentication(claims);
 
-            if(authentication != null) {
-                Object logouted = redisTemplate.opsForValue().get(token);
+                if(authentication != null) {
 
-                if (logouted instanceof Boolean && (boolean) logouted) {
+                    if(redisTemplate.hasKey(token)){
+                        Object logouted = redisTemplate.opsForValue().get(token);
+                        if (logouted instanceof Boolean && (boolean) logouted) {
 
-                    PrintWriter writer = response.getWriter();
-                    writer.print("token已过期，请重新登录");
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    return;
-                } else {
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                            throw new BadCredentialsException("token已失效");
+                        }
+                    }
+                    else {
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+
                 }
+            }catch (JwtExpiratedException | JwtDisabledException e){
+                throw new BadCredentialsException("token已过期");
             }
+
         }
 
         filterChain.doFilter(request, response);

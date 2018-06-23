@@ -1,6 +1,6 @@
 package com.nationalchip.iot.data.model.hub;
 
-import com.nationalchip.iot.data.annotation.Comment;
+import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.User;
 
 import javax.persistence.Entity;

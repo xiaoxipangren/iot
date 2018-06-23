@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,6 +40,8 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String AUTH_MAPPING=RestConstant.REST_BASE_MAPPING+RestConstant.REST_AUTH_MAPPING;
     private static final String USER_MAPPING=RestConstant.REST_BASE_MAPPING+RestConstant.REST_USER_MAPPING;
+    private static final String ASSET_MAPPING =RestConstant.REST_BASE_MAPPING+RestConstant.REST_ASSET_MAPPING;
+
 
     private static final String USER_REGISTER_MAPPING =USER_MAPPING+RestConstant.REST_REGISTER_ACTION;
     private static final String AUTH_LOGIN_MAPPING=AUTH_MAPPING+RestConstant.REST_LOGIN_ACTION;
@@ -46,6 +49,10 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String USER_EXISTS_MAPPING =USER_MAPPING+RestConstant.REST_EXISTS_ACTION+"/**";
     private static final String USER_SENDMAIL_MAPPING =USER_MAPPING+RestConstant.REST_SENDMAIL_ACTION;
     private static final String USER_RESETPWD_MAPPING =USER_MAPPING+RestConstant.REST_RESETPWD_ACTION;
+    private static final String RESOURCE_LIST_MAPPING = ASSET_MAPPING +RestConstant.REST_LIST_ACTION;
+    private static final String ASSET_ID_MAPPING = ASSET_MAPPING +RestConstant.REST_ID_MAPPING;
+    private static final String ASSET_DOWNLOAD_MAPPING = ASSET_MAPPING +RestConstant.REST_DOWNLOAD_ACTION;
+    private static final String RESOURCE_CATEGORY_MAPPING = ASSET_MAPPING +RestConstant.REST_CATEGORY_ACTION;
 
 
     @AutoLogger
@@ -90,7 +97,12 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //注册、登录、发送邮件、验证邮箱无需验证token
-        web.ignoring().antMatchers(AUTH_LOGIN_MAPPING, USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING, USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING);
+        web.ignoring().antMatchers(AUTH_LOGIN_MAPPING, USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING,
+                USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING, ASSET_DOWNLOAD_MAPPING,RESOURCE_LIST_MAPPING,RESOURCE_CATEGORY_MAPPING)
+        .antMatchers(HttpMethod.POST,AUTH_MAPPING)
+        .antMatchers(HttpMethod.GET,ASSET_MAPPING)
+        .antMatchers(HttpMethod.GET,ASSET_ID_MAPPING)
+        .antMatchers(HttpMethod.GET,ASSET_DOWNLOAD_MAPPING);
     }
 
 
