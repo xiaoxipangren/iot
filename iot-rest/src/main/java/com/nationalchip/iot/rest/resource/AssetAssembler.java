@@ -6,6 +6,8 @@ import com.nationalchip.iot.data.model.IAsset;
 import com.nationalchip.iot.rest.controller.AssetController;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
 
 /**
@@ -42,7 +44,6 @@ public class AssetAssembler extends FiledAssembler<IAsset,AssetResponse,IAssetBu
     public IAssetBuilder fromRequest(AssetRequest request) {
         IAssetBuilder builder = super.fromRequest(request);
         request.getGuide().ifPresent(guide -> builder.guide(guide));
-
         return builder;
     }
 }

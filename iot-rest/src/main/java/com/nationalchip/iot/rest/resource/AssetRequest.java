@@ -18,4 +18,7 @@ public class AssetRequest extends FiledRequest {
     public void setGuide(String guide) {
         this.guide = guide;
     }
+
+
+
 }

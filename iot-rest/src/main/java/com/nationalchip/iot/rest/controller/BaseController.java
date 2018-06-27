@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.persistence.EntityNotFoundException;
@@ -22,13 +23,11 @@ import javax.persistence.EntityNotFoundException;
  * @Date: 4/26/18 2:32 PM
  * @Modified:
  */
-public abstract class BaseController<T extends IEntity,R extends BaseResponse,B extends IBuilder<T>,Q extends BaseRequest> implements IController<T> {
+public abstract class BaseController<T extends IEntity,R extends BaseResponse,B extends IBuilder<T>,Q extends BaseRequest> implements IController<T,Q> {
 
     private final static int MAX_PAGESIZE=20;
     private final static int DEFAULT_PAGESIZE=10;
 
-    @Autowired
-    private IBuilderFactory builderFactory;
 
     @Autowired
     private IManager<T> manager;
@@ -69,19 +68,49 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
     }
 
     @Override
-    public ResponseEntity<Response> getAll(@RequestParam(value = "page",defaultValue = "0") int page, @RequestParam(value = "pagesize",defaultValue = "10")int pagesize) {
+    public ResponseEntity<Response> getAll(@RequestParam(value = "page",defaultValue = "0") int page,
+                                           @RequestParam(value = "pagesize",defaultValue = "10")int pagesize,
+                                           @RequestParam(value= "sql",defaultValue = "")String sql) {
         page = validatePage(page-1);//调整page从1开始计数
         pagesize = validatePagesize(pagesize);
         Pageable pageable = new PageRequest(page,pagesize);
 
-        Page<T> result = manager.findAll(pageable);
+        Page<T> result = null;
+        if(sql !=null && !sql.isEmpty())
+            result = manager.findAll(pageable,sql);
+        else{
+            result = manager.findAll(pageable);
+        }
 
         return Response.ok(toPage(result,page,pagesize));
     }
 
     @Override
     public ResponseEntity<Response> delete(@PathVariable Long id) {
-        return null;
+        manager.delete(id);
+        return Response.deleted();
+    }
+
+
+    @Override
+    public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody final Q request) {
+
+        B builder = getAssembler().fromRequest(request);
+        builder.id(id);
+
+        T t = getManager().update(builder);
+
+        return Response.ok("更新成功",getAssembler().toResource(t));
+    }
+
+    @Override
+    public ResponseEntity<Response> create(@RequestBody final Q request) {
+
+        B builder = getAssembler().fromRequest(request);
+
+        T t = getManager().create(builder);
+
+        return Response.created(getAssembler().toResource(t));
     }
 
 
@@ -105,14 +134,5 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
 
         return new PageResponse<>(((BaseAssembler<T,R,B,Q>)assembler).toResources(result.getContent()),result.getTotalElements(),offset);
 
-    }
-
-
-    public IBuilderFactory getBuilderFactory() {
-        return builderFactory;
-    }
-
-    public void setBuilderFactory(IBuilderFactory builderFactory) {
-        this.builderFactory = builderFactory;
     }
 }

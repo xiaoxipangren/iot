@@ -45,9 +45,9 @@ public class AuthController{
 
         token=token.replace(RestConstant.REST_JWT_PREFIX,"");
 
-        boolean result = authService.logout(token);
+        authService.logout(token);
 
-        return Response.deleted("注销成功",result);
+        return Response.deleted("注销成功");
     }
 
 }

@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.List;
+
 /**
  * @Author: zhenghq
  * @Description:
@@ -18,6 +20,7 @@ public interface IManager<T extends IEntity> {
     Iterable<T> find(Iterable<Long> ids);
     Iterable<T> findAll(Sort sort);
     Page<T> findAll(Pageable pageable);
+    Page<T> findAll(Pageable pageable,String condition);
 
     boolean exists(Long id);
 
@@ -33,6 +36,7 @@ public interface IManager<T extends IEntity> {
     void delete(Long id);
     void delete(Iterable<T> entities);
     void deleteAll();
+
 
 
 }

@@ -126,12 +126,19 @@ public class Response {
     public static ResponseEntity<Response> success(String message, Object data, HttpStatus status){
         return new ResponseEntity<>(success(message, data, status.value()), status);
     }
-    public static ResponseEntity<Response> created(String message, Object data){
+    public static ResponseEntity<Response> created(Object data){
+        return success("资源创建成功",data,HttpStatus.CREATED);
+    }
+
+    public static ResponseEntity<Response> created(String message,Object data){
         return success(message,data,HttpStatus.CREATED);
     }
 
-    public static ResponseEntity<Response> deleted(String message, Object data){
-        return success(message,data,HttpStatus.NO_CONTENT);
+    public static ResponseEntity<Response> deleted(){
+        return success("资源已删除",null,HttpStatus.NO_CONTENT);
     }
 
+    public static ResponseEntity<Response> deleted(String message){
+        return success(message,null,HttpStatus.NO_CONTENT);
+    }
 }

@@ -4,14 +4,18 @@ import com.google.common.collect.Lists;
 import com.nationalchip.iot.data.builder.IBuilder;
 import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.repository.IRepository;
+import com.nationalchip.iot.data.specification.SpecificationParser;
 import com.nationalchip.iot.helper.TypeHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -27,12 +31,16 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
 
     @Autowired
+    private SpecificationParser specificationParser;
+
+
+
+    @Autowired
     private IRepository<E> repository;
 
     public BaseManager(){
 
     }
-
 
 
     @Override
@@ -126,7 +134,16 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
     @Override
     public Page<T> findAll(Pageable pageable) {
 
-        return repository.findAll(pageable).map(source -> source);
+        return convert(repository.findAll(pageable),pageable);
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable, String condition) {
+
+        Specification<E> specification  = specificationParser.parse(condition);
+        Page<E> page = getRepository().findAll(specification,pageable);
+
+        return convert(page,pageable);
     }
 
     @Override
@@ -185,6 +202,10 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
         entities.forEach(e -> list.add(e));
         return list;
+    }
+
+    protected Page<T> convert(final Page<E> page, final Pageable pageable) {
+        return new PageImpl<>(Collections.unmodifiableList(page.getContent()), pageable, page.getTotalElements());
     }
 
     protected List<T> toList(Iterable<T> iterable){

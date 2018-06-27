@@ -66,7 +66,9 @@ public abstract class FiledCreupdate<T extends IFiledBuilder<E>,E extends IFiled
                 e ->{
                     getFileName().ifPresent(fileName -> e.setFileName(fileName));
                     getSha1().ifPresent(sha1 -> e.setSha1(sha1));
-                    getStream().ifPresent(stream -> e.setStream(stream));
+                    getStream().ifPresent(stream -> {
+                        e.setStream(stream);
+                    });
                     getSize().ifPresent(size -> e.setSize(size));
                 }
         );

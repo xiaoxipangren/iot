@@ -2,11 +2,14 @@ package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.data.model.FiledEntity;
 import com.nationalchip.iot.data.model.IFiledEntity;
+import com.nationalchip.iot.data.model.NamedEntity;
 import com.nationalchip.iot.data.repository.IFiledRepository;
 import com.nationalchip.iot.data.repository.IFsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * @Author: zhenghq
@@ -18,6 +21,19 @@ public abstract class FiledManager<T extends IFiledEntity,E extends T> extends A
 
     @Autowired
     private IFsRepository fsRepository;
+
+
+    @Override
+    public T findOne(Long id) {
+        T t = super.findOne(id);
+        FiledEntity entity = (FiledEntity) t;
+        try {
+            entity.setStream(new FileInputStream(fsRepository.getFile(t.getSha1())));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return (T)entity;
+    }
 
     @Override
     public File getFile(String sha1) {

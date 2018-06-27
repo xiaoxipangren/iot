@@ -1,5 +1,7 @@
 package com.nationalchip.iot.rest.resource;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Optional;
 
 /**
@@ -10,6 +12,7 @@ import java.util.Optional;
  */
 public abstract class FiledRequest extends VersionedRequest {
     private String fileName;
+    private MultipartFile file;
     private String sha1;
 
     public Optional<String> getSha1() {
@@ -28,5 +31,11 @@ public abstract class FiledRequest extends VersionedRequest {
         this.fileName = fileName;
     }
 
+    public Optional<MultipartFile> getFile() {
+        return Optional.ofNullable(file);
+    }
 
+    public void setFile(MultipartFile file) {
+        this.file = file;
+    }
 }
