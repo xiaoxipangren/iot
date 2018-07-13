@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Set;
 
 public interface IUser extends UserDetails,INamedEntity {
-    String getName();
     Date getLastLogin();
     String getPhone();
     String getEmail();

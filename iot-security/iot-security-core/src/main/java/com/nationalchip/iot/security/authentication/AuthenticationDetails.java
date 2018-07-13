@@ -1,13 +1,13 @@
 package com.nationalchip.iot.security.authentication;
 
-import com.nationalchip.iot.data.model.auth.Status;
-
 import java.io.Serializable;
 import java.util.Date;
 
 public class AuthenticationDetails implements Serializable{
     private String tenant;
-    private Status status;
+    private boolean once;
+
+
 
     public Date getExpiration() {
         return expiration;
@@ -22,9 +22,8 @@ public class AuthenticationDetails implements Serializable{
     public AuthenticationDetails() {
     }
 
-    public AuthenticationDetails(String tenant, Status status,Date expiration){
+    public AuthenticationDetails(String tenant,Date expiration){
         this.tenant=tenant;
-        this.status=status;
         this.expiration=expiration;
     }
 
@@ -36,11 +35,11 @@ public class AuthenticationDetails implements Serializable{
         this.tenant = tenant;
     }
 
-    public Status getStatus() {
-        return status;
+    public boolean isOnce() {
+        return once;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setOnce(boolean once) {
+        this.once = once;
     }
 }

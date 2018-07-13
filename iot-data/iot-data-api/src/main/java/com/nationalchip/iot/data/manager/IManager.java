@@ -33,6 +33,8 @@ public interface IManager<T extends IEntity> {
 
     long count();
 
+    long count(String condition);
+
     void delete(Long id);
     void delete(Iterable<T> entities);
     void deleteAll();

@@ -22,6 +22,26 @@ public class RestProperty {
 
     private int validationExpiration;
 
+    private String countHeader;
+
+    private String existedHeader;
+
+    public String getCountHeader() {
+        return countHeader;
+    }
+
+    public void setCountHeader(String countHeader) {
+        this.countHeader = countHeader;
+    }
+
+    public String getExistedHeader() {
+        return existedHeader;
+    }
+
+    public void setExistedHeader(String existedHeader) {
+        this.existedHeader = existedHeader;
+    }
+
     public String getValidateMail() {
         return validateMail;
     }

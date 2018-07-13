@@ -22,7 +22,6 @@ public final class SpecificationParser {
         return (root, query, cb) -> {
             Node rootNode = new RSQLParser().parse(sql);
             List<Predicate> predicates = rootNode.accept(new SqlVistor<>(cb),root);
-
             return cb.and(predicates.toArray(new Predicate[predicates.size()]));
         };
     }

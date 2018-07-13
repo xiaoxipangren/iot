@@ -2,11 +2,15 @@ package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.common.io.IFileRepository;
 import com.nationalchip.iot.common.io.IOHelper;
-import com.nationalchip.iot.data.configuration.DataProperties;
+import com.nationalchip.iot.data.builder.IBuilder;
+import com.nationalchip.iot.data.builder.INamedBuilder;
+import com.nationalchip.iot.data.builder.IUserBuilder;
+import com.nationalchip.iot.data.configuration.DataProperty;
 import com.nationalchip.iot.data.model.auth.IRole;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.data.model.auth.User;
+import com.nationalchip.iot.data.repository.INamedRepository;
 import com.nationalchip.iot.data.repository.IRepository;
 import com.nationalchip.iot.data.repository.UserRepository;
 import com.nationalchip.iot.helper.RegexHelper;
@@ -36,7 +40,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     private IFileRepository fileRepository;
 
     @Autowired
-    private DataProperties dataProperties;
+    private DataProperty dataProperty;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -72,6 +76,17 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     }
 
     @Override
+    protected void preUpdate(IUser iUser) {
+        super.postUpdate(iUser);
+
+        if(!isEncrypted(iUser.getPassword())){
+            User u =(User)iUser;
+            u.setPassword(passwordEncoder.encode(u.getPassword()));
+        }
+
+    }
+
+    @Override
     public void deleteUser(String username) {
         repository().deleteByName(username);
     }
@@ -80,8 +95,6 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     public void changePassword(String oldPassword, String newPassword) {
         String username = tenantAware.getCurrentTenant();
         User user = loadUser(username);
-
-
 
         if(passwordEncoder.matches(oldPassword,user.getPassword()   )){
             user.setPassword(passwordEncoder.encode(newPassword));
@@ -107,6 +120,23 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         update(user);
     }
 
+    @Override
+    protected IUser loadEntity(IBuilder<IUser> builder) {
+        IUser t = super.loadEntity(builder);
+
+
+
+        if(t == null && builder instanceof IUserBuilder){
+            IUserBuilder userBuilder = (IUserBuilder)builder;
+            if(userBuilder.getEmail().isPresent()){
+                t = getRepository().findByEmail(userBuilder.getEmail().get());
+            }
+            else if(userBuilder.getPhone().isPresent())
+                t = getRepository().findByPhone(userBuilder.getEmail().get());
+        }
+
+        return t;
+    }
 
     public void changeEmail(String email){
 
@@ -174,8 +204,8 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
     @Override
     public String changeAvatar(InputStream stream) {
-        String sha1 = fileRepository.store( stream,null,dataProperties.getFs().getRepo(),dataProperties.getFs().getImage(),dataProperties.getFs().getAvatar());
-        String avatar = Paths.get(dataProperties.getFs().getAvatar(), IOHelper.hashPath(sha1),sha1).toString();
+        String sha1 = fileRepository.store( stream,null, dataProperty.getFs().getRepo(), dataProperty.getFs().getImage(), dataProperty.getFs().getAvatar());
+        String avatar = Paths.get(dataProperty.getFs().getAvatar(), IOHelper.hashPath(sha1),sha1).toString();
 
         User user = loadCurrentUser();
         user.setAvatar(avatar);
@@ -231,7 +261,8 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     protected void preCreate(IUser iUser) {
         super.preCreate(iUser);
         User user = (User)iUser;
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(!isEncrypted(user.getPassword()))
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setStatus(Status.ACTIVED);
     }
 
@@ -258,12 +289,25 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
     }
 
+    @Override
+    public UserRepository getRepository() {
+        return (UserRepository)super.getRepository();
+
+    }
+
     private User loadCurrentUser(){
         String username = tenantAware.getCurrentTenant();
         return loadUser(username);
     }
     private User loadUser(String username){
         return (User) loadUserByUsername(username);
+    }
+
+    private boolean isEncrypted(String password){
+        if(password==null)
+            return false;
+
+        return password.startsWith("$2a$10$");
     }
 
 }

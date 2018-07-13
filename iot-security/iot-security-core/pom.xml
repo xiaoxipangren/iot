@@ -44,11 +44,6 @@
             <artifactId>iot-core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.nationalchip.iot</groupId>
-            <artifactId>iot-data-jpa</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
         <!--end iot-->
 

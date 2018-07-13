@@ -2,7 +2,7 @@ package com.nationalchip.iot.data.repository;
 
 import com.nationalchip.iot.annotation.AutoLogger;
 import com.nationalchip.iot.common.io.IFileRepository;
-import com.nationalchip.iot.data.configuration.DataProperties;
+import com.nationalchip.iot.data.configuration.DataProperty;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,29 +31,29 @@ public class FsAssetRepository implements IFsRepository {
     private IFileRepository hashFileRepository;
 
     @Autowired
-    private DataProperties dataProperties;
+    private DataProperty dataProperty;
 
 
     @Override
     public String create(InputStream content, String sha1) {
 
-        return hashFileRepository.store(content,sha1,dataProperties.getFs().getRepo(),BASE_PATH);
+        return hashFileRepository.store(content,sha1, dataProperty.getFs().getRepo(),BASE_PATH);
     }
 
 
 
     @Override
     public void deleteBySha1(String sha1) {
-        hashFileRepository.delete(sha1,dataProperties.getFs().getRepo(),BASE_PATH);
+        hashFileRepository.delete(sha1, dataProperty.getFs().getRepo(),BASE_PATH);
     }
 
     @Override
     public boolean existsBySha1(String sha1) {
-        return hashFileRepository.exists(sha1,dataProperties.getFs().getRepo(),BASE_PATH);
+        return hashFileRepository.exists(sha1, dataProperty.getFs().getRepo(),BASE_PATH);
     }
 
     @Override
     public File getFile(String sha1) {
-        return hashFileRepository.get(sha1,dataProperties.getFs().getRepo(),BASE_PATH);
+        return hashFileRepository.get(sha1, dataProperty.getFs().getRepo(),BASE_PATH);
     }
 }

@@ -10,4 +10,5 @@ public interface ITenantAware {
     String getCurrentTenant();
 
     <T> T runAs(final String tenant,TenantRunner<T> runner);
+
 }

@@ -1,6 +1,7 @@
 package com.nationalchip.iot.rest.resource;
 
 import com.nationalchip.iot.rest.exception.RestException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -126,6 +127,16 @@ public class Response {
     public static ResponseEntity<Response> success(String message, Object data, HttpStatus status){
         return new ResponseEntity<>(success(message, data, status.value()), status);
     }
+
+    public static ResponseEntity<Response> ok(String headerName, String headerValue){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(headerName,headerValue);
+
+        return new ResponseEntity<>(success(""),headers,HttpStatus.OK);
+    }
+
+
     public static ResponseEntity<Response> created(Object data){
         return success("资源创建成功",data,HttpStatus.CREATED);
     }

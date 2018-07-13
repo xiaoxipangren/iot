@@ -3,6 +3,7 @@ package com.nationalchip.iot.rest.resource;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.rest.controller.AuthController;
 import org.springframework.hateoas.mvc.IdentifiableResourceAssemblerSupport;
+import org.springframework.stereotype.Component;
 
 /**
  * @Author: zhenghq
@@ -10,6 +11,7 @@ import org.springframework.hateoas.mvc.IdentifiableResourceAssemblerSupport;
  * @Date: 6/20/18 3:51 PM
  * @Modified:
  */
+@Component
 public class AuthAssembler extends IdentifiableResourceAssemblerSupport<IUser,AuthResource> {
 
 

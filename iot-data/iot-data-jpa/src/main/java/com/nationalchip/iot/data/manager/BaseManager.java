@@ -78,9 +78,9 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
     }
 
-    protected  void preCreate(final T t){};
+    protected  void preCreate(final T t){}
 
-    protected  void postCreate(final T t){};
+    protected  void postCreate(final T t){}
 
 
     protected T loadEntity(IBuilder<T> builder){
@@ -93,6 +93,7 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
     }
 
+    protected void preUpdate(final T t){}
 
 
     @Override
@@ -100,8 +101,10 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
         T t = loadEntity(builder);
         if(t!=null){
             builder.update(t);
+            preUpdate(t);
+            t = repository.save((E)t);
             postUpdate(t);
-            return repository.save((E)t);
+            return t;
         }
         return t;
     }
@@ -154,6 +157,16 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
     @Override
     public long count() {
         return repository.count();
+    }
+
+    @Override
+    public long count(String condition) {
+
+        if(condition==null || condition.isEmpty())
+            return count();
+
+        Specification<E> specification  = specificationParser.parse(condition);
+        return repository.count(specification);
     }
 
     @Override

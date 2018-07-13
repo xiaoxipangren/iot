@@ -76,7 +76,7 @@ public class Authority extends BaseEntity implements IAuthority {
 
     @Override
     public String toString() {
-        return String.join(DataConstant.SEPERATOR,operation.getName().toUpperCase(),target.toUpperCase());
+        return String.join(DataConstant.SEPERATOR,operation.getName().toLowerCase(),target.toLowerCase());
     }
 
     @Override

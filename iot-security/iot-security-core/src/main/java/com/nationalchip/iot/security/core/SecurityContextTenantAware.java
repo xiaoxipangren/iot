@@ -1,13 +1,12 @@
 package com.nationalchip.iot.security.core;
 
-import com.nationalchip.iot.data.model.auth.IUser;
-import com.nationalchip.iot.data.model.auth.Role;
-import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.security.authentication.AuthenticationDetails;
+import com.nationalchip.iot.security.authority.Authority;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import com.nationalchip.iot.tenancy.TenantRunner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -66,15 +65,15 @@ public class SecurityContextTenantAware implements ITenantAware {
         private static final long serialVersionUID = 1L;
 
         private static final Collection<? extends GrantedAuthority> SYSTEM_AUTHORITIES = Arrays
-                .asList(Role.SystemRole());
+                .asList(new SimpleGrantedAuthority(Authority.ROLE_SYSTEM));
         private final Authentication delegate;
 
-        private final IUser systemPrincipal;
+        private final String systemPrincipal;
 
 
         private AuthenticationDelegate(final Authentication delegate, final String tenant) {
             this.delegate = delegate;
-            this.systemPrincipal = User.SystemUser(tenant);
+            this.systemPrincipal = tenant;
         }
 
         @Override
@@ -104,7 +103,7 @@ public class SecurityContextTenantAware implements ITenantAware {
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-            return (delegate != null) ? delegate.getAuthorities() : Collections.emptyList();
+            return (delegate != null) ? delegate.getAuthorities() : SYSTEM_AUTHORITIES;
         }
 
         @Override

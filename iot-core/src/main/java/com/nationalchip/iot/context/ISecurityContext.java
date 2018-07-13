@@ -13,4 +13,5 @@ public interface ISecurityContext {
 
 
     <T> T runAsSystemAsTenant(final Callable<T> callable, final String tenant);
+
 }

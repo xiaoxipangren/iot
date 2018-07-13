@@ -2,6 +2,8 @@ package com.nationalchip.iot.data.builder;
 
 import com.nationalchip.iot.data.model.auth.IUser;
 
+import java.util.Optional;
+
 /**
  * @Author: zhenghq
  * @Description:
@@ -14,4 +16,9 @@ public interface IUserBuilder extends INamedBuilder<IUser> {
     IUserBuilder type(int type);
     IUserBuilder password(String password);
     IUserBuilder avatar(String avatar);
+
+
+    Optional<String> getPhone();
+    Optional<String> getEmail();
+
 }

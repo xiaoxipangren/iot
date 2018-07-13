@@ -50,7 +50,11 @@ public abstract class NamedManager<T extends INamedEntity,E extends T> extends B
         T t = super.loadEntity(builder);
 
         if(t == null && builder instanceof INamedBuilder){
-            t = ((INamedRepository<E>)getRepository()).findByName(((INamedBuilder<T>)builder).getName().get());
+
+            INamedBuilder<T> namedBuilder = (INamedBuilder<T>)builder;
+            if(namedBuilder.getName().isPresent()){
+                return getRepository().findByName(namedBuilder.getName().get());
+            }
         }
 
         return t;
@@ -78,4 +82,6 @@ public abstract class NamedManager<T extends INamedEntity,E extends T> extends B
     public INamedRepository<E> getRepository() {
         return (INamedRepository<E>) super.getRepository();
     }
+
+
 }

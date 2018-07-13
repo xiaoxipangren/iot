@@ -29,7 +29,7 @@ public class AssetAssembler extends FiledAssembler<IAsset,AssetResponse,IAssetBu
         AssetResponse resource =  super.toResource(entity);
         resource.setGuide(entity.getGuide());
 
-        resource.add(linkTo(methodOn(AssetController.class).download(entity.getId())).withRel("download"));
+//        resource.add(linkTo(methodOn(AssetController.class).download(entity.getId())).withRel("download"));
 
         return resource;
 

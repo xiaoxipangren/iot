@@ -26,7 +26,7 @@ import java.security.NoSuchAlgorithmException;
 public class HashFileRepository extends AbstractFileRepository {
 
     private static final String TEMP_FILE_PREFIX = "tmp";
-    private static final String TEMP_FILE_SUFFIX = "asset";
+    private static final String TEMP_FILE_SUFFIX = "hashfile";
 
 
 

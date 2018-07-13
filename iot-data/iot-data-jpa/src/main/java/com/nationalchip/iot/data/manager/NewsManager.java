@@ -2,7 +2,7 @@ package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.common.io.IFileRepository;
 import com.nationalchip.iot.common.io.IOHelper;
-import com.nationalchip.iot.data.configuration.DataProperties;
+import com.nationalchip.iot.data.configuration.DataProperty;
 import com.nationalchip.iot.data.model.INews;
 import com.nationalchip.iot.data.model.News;
 import com.nationalchip.iot.data.repository.NewsRepository;
@@ -29,7 +29,7 @@ public class NewsManager extends ArchivedManager<INews,News> implements INewsMan
     private static final String BASE64_PREFIX="data:image";
 
     @Autowired
-    private DataProperties dataProperties;
+    private DataProperty dataProperty;
 
     @Qualifier("hashFileRepository")
     @Autowired
@@ -64,7 +64,7 @@ public class NewsManager extends ArchivedManager<INews,News> implements INewsMan
 
     private void saveCover(News news){
         if(news.getCoverImage()!=null){
-            String cover = hashFileRepository.store(news.getCoverImage(),null,dataProperties.getFs().getRepo(),dataProperties.getFs().getImage(),dataProperties.getFs().getNews());
+            String cover = hashFileRepository.store(news.getCoverImage(),null, dataProperty.getFs().getRepo(), dataProperty.getFs().getImage(), dataProperty.getFs().getNews());
             news.setCover(cover);
         }
 
@@ -88,9 +88,9 @@ public class NewsManager extends ArchivedManager<INews,News> implements INewsMan
 
         InputStream stream = new ByteArrayInputStream(bytes);
 
-        String hash = hashFileRepository.store(stream,null,dataProperties.getFs().getRepo(),dataProperties.getFs().getImage(),dataProperties.getFs().getNews());
+        String hash = hashFileRepository.store(stream,null, dataProperty.getFs().getRepo(), dataProperty.getFs().getImage(), dataProperty.getFs().getNews());
 
-        return Paths.get(dataProperties.getFs().getNews(), IOHelper.hashPath(hash),hash).toString();
+        return Paths.get(dataProperty.getFs().getNews(), IOHelper.hashPath(hash),hash).toString();
 
     }
 

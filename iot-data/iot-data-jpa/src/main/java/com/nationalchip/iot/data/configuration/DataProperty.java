@@ -10,7 +10,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 
 @ConfigurationProperties("iot.data")
-public class DataProperties {
+public class DataProperty {
 
     private Fs fs;
 
@@ -32,6 +32,16 @@ public class DataProperties {
         private String image;
 
         private String news;
+
+        private String captcha;
+
+        public String getCaptcha() {
+            return captcha;
+        }
+
+        public void setCaptcha(String captcha) {
+            this.captcha = captcha;
+        }
 
         public String getNews() {
             return news;

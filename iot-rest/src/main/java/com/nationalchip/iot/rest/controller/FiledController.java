@@ -6,7 +6,8 @@ import com.nationalchip.iot.data.model.IFiledEntity;
 import com.nationalchip.iot.rest.resource.FiledAssembler;
 import com.nationalchip.iot.rest.resource.FiledRequest;
 import com.nationalchip.iot.rest.resource.FiledResponse;
-import com.nationalchip.iot.security.configuration.RestConstant;
+import com.nationalchip.iot.rest.resource.Response;
+import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 public abstract class FiledController<T extends IFiledEntity,R extends FiledResponse,B extends IFiledBuilder<T>,Q extends FiledRequest>  extends BaseController<T,R,B,Q>{
 
-    @RequestMapping(value = RestConstant.REST_DOWNLOAD_ACTION,method= RequestMethod.GET)
+    @RequestMapping(value = RestMappingConstant.REST_DOWNLOAD_ACTION,method= RequestMethod.GET)
     public ResponseEntity<ByteArrayResource> download(@PathVariable(value = "id")long id){
 
         T entity = getManager().findOne(id);

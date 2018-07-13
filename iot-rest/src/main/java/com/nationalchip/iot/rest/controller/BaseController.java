@@ -4,16 +4,18 @@ import com.nationalchip.iot.data.builder.IBuilder;
 import com.nationalchip.iot.data.builder.IBuilderFactory;
 import com.nationalchip.iot.data.manager.IManager;
 import com.nationalchip.iot.data.model.IEntity;
+import com.nationalchip.iot.data.specification.SortParser;
+import com.nationalchip.iot.rest.configuration.RestProperty;
 import com.nationalchip.iot.rest.exception.ResourceNotFoundException;
 import com.nationalchip.iot.rest.resource.*;
+import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -25,9 +27,15 @@ import javax.persistence.EntityNotFoundException;
  */
 public abstract class BaseController<T extends IEntity,R extends BaseResponse,B extends IBuilder<T>,Q extends BaseRequest> implements IController<T,Q> {
 
+
     private final static int MAX_PAGESIZE=20;
     private final static int DEFAULT_PAGESIZE=10;
 
+    @Autowired
+    private SortParser sortParser;
+
+    @Autowired
+    private RestProperty restProperty;
 
     @Autowired
     private IManager<T> manager;
@@ -70,10 +78,11 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
     @Override
     public ResponseEntity<Response> getAll(@RequestParam(value = "page",defaultValue = "0") int page,
                                            @RequestParam(value = "pagesize",defaultValue = "10")int pagesize,
-                                           @RequestParam(value= "sql",defaultValue = "")String sql) {
+                                           @RequestParam(value= "sql",defaultValue = "")String sql,
+                                           @RequestParam(value="sort",defaultValue="")String sort) {
         page = validatePage(page-1);//调整page从1开始计数
         pagesize = validatePagesize(pagesize);
-        Pageable pageable = new PageRequest(page,pagesize);
+        Pageable pageable = new PageRequest(page,pagesize,sortParser.parse(sort));
 
         Page<T> result = null;
         if(sql !=null && !sql.isEmpty())
@@ -86,6 +95,21 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
     }
 
     @Override
+    public ResponseEntity<Response> exists(Long id) {
+        boolean existed = manager.exists(id);
+
+        return Response.ok(restProperty.getExistedHeader(),String.valueOf(existed));
+    }
+
+    @Override
+    public ResponseEntity<Response> count( @RequestParam(value= "sql",defaultValue = "")String sql) {
+        long count = manager.count(sql);
+        return Response.ok(restProperty.getCountHeader(),String.valueOf(count));
+    }
+
+
+
+    @Override
     public ResponseEntity<Response> delete(@PathVariable Long id) {
         manager.delete(id);
         return Response.deleted();
@@ -93,6 +117,7 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
 
 
     @Override
+    @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method= RequestMethod.PATCH)
     public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody final Q request) {
 
         B builder = getAssembler().fromRequest(request);

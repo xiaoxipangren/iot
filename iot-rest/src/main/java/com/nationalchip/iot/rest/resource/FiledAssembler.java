@@ -3,9 +3,15 @@ package com.nationalchip.iot.rest.resource;
 import com.google.common.io.ByteStreams;
 import com.nationalchip.iot.data.builder.IFiledBuilder;
 import com.nationalchip.iot.data.model.IFiledEntity;
+import com.nationalchip.iot.rest.controller.AssetController;
+import com.nationalchip.iot.rest.controller.BaseController;
+import com.nationalchip.iot.rest.controller.FiledController;
 import com.nationalchip.iot.rest.exception.FileReadException;
 
 import java.io.IOException;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * @Author: zhenghq
@@ -14,7 +20,7 @@ import java.io.IOException;
  * @Modified:
  */
 public abstract class FiledAssembler<T extends IFiledEntity, R extends FiledResponse,B extends IFiledBuilder<T>,Q extends FiledRequest> extends VersionedAssembler<T, R,B,Q> {
-    public FiledAssembler(Class<?> controllerClass, Class<R> resourceType) {
+    public FiledAssembler(Class<? extends FiledController> controllerClass, Class<R> resourceType) {
         super(controllerClass, resourceType);
     }
 
@@ -24,6 +30,8 @@ public abstract class FiledAssembler<T extends IFiledEntity, R extends FiledResp
         r.setFileName(entity.getFileName());
         r.setSha1(entity.getSha1());
         r.setSize(entity.getSize());
+
+        r.add(linkTo(methodOn(this.getControllerClass()).download(entity.getId())).withRel("download"));
 
         return r;
     }
@@ -57,5 +65,10 @@ public abstract class FiledAssembler<T extends IFiledEntity, R extends FiledResp
         });
 
         return b;
+    }
+
+    @Override
+    public Class<? extends FiledController> getControllerClass() {
+        return (Class<? extends FiledController>)super.getControllerClass();
     }
 }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.nationalchip.iot.App;
 import com.nationalchip.iot.rest.resource.auth.LoginUser;
 import com.nationalchip.iot.rest.resource.auth.UserInfo;
-import com.nationalchip.iot.security.configuration.RestConstant;
+import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import com.nationalchip.iot.security.configuration.RestSecurityProperty;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class OldAuthControllerTest {
     private String email = "xxx@abc.com";
     private String phone = "phone";
 
-    private String baseMapping= RestConstant.REST_BASE_MAPPING+RestConstant.REST_AUTH_MAPPING;
+    private String baseMapping= RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_AUTH_MAPPING;
 
 
     @Before
@@ -62,7 +62,7 @@ public class OldAuthControllerTest {
         String requestJson = ow.writeValueAsString(register);
 
         ResultActions actions = mockMvc.perform(MockMvcRequestBuilders
-                .post(baseMapping+RestConstant.REST_REGISTER_ACTION)
+                .post(baseMapping+ RestMappingConstant.REST_REGISTER_ACTION)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         );
@@ -82,7 +82,7 @@ public class OldAuthControllerTest {
 
 
         actions = mockMvc.perform(MockMvcRequestBuilders
-                .post(baseMapping+RestConstant.REST_LOGIN_ACTION)
+                .post(baseMapping+ RestMappingConstant.REST_LOGIN_ACTION)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)
         );

@@ -4,6 +4,9 @@ import com.nationalchip.iot.data.model.Admin;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.data.model.hub.Developer;
+import org.springframework.security.authentication.BadCredentialsException;
+
+import java.util.Optional;
 
 /**
  * @Author: zhenghq
@@ -40,6 +43,11 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder,IUser> implements I
 
     @Override
     public IUserBuilder password(String password) {
+
+        if(password.startsWith("$2a$10$")){
+            throw new BadCredentialsException("密码不合法");
+        }
+
         this.password=password;
         return self();
     }
@@ -50,6 +58,15 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder,IUser> implements I
         return self();
     }
 
+    @Override
+    public Optional<String> getPhone() {
+        return Optional.ofNullable(phone);
+    }
+
+    @Override
+    public Optional<String> getEmail() {
+        return Optional.of(email);
+    }
 
     @Override
     protected User newInstance() {
@@ -85,6 +102,10 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder,IUser> implements I
                         user.setEmail(email);
                     if(avatar!=null)
                         user.setAvatar(avatar);
+                    else{
+                        //设置默认的头像
+                        user.setAvatar("avatar.jpg");
+                    }
 
                 }
         );

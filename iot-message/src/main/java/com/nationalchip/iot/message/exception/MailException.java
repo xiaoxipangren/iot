@@ -1,6 +1,4 @@
-package com.nationalchip.iot.message.mail;
-
-import com.nationalchip.iot.message.exception.MessageException;
+package com.nationalchip.iot.message.exception;
 
 /**
  * @Author: zhenghq

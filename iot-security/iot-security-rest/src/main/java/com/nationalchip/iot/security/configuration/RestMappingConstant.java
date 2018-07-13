@@ -6,11 +6,11 @@ package com.nationalchip.iot.security.configuration;
  * @Date: 4/20/18 5:11 PM
  * @Modified:
  */
-public class RestConstant {
+public class RestMappingConstant {
 
     public static final String REST_BASE_MAPPING = "/rest/v1";
 
-    public static final String REST_AUTH_MAPPING = "/auths";
+    public static final String REST_AUTH_MAPPING = "/auth";
 
     public static final String REST_USER_MAPPING = "/users";
 
@@ -18,9 +18,11 @@ public class RestConstant {
 
     public static final String REST_NEWS_MAPPING = "/news";
 
+    public static final String REST_MAIL_MAPPING = "/mails";
 
+    public static final String REST_CAPTCHA_MAPPING = "/captcha";
 
-    public static final String REST_ID_MAPPING="/{id}";
+    public static final String REST_ID_MAPPING="/{id:.+}";
 
 
 

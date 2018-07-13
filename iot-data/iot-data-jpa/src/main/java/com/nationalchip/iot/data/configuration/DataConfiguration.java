@@ -32,7 +32,7 @@ import java.util.Map;
 @EnableJpaAuditing
 @EnableJpaRepositories(basePackages = { "com.nationalchip.iot.data" })
 @EnableTransactionManagement
-@EnableConfigurationProperties(DataProperties.class)
+@EnableConfigurationProperties(DataProperty.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class DataConfiguration extends JpaBaseConfiguration {
 

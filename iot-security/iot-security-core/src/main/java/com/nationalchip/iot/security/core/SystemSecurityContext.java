@@ -2,14 +2,17 @@ package com.nationalchip.iot.security.core;
 
 import com.nationalchip.iot.annotation.AutoLogger;
 import com.nationalchip.iot.context.ISecurityContext;
-import com.nationalchip.iot.data.model.auth.Role;
+import com.nationalchip.iot.security.authority.Authority;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,21 +25,17 @@ import java.util.concurrent.Callable;
  * @Date: 3/5/18 9:09 AM
  * @Modified:
  */
+@Component
 public class SystemSecurityContext implements ISecurityContext{
 
     @AutoLogger
     private  Logger logger;
 
-    private final ITenantAware tenantAware;
+    @Autowired
+    private ITenantAware tenantAware;
 
-    /**
-     * Autowired constructor.
-     *
-     * @param tenantAware
-     *            the tenant aware bean to retrieve the current tenant
-     */
-    public SystemSecurityContext(final ITenantAware tenantAware) {
-        this.tenantAware = tenantAware;
+
+    public SystemSecurityContext() {
     }
 
 
@@ -87,8 +86,8 @@ public class SystemSecurityContext implements ISecurityContext{
     public static final class SystemCodeAuthentication implements Authentication {
 
         private static final long serialVersionUID = 1L;
-        private static final List<Role> AUTHORITIES = Collections
-                .singletonList(Role.SystemRole());
+        private static final List<? extends GrantedAuthority> AUTHORITIES = Collections
+                .singletonList(new SimpleGrantedAuthority(Authority.ROLE_SYSTEM));
         private final Authentication oldAuthentication;
 
         private SystemCodeAuthentication(final Authentication oldAuthentication) {

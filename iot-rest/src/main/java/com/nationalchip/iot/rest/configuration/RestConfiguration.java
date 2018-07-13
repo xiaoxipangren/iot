@@ -2,7 +2,7 @@ package com.nationalchip.iot.rest.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.nationalchip.iot.data.configuration.DataProperties;
+import com.nationalchip.iot.data.configuration.DataProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -35,32 +35,32 @@ import java.nio.file.Paths;
 public class RestConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
-    private DataProperties dataProperties;
+    private DataProperty dataProperty;
+
+    @Autowired
+    private RestProperty restProperty;
 
     @Override
     public void addCorsMappings(CorsRegistry registry){
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowCredentials(true)
-                .allowedMethods("GET", "POST", "DELETE", "PUT")
+                .allowedMethods("GET", "POST", "DELETE", "PATCH","HEAD")
+                .exposedHeaders(restProperty.getCountHeader(),restProperty.getExistedHeader())//如果不设置ajax将无法读取到自定义的header
                 .maxAge(3600);
     }
 
-    @Bean("objectMapper")
-    public ObjectMapper mapper() {
-        return new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-    }
+//    @Bean("objectMapper")
+//    public ObjectMapper mapper() {
+//        return new ObjectMapper().disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+//    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/"+dataProperties.getFs().getImage()+"**")
-                .addResourceLocations("classpath:/static/") //注意resourceLocations一定要以/结尾
-                .addResourceLocations("file:"+ appendFsSplitter(Paths.get(dataProperties.getFs().getRepo(),dataProperties.getFs().getImage()).toString()));
-
-
-
+        registry.addResourceHandler(appendFsSplitter(dataProperty.getFs().getCaptcha())+"**")
+                .addResourceLocations("file:"+ appendFsSplitter(Paths.get(dataProperty.getFs().getRepo(), dataProperty.getFs().getImage()).toString()));
 
     }
 

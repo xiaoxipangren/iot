@@ -10,7 +10,7 @@ import com.nationalchip.iot.rest.resource.auth.LoginUser;
 import com.nationalchip.iot.rest.resource.auth.PwdReset;
 import com.nationalchip.iot.rest.resource.auth.RegisterUser;
 import com.nationalchip.iot.rest.resource.auth.SendMail;
-import com.nationalchip.iot.security.configuration.RestConstant;
+import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import com.nationalchip.iot.security.configuration.RestSecurityProperty;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +61,7 @@ public class AuthControllerTest {
     private static final String ACTION_VALIDATE="validate";
     private static final String ACTION_RESETPWD="resetpwd";
 
-    private String baseMapping= RestConstant.REST_BASE_MAPPING+RestConstant.REST_AUTH_MAPPING;
+    private String baseMapping= RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_AUTH_MAPPING;
 
 
 
@@ -74,7 +74,7 @@ public class AuthControllerTest {
         user.setPhone(phone);
         user.setCode("twte");
 
-        String response = post(RestConstant.REST_REGISTER_ACTION,user);
+        String response = post(RestMappingConstant.REST_REGISTER_ACTION,user);
         System.out.println(response);
 
 
@@ -91,7 +91,7 @@ public class AuthControllerTest {
         mail.setEmail(email);
         mail.setAction(ACTION_VALIDATE);
 
-        String response = post(RestConstant.REST_SENDMAIL_ACTION,mail);
+        String response = post(RestMappingConstant.REST_SENDMAIL_ACTION,mail);
         System.out.println(response);
 
     }
@@ -105,7 +105,7 @@ public class AuthControllerTest {
         user.setUsername(username);
         user.setPassword("password");
 
-        String response = post(RestConstant.REST_LOGIN_ACTION,user);
+        String response = post(RestMappingConstant.REST_LOGIN_ACTION,user);
         System.out.println(response);
 
     }
@@ -128,7 +128,7 @@ public class AuthControllerTest {
         SendMail mail = new SendMail();
         mail.setEmail(email);
         mail.setAction(ACTION_RESETPWD);
-        post(RestConstant.REST_SENDMAIL_ACTION,mail);
+        post(RestMappingConstant.REST_SENDMAIL_ACTION,mail);
 
         String newpwd="password";
 
@@ -137,7 +137,7 @@ public class AuthControllerTest {
         reset.setCode((String)redisTemplate.opsForValue().get(KeyHelper.resetPasswordKey(email)));
         reset.setPassword(newpwd);
 
-        String respons = post(RestConstant.REST_RESETPWD_ACTION,reset);
+        String respons = post(RestMappingConstant.REST_RESETPWD_ACTION,reset);
 
         System.out.println(respons);
 
