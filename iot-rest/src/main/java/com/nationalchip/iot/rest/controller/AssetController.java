@@ -7,6 +7,7 @@ import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import io.swagger.annotations.Api;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author: zhenghq
@@ -23,5 +24,13 @@ public class AssetController extends FiledController<IAsset,AssetResponse,IAsset
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Response> create(AssetRequest request) {
         return super.create(request);
+    }
+
+
+
+    @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method = RequestMethod.PATCH)
+    @Override
+    public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody AssetRequest request) {
+        return super.update(id, request);
     }
 }

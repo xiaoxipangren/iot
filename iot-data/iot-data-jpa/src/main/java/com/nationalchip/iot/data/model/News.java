@@ -2,10 +2,7 @@ package com.nationalchip.iot.data.model;
 
 import com.nationalchip.iot.data.annotation.Comment;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.InputStream;
 import java.util.Date;
 
@@ -27,6 +24,7 @@ public class News extends ArchivedEntity implements INews {
     @Column(name="author")
     private String author;
 
+    @Lob
     @Comment("新闻内容")
     @Column(name="content")
     private String content;

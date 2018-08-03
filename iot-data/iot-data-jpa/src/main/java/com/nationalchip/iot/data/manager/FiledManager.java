@@ -52,15 +52,15 @@ public abstract class FiledManager<T extends IFiledEntity,E extends T> extends A
     private void saveFile (T t){
         FiledEntity entity = (FiledEntity) t;
         if(entity.getStream()!=null){
-            String hash = fsRepository.create(entity.getStream(),entity.getSha1());
+            String hash = fsRepository.create(entity.getStream(),null);
             entity.setSha1(hash);
         }
     }
 
 
     @Override
-    protected void postUpdate(T t) {
-        super.postUpdate(t);
+    protected void preUpdate(T t) {
+        super.preUpdate(t);
         saveFile(t);
     }
 

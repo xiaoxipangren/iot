@@ -59,7 +59,7 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
         return t;
     }
 
-    protected void checkExisted(IBuilder<T> builder,boolean throwIfExisted){
+    protected boolean checkExisted(IBuilder<T> builder,boolean throwIfExisted){
         Optional<Long> id = builder.getId();
 
         if(id.isPresent()){
@@ -72,9 +72,11 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
             if(!existed && !throwIfExisted){
                 throw notFoundException("id",idL+"", getGenericTypeName(1));
             }
+
+            return existed;
         }
 
-
+        return false;
 
     }
 
@@ -201,7 +203,8 @@ public abstract class BaseManager<T extends IEntity,E extends T> implements IMan
 
     @Override
     public void delete(Long id) {
-        repository.delete(id);
+        if(exists(id))
+            repository.delete(id);
     }
 
     @Override

@@ -38,23 +38,9 @@ import static com.nationalchip.iot.security.configuration.RestMappingConstant.*;
 @EnableConfigurationProperties(RestSecurityProperty.class)
 public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private static final String AUTH_MAPPING= REST_BASE_MAPPING+ REST_AUTH_MAPPING;
-    private static final String USER_MAPPING= REST_BASE_MAPPING+ REST_USER_MAPPING;
+
     private static final String ASSET_MAPPING = REST_BASE_MAPPING+ REST_ASSET_MAPPING;
-    private static final String NNES_MAPPING = REST_BASE_MAPPING+ REST_NEWS_MAPPING;
-
-
-
-    private static final String USER_REGISTER_MAPPING =USER_MAPPING+ REST_REGISTER_ACTION;
-    private static final String AUTH_LOGIN_MAPPING=AUTH_MAPPING+ REST_LOGIN_ACTION;
-    private static final String USER_VALIDATE_MAPPING =USER_MAPPING+ REST_VALIDATE_ACTION;
-    private static final String USER_EXISTS_MAPPING =USER_MAPPING+ REST_EXISTS_ACTION+"/**";
-    private static final String USER_SENDMAIL_MAPPING =USER_MAPPING+ REST_SENDMAIL_ACTION;
-    private static final String USER_RESETPWD_MAPPING =USER_MAPPING+ REST_RESETPWD_ACTION;
-    private static final String RESOURCE_LIST_MAPPING = ASSET_MAPPING + REST_LIST_ACTION;
-    private static final String ASSET_ID_MAPPING = ASSET_MAPPING + REST_ID_MAPPING;
     private static final String ASSET_DOWNLOAD_MAPPING = ASSET_MAPPING + REST_DOWNLOAD_ACTION;
-    private static final String RESOURCE_CATEGORY_MAPPING = ASSET_MAPPING + REST_CATEGORY_ACTION;
 
 
     @AutoLogger
@@ -92,7 +78,7 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //禁用session
                 .authorizeRequests()
-                .antMatchers(AUTH_LOGIN_MAPPING, USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING, USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING).permitAll()
+//                .antMatchers(AUTH_LOGIN_MAPPING, USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING, USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING).permitAll()
                 .antMatchers(REST_BASE_MAPPING+"/**").authenticated().and()
                 .addFilterBefore(jwtAuthenticationFilter,UsernamePasswordAuthenticationFilter.class);
 
@@ -101,10 +87,9 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers( USER_REGISTER_MAPPING, USER_VALIDATE_MAPPING, USER_SENDMAIL_MAPPING,
-                USER_EXISTS_MAPPING, USER_RESETPWD_MAPPING, ASSET_DOWNLOAD_MAPPING,RESOURCE_LIST_MAPPING,RESOURCE_CATEGORY_MAPPING)
-                .antMatchers(HttpMethod.GET,ASSET_MAPPING)
-                .antMatchers(HttpMethod.GET,ASSET_ID_MAPPING)
+        web.ignoring()
+                .antMatchers(HttpMethod.GET,mapping(REST_ASSET_MAPPING))
+                .antMatchers(HttpMethod.GET,mapId(REST_ASSET_MAPPING))
                 .antMatchers(HttpMethod.GET,ASSET_DOWNLOAD_MAPPING)
                 .antMatchers(HttpMethod.GET, mapping(REST_NEWS_MAPPING))
                 .antMatchers(HttpMethod.GET, mapId(REST_NEWS_MAPPING))

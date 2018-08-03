@@ -26,8 +26,6 @@ public interface IUserManager extends UserDetailsManager,INamedManager<IUser>{
     boolean existsByPhone(String phone);
     IUser findByPhone(String phone);
 
-    void changeAvatar(String avatar);
-
 
     boolean isInRole(IRole role);
     void addToRole(IRole role);

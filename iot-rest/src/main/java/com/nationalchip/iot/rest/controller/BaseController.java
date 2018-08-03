@@ -78,15 +78,15 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
     @Override
     public ResponseEntity<Response> getAll(@RequestParam(value = "page",defaultValue = "0") int page,
                                            @RequestParam(value = "pagesize",defaultValue = "10")int pagesize,
-                                           @RequestParam(value= "sql",defaultValue = "")String sql,
+                                           @RequestParam(value= "filter",defaultValue = "")String filter,
                                            @RequestParam(value="sort",defaultValue="")String sort) {
         page = validatePage(page-1);//调整page从1开始计数
         pagesize = validatePagesize(pagesize);
         Pageable pageable = new PageRequest(page,pagesize,sortParser.parse(sort));
 
         Page<T> result = null;
-        if(sql !=null && !sql.isEmpty())
-            result = manager.findAll(pageable,sql);
+        if(filter !=null && !filter.isEmpty())
+            result = manager.findAll(pageable,filter);
         else{
             result = manager.findAll(pageable);
         }
@@ -102,8 +102,8 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
     }
 
     @Override
-    public ResponseEntity<Response> count( @RequestParam(value= "sql",defaultValue = "")String sql) {
-        long count = manager.count(sql);
+    public ResponseEntity<Response> count( @RequestParam(value= "filter",defaultValue = "")String filter) {
+        long count = manager.count(filter);
         return Response.ok(restProperty.getCountHeader(),String.valueOf(count));
     }
 

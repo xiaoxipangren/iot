@@ -1,16 +1,13 @@
 package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.common.io.IFileRepository;
-import com.nationalchip.iot.common.io.IOHelper;
 import com.nationalchip.iot.data.builder.IBuilder;
-import com.nationalchip.iot.data.builder.INamedBuilder;
 import com.nationalchip.iot.data.builder.IUserBuilder;
 import com.nationalchip.iot.data.configuration.DataProperty;
 import com.nationalchip.iot.data.model.auth.IRole;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.data.model.auth.User;
-import com.nationalchip.iot.data.repository.INamedRepository;
 import com.nationalchip.iot.data.repository.IRepository;
 import com.nationalchip.iot.data.repository.UserRepository;
 import com.nationalchip.iot.helper.RegexHelper;
@@ -29,11 +26,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 
 @Component
 @Transactional(readOnly = true)
 public class UserManager extends NamedManager<IUser,User> implements IUserManager{
+
+    private static final String AVATAR_PATH="image/avatar";
 
     @Autowired
     @Qualifier("hashFileRepository")
@@ -77,12 +75,9 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
     @Override
     protected void preUpdate(IUser iUser) {
-        super.postUpdate(iUser);
+        super.preUpdate(iUser);
 
-        if(!isEncrypted(iUser.getPassword())){
-            User u =(User)iUser;
-            u.setPassword(passwordEncoder.encode(u.getPassword()));
-        }
+        encryptPassword(iUser);
 
     }
 
@@ -124,8 +119,6 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     protected IUser loadEntity(IBuilder<IUser> builder) {
         IUser t = super.loadEntity(builder);
 
-
-
         if(t == null && builder instanceof IUserBuilder){
             IUserBuilder userBuilder = (IUserBuilder)builder;
             if(userBuilder.getEmail().isPresent()){
@@ -161,6 +154,9 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     }
 
 
+
+
+
     @Override
     public boolean userExists(String username) {
         return repository().existsByName(username);
@@ -180,12 +176,6 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         return user;
     }
 
-    @Override
-    public void changeAvatar(String avatar) {
-        User user = loadCurrentUser();
-        user.setAvatar(avatar);
-        update(user);
-    }
 
     @Override
     public boolean isInRole(IRole role) {
@@ -204,8 +194,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
     @Override
     public String changeAvatar(InputStream stream) {
-        String sha1 = fileRepository.store( stream,null, dataProperty.getFs().getRepo(), dataProperty.getFs().getImage(), dataProperty.getFs().getAvatar());
-        String avatar = Paths.get(dataProperty.getFs().getAvatar(), IOHelper.hashPath(sha1),sha1).toString();
+        String avatar = saveAvatar(stream);
 
         User user = loadCurrentUser();
         user.setAvatar(avatar);
@@ -214,6 +203,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
 
         return avatar;
     }
+
 
     @Override
     public void removeFromRole(IRole role) {
@@ -261,9 +251,9 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     protected void preCreate(IUser iUser) {
         super.preCreate(iUser);
         User user = (User)iUser;
-        if(!isEncrypted(user.getPassword()))
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setStatus(Status.ACTIVED);
+
+        encryptPassword(iUser);
     }
 
 
@@ -308,6 +298,20 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
             return false;
 
         return password.startsWith("$2a$10$");
+    }
+
+
+    private void encryptPassword(IUser user){
+        if(user.getPassword()!=null && !isEncrypted(user.getPassword())){
+            User u =(User)user;
+            u.setPassword(passwordEncoder.encode(u.getPassword()));
+        }
+    }
+
+    private String saveAvatar(InputStream avatar){
+        String sha1 = fileRepository.store( avatar,null, dataProperty.getNginx().getLocation(),AVATAR_PATH);
+        return fileRepository.get(sha1,dataProperty.getNginx().getLocation(),AVATAR_PATH).getAbsolutePath()
+                .replace(dataProperty.getNginx().getLocation(),dataProperty.getNginx().getServer());
     }
 
 }

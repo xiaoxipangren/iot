@@ -6,6 +6,7 @@ import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.data.model.hub.Developer;
 import org.springframework.security.authentication.BadCredentialsException;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -92,13 +93,13 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder,IUser> implements I
         super.apply(entity);
         this.<User>tryCast(entity).ifPresent(
                 user ->{
-                    if(password!=null){
+                    if(password!=null && !user.getPassword().equals(password)){
                         user.setPassword(password);
                     }
-                    if(phone!=null){
+                    if(phone!=null && !phone.equals(user.getPhone())){
                         user.setPhone(phone);
                     }
-                    if(email!=null)
+                    if(email!=null && !email.equals(user.getEmail()))
                         user.setEmail(email);
                     if(avatar!=null)
                         user.setAvatar(avatar);

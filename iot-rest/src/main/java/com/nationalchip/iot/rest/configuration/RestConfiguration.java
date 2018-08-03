@@ -59,8 +59,8 @@ public class RestConfiguration extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler(appendFsSplitter(dataProperty.getFs().getCaptcha())+"**")
-                .addResourceLocations("file:"+ appendFsSplitter(Paths.get(dataProperty.getFs().getRepo(), dataProperty.getFs().getImage()).toString()));
+//        registry.addResourceHandler(appendFsSplitter(dataProperty.getFs().getCaptcha())+"**")
+//                .addResourceLocations("file:"+ appendFsSplitter(Paths.get(dataProperty.getFs().getRepo(), dataProperty.getFs().getImage()).toString()));
 
     }
 

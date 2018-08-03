@@ -18,4 +18,5 @@ public interface IFiledManager<T extends IFiledEntity> extends IArchivedManager<
 
     File getFile(String sha1);
 
+
 }

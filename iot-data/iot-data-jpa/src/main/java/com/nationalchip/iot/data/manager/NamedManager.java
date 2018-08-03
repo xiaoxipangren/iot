@@ -21,16 +21,16 @@ public abstract class NamedManager<T extends INamedEntity,E extends T> extends B
 
 
     @Override
-    protected void checkExisted(IBuilder<T> builder, boolean throwIfExisted) {
-        super.checkExisted(builder, throwIfExisted);
+    protected boolean checkExisted(IBuilder<T> builder, boolean throwIfExisted) {
+        boolean existed = super.checkExisted(builder, throwIfExisted);
 
-        if(builder instanceof INamedBuilder){
+        if(!existed && builder instanceof INamedBuilder){
             INamedBuilder<T> namedBuilder = (INamedBuilder<T>)builder;
 
             Optional<String> optionalName = namedBuilder.getName();
             if(optionalName.isPresent()){
                 String name = optionalName.get();
-                boolean existed = existsByName(name);
+                existed = existsByName(name);
 
                 if(existed && throwIfExisted){
                     throw existsException("名称",name, getGenericTypeName(1));
@@ -40,9 +40,10 @@ public abstract class NamedManager<T extends INamedEntity,E extends T> extends B
                     throw notFoundException("名称",name,getGenericTypeName(1));
                 }
 
+                return existed;
             }
-
         }
+        return false;
     }
 
     @Override

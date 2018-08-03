@@ -1,5 +1,6 @@
 package com.nationalchip.iot.common.io;
 
+import com.google.common.base.Splitter;
 import com.google.common.io.BaseEncoding;
 import com.google.common.io.ByteStreams;
 import com.nationalchip.iot.annotation.AutoLogger;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * @Author: zhenghq
@@ -86,7 +88,7 @@ public class HashFileRepository extends AbstractFileRepository {
     @Override
     protected Path getDirectoryPath(String sha1, String... paths) {
 
-        String path = IOHelper.hashPath(sha1);
+        String path = hashPath(sha1);
 
         String[] array = new String[paths.length];
         for(int i=1;i<paths.length;i++){
@@ -111,6 +113,17 @@ public class HashFileRepository extends AbstractFileRepository {
         } catch (final IOException e) {
             throw new FileStoreException("无法创建临时文件", e);
         }
+    }
+
+    private String hashPath(String hash){
+        if(hash==null || hash.isEmpty() || hash.length()<4)
+            return hash;
+        int length = hash.length();
+        final List<String> folders = Splitter.fixedLength(2).splitToList(hash.substring(length - 4, length));
+        final String folder1 = folders.get(0);
+        final String folder2 = folders.get(1);
+
+        return Paths.get(folder1,folder2).toString();
     }
 
 }

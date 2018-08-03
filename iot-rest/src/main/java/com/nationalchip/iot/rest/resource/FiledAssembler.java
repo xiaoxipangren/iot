@@ -7,6 +7,7 @@ import com.nationalchip.iot.rest.controller.AssetController;
 import com.nationalchip.iot.rest.controller.BaseController;
 import com.nationalchip.iot.rest.controller.FiledController;
 import com.nationalchip.iot.rest.exception.FileReadException;
+import com.nationalchip.iot.rest.exception.RestException;
 
 import java.io.IOException;
 
@@ -60,7 +61,7 @@ public abstract class FiledAssembler<T extends IFiledEntity, R extends FiledResp
                     b.fileName(file.getOriginalFilename());
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new RestException("文件读取出现IO异常");
             }
         });
 

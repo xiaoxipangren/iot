@@ -4,6 +4,7 @@ import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.model.INamedEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.Set;
 

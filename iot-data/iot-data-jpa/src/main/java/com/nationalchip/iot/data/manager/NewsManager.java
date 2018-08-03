@@ -1,7 +1,6 @@
 package com.nationalchip.iot.data.manager;
 
 import com.nationalchip.iot.common.io.IFileRepository;
-import com.nationalchip.iot.common.io.IOHelper;
 import com.nationalchip.iot.data.configuration.DataProperty;
 import com.nationalchip.iot.data.model.INews;
 import com.nationalchip.iot.data.model.News;
@@ -12,9 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.nio.file.Paths;
 
 /**
  * @Author: zhenghq
@@ -27,6 +26,7 @@ import java.nio.file.Paths;
 public class NewsManager extends ArchivedManager<INews,News> implements INewsManager {
 
     private static final String BASE64_PREFIX="data:image";
+    private static final String BASE_PATH="image/news";
 
     @Autowired
     private DataProperty dataProperty;
@@ -45,12 +45,11 @@ public class NewsManager extends ArchivedManager<INews,News> implements INewsMan
 
 
     @Override
-    protected void postUpdate(INews iNews) {
-        super.postUpdate(iNews);
-
+    protected void preUpdate(INews iNews) {
+        super.preUpdate(iNews);
         saveImages(iNews);
-
     }
+
 
 
     private void saveImages(INews iNews){
@@ -58,13 +57,18 @@ public class NewsManager extends ArchivedManager<INews,News> implements INewsMan
 
         saveCover(news);
         String content = news.getContent();
-        news.setContent(saveImages(content));
+
+        if(content!=null){
+            news.setContent(saveImages(content));
+        }
+
     }
 
 
     private void saveCover(News news){
+
         if(news.getCoverImage()!=null){
-            String cover = hashFileRepository.store(news.getCoverImage(),null, dataProperty.getFs().getRepo(), dataProperty.getFs().getImage(), dataProperty.getFs().getNews());
+            String cover = saveImage(news.getCoverImage());
             news.setCover(cover);
         }
 
@@ -88,10 +92,14 @@ public class NewsManager extends ArchivedManager<INews,News> implements INewsMan
 
         InputStream stream = new ByteArrayInputStream(bytes);
 
-        String hash = hashFileRepository.store(stream,null, dataProperty.getFs().getRepo(), dataProperty.getFs().getImage(), dataProperty.getFs().getNews());
+        return saveImage(stream);
 
-        return Paths.get(dataProperty.getFs().getNews(), IOHelper.hashPath(hash),hash).toString();
+    }
 
+    private String saveImage(InputStream stream){
+        String hash = hashFileRepository.store(stream,null,dataProperty.getNginx().getLocation(),BASE_PATH);
+        File file = hashFileRepository.get(hash,dataProperty.getNginx().getLocation(),BASE_PATH);
+        return file.getAbsolutePath().replace(dataProperty.getNginx().getLocation(),dataProperty.getNginx().getServer());
     }
 
     @Override

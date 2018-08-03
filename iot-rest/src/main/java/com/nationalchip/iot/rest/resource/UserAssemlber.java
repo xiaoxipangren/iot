@@ -3,7 +3,10 @@ package com.nationalchip.iot.rest.resource;
 import com.nationalchip.iot.data.builder.IUserBuilder;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.rest.controller.UserController;
+import com.nationalchip.iot.rest.exception.RestException;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 /**
  * @Author: zhenghq
@@ -25,6 +28,7 @@ public class UserAssemlber extends NamedAssembler<IUser,UserResponse,IUserBuilde
         response.setAvatar(entity.getAvatar());
         response.setLastLogin(entity.getLastLogin());
         response.setPhone(entity.getPhone());
+        response.setEmail(entity.getEmail());
 
         return response;
     }

@@ -7,9 +7,7 @@ import com.nationalchip.iot.rest.resource.NewsResponse;
 import com.nationalchip.iot.rest.resource.Response;
 import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author: zhenghq
@@ -24,5 +22,17 @@ public class NewsController extends BaseController<INews,NewsResponse,INewsBuild
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Response> create(NewsRequest request) {
         return super.create(request);
+    }
+
+    @RequestMapping(value = RestMappingConstant.REST_UPLOAD_ACTION,method= RequestMethod.POST)
+    public ResponseEntity<Response> cover(@PathVariable(value = "id")long id, NewsRequest request){
+        return super.update(id,request);
+    }
+
+
+    @Override
+    @RequestMapping(method = RequestMethod.PATCH,value = RestMappingConstant.REST_ID_MAPPING)
+    public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody NewsRequest request) {
+        return super.update(id, request);
     }
 }

@@ -1,6 +1,6 @@
 package com.nationalchip.iot.security.authentication;
 
-import com.nationalchip.iot.cache.redis.RedisService;
+import com.nationalchip.iot.cache.redis.IRedisService;
 import com.nationalchip.iot.data.model.auth.IUser;
 import com.nationalchip.iot.data.model.auth.Status;
 import com.nationalchip.iot.security.jwt.ClaimsBuilder;
@@ -31,7 +31,7 @@ public class AuthenticationService implements IAuthenticationService {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private RedisService redisService;
+    private IRedisService redisService;
 
     @Autowired
     private IJwtProvider jwtProvider;

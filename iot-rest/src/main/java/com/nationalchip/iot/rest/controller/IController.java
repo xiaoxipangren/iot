@@ -32,7 +32,7 @@ public interface IController<T extends IEntity,Q extends IRequest> {
 
 
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE,value = RestMappingConstant.REST_ID_MAPPING)
     ResponseEntity<Response> delete(@PathVariable("id")final Long id);
 
     @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method= RequestMethod.PATCH)

@@ -1,6 +1,7 @@
 package com.nationalchip.iot.helper;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,18 +27,18 @@ public class RegexHelper {
     }
 
     public static Iterable<String> extract(String content,String pattern){
-        Pattern p = Pattern.compile(pattern);
+        Pattern p = Pattern.compile(pattern,Pattern.MULTILINE);
         Matcher matcher = p.matcher(content);
 
-        matcher.find();
+        if(matcher == null)
+            return Collections.emptyList();
 
         List<String> result = new ArrayList<>();
 
-        for ( int i = 0;i<matcher.groupCount();i++){
-            result.add(matcher.group(i));
+        while(matcher.find()){
+            result.add(matcher.group());
         }
 
         return result;
-
     }
 }

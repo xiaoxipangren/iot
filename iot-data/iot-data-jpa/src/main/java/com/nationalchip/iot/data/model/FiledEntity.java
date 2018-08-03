@@ -28,7 +28,7 @@ public abstract class FiledEntity extends VersionedEntity implements IFiledEntit
         this.sha1 = sha1;
     }
 
-    @Column(name="sha1",unique = true)
+    @Column(name="sha1")
     @Comment("sha1值")
     private String sha1;
 

@@ -3,10 +3,7 @@ package com.nationalchip.iot.rest.controller;
 import com.nationalchip.iot.data.builder.IFiledBuilder;
 import com.nationalchip.iot.data.manager.IFiledManager;
 import com.nationalchip.iot.data.model.IFiledEntity;
-import com.nationalchip.iot.rest.resource.FiledAssembler;
-import com.nationalchip.iot.rest.resource.FiledRequest;
-import com.nationalchip.iot.rest.resource.FiledResponse;
-import com.nationalchip.iot.rest.resource.Response;
+import com.nationalchip.iot.rest.resource.*;
 import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author: zhenghq
@@ -40,6 +39,12 @@ public abstract class FiledController<T extends IFiledEntity,R extends FiledResp
 
         return new ResponseEntity<>(new ByteArrayResource(getAssembler().toBytes(entity)),headers, HttpStatus.OK);
     }
+
+    @RequestMapping(value = RestMappingConstant.REST_UPLOAD_ACTION,method= RequestMethod.POST)
+    public ResponseEntity<Response> upload(@PathVariable(value = "id")long id, Q request){
+        return super.update(id,request);
+    }
+
 
     @Override
     public IFiledManager<T> getManager() {

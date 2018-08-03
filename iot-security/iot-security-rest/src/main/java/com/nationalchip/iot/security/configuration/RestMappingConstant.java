@@ -32,6 +32,8 @@ public class RestMappingConstant {
 
     public static final String REST_DOWNLOAD_ACTION = REST_ID_MAPPING+"/download";
 
+    public static final String REST_UPLOAD_ACTION = REST_ID_MAPPING+"/upload";
+
     public static final String REST_LOGIN_ACTION = "/login";
 
     public static final String REST_REGISTER_ACTION = "/register";

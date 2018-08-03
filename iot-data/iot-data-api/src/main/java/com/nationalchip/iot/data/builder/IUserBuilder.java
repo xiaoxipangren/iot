@@ -2,6 +2,7 @@ package com.nationalchip.iot.data.builder;
 
 import com.nationalchip.iot.data.model.auth.IUser;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 /**

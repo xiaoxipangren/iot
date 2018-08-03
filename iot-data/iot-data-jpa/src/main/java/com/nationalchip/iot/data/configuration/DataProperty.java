@@ -13,6 +13,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class DataProperty {
 
     private Fs fs;
+    private Nginx nginx;
+
+    public Nginx getNginx() {
+        return nginx;
+    }
+
+    public void setNginx(Nginx nginx) {
+        this.nginx = nginx;
+    }
 
     public Fs getFs() {
         return fs;
@@ -25,39 +34,8 @@ public class DataProperty {
     public static class Fs{
         private String repo;
 
-        private String avatar;
-
         private String statics;
 
-        private String image;
-
-        private String news;
-
-        private String captcha;
-
-        public String getCaptcha() {
-            return captcha;
-        }
-
-        public void setCaptcha(String captcha) {
-            this.captcha = captcha;
-        }
-
-        public String getNews() {
-            return news;
-        }
-
-        public void setNews(String news) {
-            this.news = news;
-        }
-
-        public String getImage() {
-            return image;
-        }
-
-        public void setImage(String image) {
-            this.image = image;
-        }
 
         public String getRepo() {
             return repo;
@@ -68,22 +46,33 @@ public class DataProperty {
         }
 
 
-
-
-        public String getAvatar() {
-            return avatar;
-        }
-
-        public void setAvatar(String avatar) {
-            this.avatar = avatar;
-        }
-
         public String getStatics() {
             return statics;
         }
 
         public void setStatics(String statics) {
             this.statics = statics;
+        }
+    }
+
+    public static class Nginx {
+        private String server;
+        private String location;
+
+        public String getServer() {
+            return server;
+        }
+
+        public void setServer(String server) {
+            this.server = server;
+        }
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
         }
     }
 }

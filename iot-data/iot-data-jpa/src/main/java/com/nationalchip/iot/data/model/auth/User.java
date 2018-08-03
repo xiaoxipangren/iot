@@ -6,6 +6,7 @@ import com.nationalchip.iot.data.model.*;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.*;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -64,8 +65,6 @@ public class User extends NamedEntity implements IUser {
     @Comment("账户状态")
     @Column(name="status")
     private Status status;
-
-
 
 
     public User(){
