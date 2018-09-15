@@ -17,7 +17,7 @@ import javax.persistence.*;
  * 更新由更新内容Distribution和更新对象Target组成
  */
 @Entity
-@Table(name = "rollout")
+//@Table(name = "rollout")
 @MappedSuperclass
 public class Rollout extends ArchivedEntity {
     @Comment("更新对象")

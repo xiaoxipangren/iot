@@ -19,16 +19,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
     }
 
     private Jwt jwt;
-    private Builtin builtin;
-
-    public Builtin getBuiltin() {
-        return builtin;
-    }
-
-    public void setBuiltin(Builtin builtin) {
-        this.builtin = builtin;
-    }
-
     public static class Jwt{
 
         private String alg;
@@ -92,26 +82,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
     }
 
 
-    public static class Builtin{
-        private String user;
-        private String role;
 
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
-    }
 
 
 }

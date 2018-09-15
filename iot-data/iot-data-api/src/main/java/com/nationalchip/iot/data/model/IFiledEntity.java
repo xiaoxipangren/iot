@@ -17,4 +17,6 @@ public interface IFiledEntity extends IVersionedEntity {
     String getSha1();
     long getSize();
     InputStream getStream();
+    /*资源是否是共享的，是可以自由下载，否登录才能下载*/
+    boolean isShared();
 }

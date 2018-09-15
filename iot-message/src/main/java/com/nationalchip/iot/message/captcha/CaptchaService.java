@@ -67,8 +67,8 @@ public class CaptchaService implements ICaptchaService {
 
     @Override
     public byte[] toImage(String key) {
-        checkExpiration(key);
-        ICaptcha captcha = (ICaptcha)redisService.get(key);
+
+        ICaptcha captcha = find(key);
 
         if(!captcha.isImaged()){
             return new byte[0];

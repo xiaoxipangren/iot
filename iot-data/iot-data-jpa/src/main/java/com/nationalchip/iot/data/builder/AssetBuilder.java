@@ -14,12 +14,13 @@ public class AssetBuilder extends FiledCreupdate<IAssetBuilder,IAsset> implement
     private String guide;
 
 
+
+
     @Override
     public IAssetBuilder guide(String guide) {
         this.guide=guide;
         return self();
     }
-
 
 
     @Override

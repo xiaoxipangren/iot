@@ -1,6 +1,7 @@
 package com.nationalchip.iot.data.model.ota;
 
 import com.nationalchip.iot.data.annotation.Comment;
+import com.nationalchip.iot.data.model.Device;
 import com.nationalchip.iot.data.model.VersionedEntity;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ import java.util.Set;
  */
 @MappedSuperclass
 @Entity
-@Table(name = "distribution")
+//@Table(name = "distribution")
 public class Distribution extends VersionedEntity {
 
 //    @Comment("更新包含的子模块")

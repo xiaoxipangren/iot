@@ -15,4 +15,5 @@ public interface IFiledCreupdate<T extends IFiledBuilder<E>,E extends IFiledEnti
     T fileName(String fileName);
     T size(Long size);
     T stream(InputStream stream);
+    T shared(boolean shared);
 }

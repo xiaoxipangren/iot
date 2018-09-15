@@ -1,8 +1,10 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.IEventEntity;
-import com.nationalchip.iot.data.model.NamedEntity;
+import com.nationalchip.iot.data.model.auth.Consumer;
+import com.nationalchip.iot.data.model.auth.Developer;
+import com.nationalchip.iot.data.model.ota.Distribution;
+import com.nationalchip.iot.data.model.ota.Status;
 import org.eclipse.persistence.descriptors.DescriptorEvent;
 
 import javax.persistence.*;
@@ -74,9 +76,9 @@ public class Device extends NamedEntity implements IEventEntity {
     private Product product;
 
     @Comment("设备制造商")
-    @ManyToOne(optional = true,targetEntity = Vendor.class,fetch = FetchType.LAZY)
+    @ManyToOne(optional = true,targetEntity = Developer.class,fetch = FetchType.LAZY)
     @JoinColumn(name = "produced_by",nullable = true,foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT))
-    private Vendor vendor;
+    private Developer developer;
 
     @Column(name = "update_status")
     @Comment("设备更新状态")

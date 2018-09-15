@@ -28,6 +28,7 @@ public class AssetAssembler extends FiledAssembler<IAsset,AssetResponse,IAssetBu
     public AssetResponse toResource(IAsset entity) {
         AssetResponse resource =  super.toResource(entity);
         resource.setGuide(entity.getGuide());
+        resource.setShared(entity.isShared());
 
 //        resource.add(linkTo(methodOn(AssetController.class).download(entity.getId())).withRel("download"));
 
@@ -44,6 +45,7 @@ public class AssetAssembler extends FiledAssembler<IAsset,AssetResponse,IAssetBu
     public IAssetBuilder fromRequest(AssetRequest request) {
         IAssetBuilder builder = super.fromRequest(request);
         request.getGuide().ifPresent(guide -> builder.guide(guide));
+        request.isShared().ifPresent(shared -> builder.shared(shared));
         return builder;
     }
 }

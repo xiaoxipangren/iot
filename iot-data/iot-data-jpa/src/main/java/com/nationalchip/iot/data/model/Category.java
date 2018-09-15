@@ -1,4 +1,4 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 /**
  * @Author: zhenghq
@@ -8,8 +8,6 @@ package com.nationalchip.iot.data.model.ota;
  */
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.NamedEntity;
-
 import javax.persistence.*;
 import java.util.Set;
 
@@ -20,10 +18,14 @@ import java.util.Set;
 @MappedSuperclass
 @Entity
 @Table(name = "product_category")
-public class Category extends NamedEntity {
+public class Category extends NamedEntity implements ICategory {
 
     public Category() {
     }
+
+    @Comment("品类的编码")
+    @Column(name = "code")
+    private String code;
 
     @Comment("品类的详细描述")
     @Column(name = "detail")
@@ -36,6 +38,15 @@ public class Category extends NamedEntity {
 
     public String getDetail() {
         return detail;
+    }
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public void setDetail(String detail) {

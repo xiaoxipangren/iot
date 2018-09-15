@@ -25,4 +25,11 @@ public class BuilderFactory implements IBuilderFactory {
     public INewsBuilder news() {
         return new NewsBuilder();
     }
+
+    @Override
+    public IDocumentBuilder document() {
+        return new DocumentBuilder();
+    }
+
+
 }

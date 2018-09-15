@@ -18,6 +18,15 @@ public abstract class FiledCreupdate<T extends IFiledBuilder<E>,E extends IFiled
     private String fileName;
     private Long size;
     private InputStream stream;
+    private boolean shared = true;
+
+
+    @Override
+    public T shared(boolean shared) {
+        this.shared=shared;
+        return self();
+    }
+
 
     public T stream(InputStream stream) {
         this.stream =stream;
@@ -70,6 +79,7 @@ public abstract class FiledCreupdate<T extends IFiledBuilder<E>,E extends IFiled
                         e.setStream(stream);
                     });
                     getSize().ifPresent(size -> e.setSize(size));
+                    e.setShared(shared);
                 }
         );
 

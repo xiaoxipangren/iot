@@ -3,8 +3,11 @@ package com.nationalchip.iot.rest.controller;
 import com.nationalchip.iot.data.builder.IFiledBuilder;
 import com.nationalchip.iot.data.manager.IFiledManager;
 import com.nationalchip.iot.data.model.IFiledEntity;
+import com.nationalchip.iot.rest.exception.RestException;
 import com.nationalchip.iot.rest.resource.*;
 import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import com.nationalchip.iot.tenancy.ITenantAware;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,10 +27,17 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public abstract class FiledController<T extends IFiledEntity,R extends FiledResponse,B extends IFiledBuilder<T>,Q extends FiledRequest>  extends BaseController<T,R,B,Q>{
 
+
+    @Autowired
+    private ITenantAware tenantAware;
+
     @RequestMapping(value = RestMappingConstant.REST_DOWNLOAD_ACTION,method= RequestMethod.GET)
     public ResponseEntity<ByteArrayResource> download(@PathVariable(value = "id")long id){
 
         T entity = getManager().findOne(id);
+
+        if(!entity.isShared() && tenantAware.isAnonymous())
+            throw new RestException("权限不足，请登录后下载",HttpStatus.FORBIDDEN);
 
 
         HttpHeaders headers = new HttpHeaders();

@@ -50,11 +50,11 @@
                             <artifactId>iot-message</artifactId>
                             <version>${project.version}</version>
                         </artifactItem>
-                        <artifactItem>
-                            <groupId>com.nationalchip.iot</groupId>
-                            <artifactId>iot-security-rest</artifactId>
-                            <version>${project.version}</version>
-                        </artifactItem>
+                        <!--<artifactItem>-->
+                            <!--<groupId>com.nationalchip.iot</groupId>-->
+                            <!--<artifactId>iot-security-rest</artifactId>-->
+                            <!--<version>${project.version}</version>-->
+                        <!--</artifactItem>-->
                     </artifactItems>
                 </configuration>
                 <executions>

@@ -1,7 +1,7 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.auth.User;
+import com.nationalchip.iot.data.model.Device;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +15,17 @@ import java.util.Set;
 
 @Entity
 @Table(name = "consumer")
-class Consumer extends User {
+public class Consumer extends User {
+
+    public Consumer(){
+
+    }
+
+    public Consumer(String username,String password){
+        super(username,password);
+    }
+
+
 
     @Column(name="location")
     @Comment("注册时的地点")

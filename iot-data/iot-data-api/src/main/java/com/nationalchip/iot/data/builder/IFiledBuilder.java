@@ -15,4 +15,5 @@ public interface IFiledBuilder<T extends IFiledEntity> extends IVersionedBuilder
     IFiledBuilder<T> fileName(String fileName);
     IFiledBuilder<T> size(Long size);
     IFiledBuilder<T> stream(InputStream stream);
+    IFiledBuilder<T> shared(boolean shared);
 }

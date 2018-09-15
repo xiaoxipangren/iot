@@ -4,6 +4,7 @@ import com.nationalchip.iot.security.authentication.AuthenticationDetails;
 import com.nationalchip.iot.security.authority.Authority;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import com.nationalchip.iot.tenancy.TenantRunner;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 /**
  * @Author: zhenghq
@@ -44,6 +44,15 @@ public class SecurityContextTenantAware implements ITenantAware {
     }
 
     @Override
+    public boolean isAnonymous() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication==null)
+            return false;
+
+        return AnonymousAuthenticationToken.class.isAssignableFrom(authentication.getClass());
+    }
+
+    @Override
     public <T> T runAs(String tenant, TenantRunner<T> runner) {
         final SecurityContext originalContext = SecurityContextHolder.getContext();
         try {
@@ -65,7 +74,7 @@ public class SecurityContextTenantAware implements ITenantAware {
         private static final long serialVersionUID = 1L;
 
         private static final Collection<? extends GrantedAuthority> SYSTEM_AUTHORITIES = Arrays
-                .asList(new SimpleGrantedAuthority(Authority.ROLE_SYSTEM));
+                .asList(new SimpleGrantedAuthority(Authority.SYSTEM));
         private final Authentication delegate;
 
         private final String systemPrincipal;

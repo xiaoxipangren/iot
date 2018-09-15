@@ -5,6 +5,8 @@ import com.nationalchip.iot.security.configuration.RestSecurityProperty;
 import com.nationalchip.iot.security.exception.JwtDisabledException;
 import com.nationalchip.iot.security.exception.JwtExpiratedException;
 import com.nationalchip.iot.security.jwt.IJwtProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     public IJwtProvider getJwtProvider() {
         return jwtProvider;
@@ -31,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private RestSecurityProperty securityProperty;
 
     private IRedisService redisService;
+
 
     public JwtAuthenticationFilter(IJwtProvider jwtProvider, IRedisService redisService, RestSecurityProperty securityProperty){
         this.jwtProvider=jwtProvider;
@@ -48,9 +53,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token=header.replace(prefix,"").trim();
             if(redisService.hasKey(token)){
                 Object logouted = redisService.get(token);
-                if (logouted instanceof Boolean && (boolean) logouted) {
 
-                    throw new BadCredentialsException("token已失效");
+                if (logouted instanceof Boolean && (boolean) logouted) {
+                    logger.warn(String.format("token:%s已失效",token));
                 }
             }
             else {
@@ -61,12 +66,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     }
                 }catch (JwtExpiratedException | JwtDisabledException e){
-                    throw new BadCredentialsException("token已过期");
+                    //当token过期后，尝试进行字段续签
+                    logger.warn(String.format("token:%s已过期",token));
                 }
-
             }
-
-
         }
 
         filterChain.doFilter(request, response);

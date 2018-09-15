@@ -1,12 +1,10 @@
 package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.configuration.DataConstant;
 import com.nationalchip.iot.data.model.*;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
 import javax.persistence.*;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,7 +15,7 @@ import java.util.Set;
  * 抽象的用户类
  * 共有四种不同的用户和系统发生交互
  * Admin:系统管理员
- * Vendor:厂商用户
+ * Developer:厂商用户
  * Consumer:消费者(app用户)
  *
  */
@@ -284,7 +282,7 @@ public class User extends NamedEntity implements IUser {
 
 
     public static IUser SystemUser(String tenant){
-        IUser user = new User(DataConstant.SYSTEM_USER,"***");
+        IUser user = new User(com.nationalchip.iot.security.authority.Authority.SYSTEM,"***");
         return user;
     }
 }

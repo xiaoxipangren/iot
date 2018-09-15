@@ -27,13 +27,18 @@ public class OrderedFilter extends AbstractFilter {
 
     @Override
     public void filter(StringBuilder request, StringBuilder response, IFilterChain chain){
-        if(index!=7){
-            filterRequest(request);
-            super.filter(request,response,chain);
-            filterResponse(response);
+
+
+        if(index==7){
+            return;
         }
-        else
-            super.filter(request,response,chain);
+
+
+
+        filterRequest(request);
+        super.filter(request,response,chain);
+        filterResponse(response);
+
 
 
     }

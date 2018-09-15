@@ -32,4 +32,7 @@ public class Asset extends FiledEntity implements IAsset {
     public String getGuide() {
         return guide;
     }
+
+
+
 }

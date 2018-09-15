@@ -74,7 +74,7 @@ public class CaptchaController {
         String address = request.getAddress();
 
         if(RegexHelper.isEmail(address)){
-            sendMail(request.getAction().toLowerCase(),request.getAddress(),captcha.getValue());
+            sendMail(request.getAction().toUpperCase(),request.getAddress(),captcha.getValue());
         }
 
         return Response.ok(response);
@@ -132,12 +132,12 @@ public class CaptchaController {
         try{
             captcha = captchaServcie.validate(builder);
         }catch (CaptchaExpiredException e){
-            throw new RestException(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new RestException(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
 
         if(captcha!=null){
             IClaimsBuilder claimsBuilder = new ClaimsBuilder();
-            claimsBuilder.authorities(Collections.singletonList(captcha.getAction()));
+            claimsBuilder.authorities(Collections.singletonList(captcha.getAction().toUpperCase()));
             claimsBuilder.subject(captcha.getTarget());
             claimsBuilder.once(true);
 

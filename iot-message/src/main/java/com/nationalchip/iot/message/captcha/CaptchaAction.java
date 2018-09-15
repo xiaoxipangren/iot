@@ -40,7 +40,7 @@ public enum  CaptchaAction {
 
     public static CaptchaAction from(String action){
         for(CaptchaAction captchaAction : CaptchaAction.values()){
-            if(captchaAction.name.toLowerCase().equals(action.toLowerCase())){
+            if(captchaAction.name.toUpperCase().equalsIgnoreCase(action.toUpperCase())){
                 return captchaAction;
             }
         }

@@ -1,4 +1,4 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model;
 
 /**
  * @Author: zhenghq
@@ -8,7 +8,7 @@ package com.nationalchip.iot.data.model.ota;
  */
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.NamedEntity;
+import com.nationalchip.iot.data.model.auth.Developer;
 
 import javax.persistence.*;
 
@@ -34,9 +34,9 @@ public class Product extends NamedEntity {
     private Category category;
 
     @Comment("建立产品的厂商")
-    @ManyToOne(targetEntity = Vendor.class,fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Developer.class,fetch = FetchType.LAZY)
     @JoinColumn(name = "owned_by",nullable = true,foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT))
-    private Vendor vendor;
+    private Developer developer;
 
 
 }

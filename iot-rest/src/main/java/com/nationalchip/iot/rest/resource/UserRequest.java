@@ -15,6 +15,14 @@ public class UserRequest extends NamedRequest {
     private String password;
     private String username;
     private String oldpwd;
+
+    /**
+     * 账户类型
+     * 0-默认，开发者
+     * １-消费者
+     * 2-管理员
+     */
+    private int type;
     private boolean register=false;
 
     public boolean isRegister() {
@@ -73,4 +81,11 @@ public class UserRequest extends NamedRequest {
         this.password = password;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }

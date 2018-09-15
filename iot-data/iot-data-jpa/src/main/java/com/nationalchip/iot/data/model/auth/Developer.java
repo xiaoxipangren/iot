@@ -1,14 +1,14 @@
-package com.nationalchip.iot.data.model.ota;
+package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.model.auth.User;
+import com.nationalchip.iot.data.model.Device;
+import com.nationalchip.iot.data.model.Product;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
@@ -16,19 +16,25 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name = "vendor")
-class Vendor extends User {
+@Table(name = "developer")
+public class Developer extends User {
+
+    public Developer(){
+
+    }
+
+    public Developer(String username,String password){
+        super(username,password);
+    }
 
     @Column(name="eng_name")
     @Comment("厂商英文名称")
-    @NotNull
     @Max(16)
     private String englishName;
 
 
     @Column(name = "linkman")
     @Comment("厂商联系人")
-    @NotNull
     private String linkman;
 
     @Column(name = "website")
@@ -37,12 +43,13 @@ class Vendor extends User {
 
 
     @Comment("拥有的产品")
-    @OneToMany(mappedBy = "vendor",targetEntity = Product.class)
+    @OneToMany(mappedBy = "developer",targetEntity = Product.class)
     private Set<Product> products;
 
     @Comment("拥有的设备")
-    @OneToMany(mappedBy = "vendor",targetEntity = Device.class)
+    @OneToMany(mappedBy = "developer",targetEntity = Device.class)
     private Set<Device> devices;
+
 
 
     public String getEnglishName() {

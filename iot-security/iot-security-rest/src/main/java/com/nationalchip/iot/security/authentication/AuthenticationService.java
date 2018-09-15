@@ -37,8 +37,19 @@ public class AuthenticationService implements IAuthenticationService {
     private IJwtProvider jwtProvider;
 
     @Override
-    public Authentication authenticate(String username, String password) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username,password);
+    public Authentication authenticate(AccountTypeAuthenticationToken token) {
+
+
+        /**
+         *
+         * TODO:
+         * 重写登录验证逻辑
+         * 1.判断是否允许登录
+         * 2.更新登录日期
+         *
+         *
+         *
+         */
         Authentication authentication = authenticationManager.authenticate(token);
 
         IUser user = (IUser) authentication.getPrincipal();

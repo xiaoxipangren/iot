@@ -14,6 +14,7 @@ import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 import static com.nationalchip.iot.security.authority.AuthorityExpression.*;
-
+import static com.nationalchip.iot.security.authority.Authority.*;
 /**
  * @Author: zhenghq
  * @Description:
@@ -48,12 +49,27 @@ public class UserController extends BaseController<IUser,UserResponse,IUserBuild
             @ExampleProperty(mediaType = "application/json",value = "{\"username\":\"username\"}")
     }))
     @RequestMapping(method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
-    @PreAuthorize(HAS_AUTH_REGISTER+HAS_AUTH_OR+HAS_AUTH_CREATE_USER)
+    @PreAuthorize(HAS_AUTH_REGISTER+ OR +HAS_AUTH_CREATE_USER)
     public ResponseEntity<Response> create(@RequestBody UserRequest request){
 
-        if(request.isRegister())
-            return register(request);
+        if(request.isRegister()) {
+            if (request.getType() == TYPE_ADMIN)
+                throw new RestException("权限不足，禁止访问", HttpStatus.FORBIDDEN);
 
+            return register(request);
+        }
+
+        if(request.getType()==TYPE_ADMIN)
+            return createAdmin(request);
+
+
+        return super.create(request);
+    }
+
+
+
+    @PreAuthorize(HAS_ROLE_ADMIN)
+    private ResponseEntity<Response> createAdmin(UserRequest request){
         return super.create(request);
     }
 

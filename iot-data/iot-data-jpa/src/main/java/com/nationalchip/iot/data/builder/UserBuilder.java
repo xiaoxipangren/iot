@@ -1,12 +1,8 @@
 package com.nationalchip.iot.data.builder;
 
-import com.nationalchip.iot.data.model.Admin;
-import com.nationalchip.iot.data.model.auth.IUser;
-import com.nationalchip.iot.data.model.auth.User;
-import com.nationalchip.iot.data.model.hub.Developer;
+import com.nationalchip.iot.data.model.auth.*;
 import org.springframework.security.authentication.BadCredentialsException;
 
-import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -77,6 +73,9 @@ public class UserBuilder extends NamedCreupdate<IUserBuilder,IUser> implements I
                 user = new Developer(getName().get(),password);
                 break;
             case 1:
+                user = new Consumer(getName().get(),password) ;
+                break;
+            case 2:
                 user = new Admin(getName().get(),password);
                 break;
             default:

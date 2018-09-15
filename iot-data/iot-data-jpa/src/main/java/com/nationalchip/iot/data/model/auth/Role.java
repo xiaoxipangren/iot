@@ -1,6 +1,5 @@
 package com.nationalchip.iot.data.model.auth;
 
-import com.nationalchip.iot.data.configuration.DataConstant;
 import com.nationalchip.iot.data.model.NamedEntity;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -55,12 +54,12 @@ public class Role extends NamedEntity implements IRole {
 
     @Override
     public String getAuthority() {
-        return DataConstant.ROLE_PREFIX+getName().toUpperCase();
+        return toString();
     }
 
     @Override
     public String toString(){
-        return DataConstant.ROLE_PREFIX+getName().toUpperCase();
+        return com.nationalchip.iot.security.authority.Authority.ROLE_PREFIX+getName().toUpperCase();
     }
 
     @Override
@@ -75,6 +74,6 @@ public class Role extends NamedEntity implements IRole {
 
 
     public static Role SystemRole(){
-        return new Role(DataConstant.SYSTEM_ROLE);
+        return new Role(com.nationalchip.iot.security.authority.Authority.SYSTEM);
     }
 }

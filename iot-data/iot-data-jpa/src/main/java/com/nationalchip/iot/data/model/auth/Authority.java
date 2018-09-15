@@ -1,7 +1,6 @@
 package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.annotation.Comment;
-import com.nationalchip.iot.data.configuration.DataConstant;
 import com.nationalchip.iot.data.model.BaseEntity;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 
@@ -76,7 +75,7 @@ public class Authority extends BaseEntity implements IAuthority {
 
     @Override
     public String toString() {
-        return String.join(DataConstant.SEPERATOR,operation.getName().toLowerCase(),target.toLowerCase());
+        return String.join(com.nationalchip.iot.security.authority.Authority.SEPARATOR,operation.getName().toUpperCase(),target.toUpperCase());
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.nationalchip.iot.data.annotation.Comment;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
+import javax.validation.constraints.NotNull;
 
 @MappedSuperclass
 public abstract class NamedEntity extends BaseEntity implements INamedEntity {
@@ -19,6 +20,7 @@ public abstract class NamedEntity extends BaseEntity implements INamedEntity {
 
     @Column(name="name",unique = true)
     @Comment("名称")
+    @NotNull
     private String name;
 
 

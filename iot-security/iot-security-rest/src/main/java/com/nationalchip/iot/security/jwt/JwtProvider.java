@@ -92,7 +92,7 @@ public class  JwtProvider implements IJwtProvider{
                 return claims;
             }
         }catch (ExpiredJwtException e){
-            throw e;
+            throw new JwtExpiratedException();
         }
 
         return null;

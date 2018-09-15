@@ -9,6 +9,15 @@ package com.nationalchip.iot.rest.resource;
 public class AuthRequest {
     private String username;
     private String password;
+    private String client;
+
+    public String getClient() {
+        return client;
+    }
+
+    public void setClient(String client) {
+        this.client = client;
+    }
 
     public String getUsername() {
         return username;

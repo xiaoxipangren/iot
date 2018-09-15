@@ -14,7 +14,7 @@ import java.util.function.Supplier;
  */
 public interface IAuthenticationService {
     @PreAuthorize(AuthorityExpression.HAS_AUTH_LOGIN)
-    Authentication authenticate(String username,String password);
+    Authentication authenticate(AccountTypeAuthenticationToken token);
 
     @PreAuthorize("isAuthenticated()")
     void unAuthenticate();

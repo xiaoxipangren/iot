@@ -14,7 +14,15 @@ public abstract class FiledRequest extends VersionedRequest {
     private String fileName;
     private MultipartFile file;
     private String sha1;
+    private boolean shared;
 
+    public Optional<Boolean> isShared() {
+        return Optional.ofNullable(shared);
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
+    }
     public Optional<String> getSha1() {
         return Optional.ofNullable(sha1);
     }

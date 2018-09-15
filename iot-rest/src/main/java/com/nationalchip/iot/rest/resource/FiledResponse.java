@@ -10,6 +10,15 @@ public abstract class FiledResponse extends VersionedResponse {
     private String fileName;
     private long size;
     private String sha1;
+    private boolean shared;
+
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
+    }
 
     public String getFileName() {
         return fileName;

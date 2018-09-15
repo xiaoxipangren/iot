@@ -11,6 +11,7 @@ import java.util.Optional;
 public class AssetRequest extends FiledRequest {
     private String guide;
 
+
     public Optional<String> getGuide() {
         return Optional.ofNullable(guide);
     }
@@ -18,7 +19,5 @@ public class AssetRequest extends FiledRequest {
     public void setGuide(String guide) {
         this.guide = guide;
     }
-
-
 
 }

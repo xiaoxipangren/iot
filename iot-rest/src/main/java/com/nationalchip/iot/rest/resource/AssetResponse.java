@@ -10,6 +10,7 @@ public class AssetResponse extends FiledResponse {
 
     private String guide;
 
+
     public String getGuide() {
         return guide;
     }

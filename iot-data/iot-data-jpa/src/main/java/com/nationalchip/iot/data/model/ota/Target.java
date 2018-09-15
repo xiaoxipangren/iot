@@ -20,7 +20,7 @@ import java.util.Set;
  */
 
 @Entity
-@Table(name="target")
+//@Table(name="target")
 @MappedSuperclass
 public class Target extends NamedEntity {
 

@@ -232,12 +232,12 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         if(RegexHelper.isEmail(username)){
             user = repository().findByEmail(username);
             if(user==null)
-                throw new EntityNotFoundException(String.format("邮箱%s未注册",username));
+                throw new UsernameNotFoundException(String.format("邮箱%s未注册",username));
         }
         else if(RegexHelper.isPhone(username)){
             user = repository().findByPhone(username);
             if(user==null)
-                throw new EntityNotFoundException(String.format("手机号%s未注册",username));
+                throw new UsernameNotFoundException(String.format("手机号%s未注册",username));
         }
         else{
             user = repository().findByName(username);

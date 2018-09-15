@@ -16,6 +16,20 @@ import java.io.InputStream;
 @MappedSuperclass
 public abstract class FiledEntity extends VersionedEntity implements IFiledEntity {
 
+    @Column(name="shared")
+    @Comment("是否需要登录才能下载")
+    private boolean shared;
+
+    @Override
+    public boolean isShared() {
+        return shared;
+    }
+
+    public void setShared(boolean shared) {
+        this.shared = shared;
+    }
+
+
     @Column(name="filename")
     @Comment("上传时的文件名")
     private String fileName;

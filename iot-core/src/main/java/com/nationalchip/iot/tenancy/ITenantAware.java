@@ -8,7 +8,7 @@ package com.nationalchip.iot.tenancy;
  */
 public interface ITenantAware {
     String getCurrentTenant();
-
+    boolean isAnonymous();
     <T> T runAs(final String tenant,TenantRunner<T> runner);
 
 }

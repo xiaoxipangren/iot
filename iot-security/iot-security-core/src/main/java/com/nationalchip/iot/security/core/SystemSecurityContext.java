@@ -87,7 +87,7 @@ public class SystemSecurityContext implements ISecurityContext{
 
         private static final long serialVersionUID = 1L;
         private static final List<? extends GrantedAuthority> AUTHORITIES = Collections
-                .singletonList(new SimpleGrantedAuthority(Authority.ROLE_SYSTEM));
+                .singletonList(new SimpleGrantedAuthority(Authority.SYSTEM));
         private final Authentication oldAuthentication;
 
         private SystemCodeAuthentication(final Authentication oldAuthentication) {

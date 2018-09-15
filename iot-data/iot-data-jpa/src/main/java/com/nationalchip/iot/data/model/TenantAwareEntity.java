@@ -16,7 +16,7 @@ import javax.validation.constraints.Size;
 @MappedSuperclass
 @TenantDiscriminatorColumn(name="tenant",length = 40)
 @Multitenant(MultitenantType.SINGLE_TABLE)
-public abstract class TenantAwareEntity extends BaseEntity implements ITenantAwareEntity{
+public abstract class TenantAwareEntity extends NamedEntity implements ITenantAwareEntity{
 
     @Column(name = "tenant", nullable = false, insertable = false, updatable = false, length = 40)
     @Size(min = 1, max = 40)
