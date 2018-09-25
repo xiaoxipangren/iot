@@ -85,7 +85,7 @@
 //    public void sendMail() throws Exception {
 //        SendMail mail = new SendMail();
 //        mail.setEmail(email);
-//        mail.setAction(ACTION_VALIDATE);
+//        mail.setOperation(ACTION_VALIDATE);
 //
 //        String response = post(RestMappingConstant.REST_SENDMAIL_ACTION,mail);
 //        System.out.println(response);
@@ -123,7 +123,7 @@
 //    public void resetPassword() throws Exception {
 //        SendMail mail = new SendMail();
 //        mail.setEmail(email);
-//        mail.setAction(ACTION_RESETPWD);
+//        mail.setOperation(ACTION_RESETPWD);
 //        post(RestMappingConstant.REST_SENDMAIL_ACTION,mail);
 //
 //        String newpwd="password";

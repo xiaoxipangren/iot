@@ -51,8 +51,8 @@ public class Authority extends BaseEntity implements IAuthority {
     }
 
 
-    public Authority(String action,String target){
-        this.operation = Operation.valueOf(action);
+    public Authority(String operation,String target){
+        this.operation = Operation.valueOf(operation);
         this.target=target;
     }
 
@@ -61,7 +61,7 @@ public class Authority extends BaseEntity implements IAuthority {
         return operation;
     }
 
-    public void setAction(Operation operation) {
+    public void setOperation(Operation operation) {
         this.operation = operation;
     }
 

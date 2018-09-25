@@ -2,6 +2,7 @@ package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.annotation.Comment;
 import com.nationalchip.iot.data.model.Device;
+import com.nationalchip.iot.security.authority.SecurityConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,7 +16,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "consumer")
-public class Consumer extends User {
+public class Consumer extends User implements IConsumer{
 
     public Consumer(){
 
@@ -36,5 +37,24 @@ public class Consumer extends User {
     @OneToMany(mappedBy = "consumer",targetEntity = Device.class)
     private Set<Device> devices;
 
+    @Override
+    public boolean isMatch(String client) {
+        return SecurityConstant.CLIENT_APP.equalsIgnoreCase(client);
+    }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Set<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(Set<Device> devices) {
+        this.devices = devices;
+    }
 }

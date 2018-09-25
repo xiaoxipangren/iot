@@ -9,4 +9,11 @@ package com.nationalchip.iot.security.authority;
 public class SecurityConstant {
     public static final String ADMIN_USERNAME="admin";
     public static final String ADMIN_PASSWORD="admin";
+
+    public static final String CLIENT_HUB="hub";
+    public static final String CLIENT_ADMIN="admin";
+    public static final String CLIENT_APP="app";
+
+
+
 }

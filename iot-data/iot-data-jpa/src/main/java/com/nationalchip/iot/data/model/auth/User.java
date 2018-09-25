@@ -29,8 +29,6 @@ public class User extends NamedEntity implements IUser {
     @Column(name = "password")
     private  String password;
 
-
-
     @Comment("用户头像")
     @Column(name = "avatar")
     private String avatar;
@@ -207,7 +205,10 @@ public class User extends NamedEntity implements IUser {
         return this.email;
     }
 
-
+    @Override
+    public boolean isMatch(String client) {
+        return false;
+    }
 
     public boolean addAuthority(final IAuthority authority){
         if(this.authorities == null){

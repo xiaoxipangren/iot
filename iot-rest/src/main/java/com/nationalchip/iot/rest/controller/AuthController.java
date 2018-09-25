@@ -1,14 +1,17 @@
 package com.nationalchip.iot.rest.controller;
 
 import com.nationalchip.iot.data.manager.IUserManager;
-import com.nationalchip.iot.data.model.auth.*;
+import com.nationalchip.iot.data.model.auth.IUser;
+import com.nationalchip.iot.data.model.auth.User;
 import com.nationalchip.iot.rest.exception.AuthException;
 import com.nationalchip.iot.rest.resource.AuthAssembler;
 import com.nationalchip.iot.rest.resource.AuthRequest;
 import com.nationalchip.iot.rest.resource.AuthResource;
 import com.nationalchip.iot.rest.resource.Response;
 import com.nationalchip.iot.security.authentication.AccountTypeAuthenticationToken;
+import com.nationalchip.iot.security.authentication.AccountTypeRequestClient;
 import com.nationalchip.iot.security.authentication.IAuthenticationService;
+import com.nationalchip.iot.security.authority.SecurityConstant;
 import com.nationalchip.iot.security.configuration.RestMappingConstant;
 import com.nationalchip.iot.security.exception.AccountTypeNotMatchedException;
 import io.swagger.annotations.Api;
@@ -19,16 +22,13 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @RestController
 @RequestMapping(value = RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_AUTH_MAPPING)
 @Api(tags = "鉴权API")
 public class AuthController{
-
-    private static final String CLIENT_HUB="hub";
-    private static final String CLIENT_ADMIN="admin";
-    private static final String CLIENT_APP="app";
 
     @Autowired
     private IAuthenticationService authenticationService;
@@ -39,24 +39,25 @@ public class AuthController{
     @Autowired
     private IUserManager userManager;
 
+
+
     @PostMapping
-    public ResponseEntity<Response> login(@RequestBody AuthRequest request){
+    public ResponseEntity<Response> login(@RequestBody AuthRequest request,HttpServletRequest httpServletRequest){
 
 
         return authenticationService.runOnce(request.getUsername(),()->{
             try{
 
-                String client = request.getClient();
-                Class type = null;
+                String ip = httpServletRequest.getRemoteAddr();
 
-                if(CLIENT_APP.equalsIgnoreCase(client))
-                    type = Consumer.class;
-                else if (CLIENT_ADMIN.equalsIgnoreCase(client))
-                    type = Admin.class;
-                else
-                    type = Developer.class;
 
-                AccountTypeAuthenticationToken token = new AccountTypeAuthenticationToken(request.getUsername(),request.getPassword(),type);
+                String source = request.getClient()==null? SecurityConstant.CLIENT_HUB:request.getClient();
+                AccountTypeRequestClient client = new AccountTypeRequestClient();
+                client.setSource(source);
+                client.setIp(ip);
+
+
+                AccountTypeAuthenticationToken token = new AccountTypeAuthenticationToken(request.getUsername(),request.getPassword(),client);
 
                 Authentication authentication = authenticationService.authenticate(token);
                 IUser user = (IUser) authentication.getPrincipal();

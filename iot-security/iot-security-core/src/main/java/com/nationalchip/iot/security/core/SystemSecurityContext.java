@@ -39,8 +39,13 @@ public class SystemSecurityContext implements ISecurityContext{
     }
 
 
+    @Override
+    public <T> T runAsSystem(Callable<T> callable) {
+        return runAsSystemAsTenant(callable,Authority.SYSTEM);
+    }
+
     @SuppressWarnings("squid:S2221")
-    public <T> T runAsSystem(final Callable<T> callable) {
+    public <T> T runAsSystemAsCurrentTenant(final Callable<T> callable) {
 
         return runAsSystemAsTenant(callable, tenantAware.getCurrentTenant());
     }
@@ -87,7 +92,7 @@ public class SystemSecurityContext implements ISecurityContext{
 
         private static final long serialVersionUID = 1L;
         private static final List<? extends GrantedAuthority> AUTHORITIES = Collections
-                .singletonList(new SimpleGrantedAuthority(Authority.SYSTEM));
+                .singletonList(new SimpleGrantedAuthority(Authority.ROLE_SYSTEM));
         private final Authentication oldAuthentication;
 
         private SystemCodeAuthentication(final Authentication oldAuthentication) {

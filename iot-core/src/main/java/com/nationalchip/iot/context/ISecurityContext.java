@@ -10,8 +10,7 @@ import java.util.concurrent.Callable;
  */
 public interface ISecurityContext {
     <T> T runAsSystem(final Callable<T> callable);
-
-
+    <T> T runAsSystemAsCurrentTenant(final Callable<T> callable);
     <T> T runAsSystemAsTenant(final Callable<T> callable, final String tenant);
 
 }

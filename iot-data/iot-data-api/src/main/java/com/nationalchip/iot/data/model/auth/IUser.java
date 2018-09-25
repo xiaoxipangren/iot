@@ -15,6 +15,7 @@ public interface IUser extends UserDetails,INamedEntity {
     Status getStatus();
     String getAvatar();
     Set<IRole> getRoles();
+    boolean isMatch(String client);
     boolean addRole(IRole role);
     boolean removeRole(IRole role);
     boolean isInRole(IRole role);

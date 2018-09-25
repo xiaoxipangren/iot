@@ -11,9 +11,10 @@ type_repository=7
 type_request=8
 type_response=9
 type_assembler=10
-type_security = 11
+type_security_rest = 11
 type_factory_interface = 12
 type_factory_class = 13
+type_security_core=14
 
 
 def model_interface(name,fields,super):
@@ -324,7 +325,7 @@ def mapping(name,map=None):
     if not map:
         map = name.lower()
 
-    directory = dir(path(type_security),package(type_security))
+    directory = dir(path(type_security_rest),package(type_security_rest))
 
     content =  'public static final String REST_%s_MAPPING = "/%s"' % (name.upper(),map)
     contents = [indent(content,floor=1)]
@@ -351,10 +352,23 @@ def factory(name):
     add(directory,file,contents=[content])
 
 
+def authority(name,model=''):
 
+    name = name.upper()
 
+    if model == None or model == '':
+        model = name
 
+    directory = dir(path(type_security_core),package(type_security_core))
+    claim = 'public static final String'
+    content = []
+    content.append(indent('%s EN_%s = "%s"' % (claim,name,model),floor=1))
+    ops = ['READ','CREATE','DELETE','UPDATE']
+    for op in ops:
+        content.append(indent('%s AUTH_%s_%s = OP_%s + SEPARATOR + EN_%s' % (claim,op,name,op,model),floor=1))
+    file = 'Authority'
 
+    add(directory,file,contents=content,reverse=False)
 
 def pack(package):
     return indent('package %s' % package)+line()
@@ -440,17 +454,20 @@ def write(path,name,content,mode = 'w+'):
     with open(file,mode) as writer:
         writer.write(content)
 
-def add(path,name,contents=[]):
+def add(path,name,contents=[],reverse=True):
     file = '%s/%s.java' % (path,name)
 
     lines=[]
     with open(file,'r') as reader:
         lines = reader.readlines()
-    contents.reverse()
+    if reverse:
+        contents.reverse()
     for content in contents:
         if content in lines:
             lines.remove(content)
         lines.insert(-2,content)
+    lines.insert(-2,line())
+
 
     write(path,name,''.join(lines))
 
@@ -483,8 +500,10 @@ def package(type):
         subfix = 'data.repository'
     elif type == type_request or type == type_response or type == type_assembler :
         subfix = 'rest.resource'
-    elif type == type_security:
+    elif type == type_security_rest:
         subfix = 'security.configuration'
+    elif type == type_security_core:
+        subfix ='security.authority'
 
     return prefix+subfix
 
@@ -501,8 +520,10 @@ def path(type):
         prefix='iot-data/iot-data-jpa'
     elif type in [type_controller,type_request,type_response,type_assembler]:
         prefix = 'iot-rest'
-    elif type == type_security:
+    elif type == type_security_rest:
         prefix = 'iot-security/iot-security-rest'
+    elif type == type_security_core:
+        prefix = 'iot-security/iot-security-core'
 
     return  prefix+'/src/main/java'
 
@@ -514,23 +535,26 @@ def test_append(str,content):
 #处理restmappingconstant
 #处理builderfactory
 if __name__ == '__main__':
-    name = 'test'
-    super = 'Named'
-    fields=[('String','alias','别名'),('int','count','数量','num')]
+    names = ['User','Role','Asset',"Document","News","Product"]
+    # super = 'Named'
+    # fields=[('String','alias','别名'),('int','count','数量','num')]
+    #
+    #
+    # model_interface(name,fields,super)
+    # model_class(name,fields,super)
+    # builder_interface(name,fields,super)
+    # builder_class(name,fields,super)
+    # repository_interface(name,fields,super)
+    # manager_interface(name,fields,super)
+    # request(name,fields,super)
+    # response(name,fields,super)
+    # controller(name)
+    # assembler(name,fields,super)
+    # mapping(name)
+    # factory(name)
 
-
-    model_interface(name,fields,super)
-    model_class(name,fields,super)
-    builder_interface(name,fields,super)
-    builder_class(name,fields,super)
-    repository_interface(name,fields,super)
-    manager_interface(name,fields,super)
-    request(name,fields,super)
-    response(name,fields,super)
-    controller(name)
-    assembler(name,fields,super)
-    mapping(name)
-    factory(name)
+    for name in names:
+        authority(name)
 
 
 

@@ -3,6 +3,7 @@ package com.nationalchip.iot.data.model.auth;
 import com.nationalchip.iot.data.annotation.Comment;
 import com.nationalchip.iot.data.model.Device;
 import com.nationalchip.iot.data.model.Product;
+import com.nationalchip.iot.security.authority.SecurityConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "developer")
-public class Developer extends User {
+public class Developer extends User implements IDeveloper{
 
     public Developer(){
 
@@ -74,5 +75,10 @@ public class Developer extends User {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    @Override
+    public boolean isMatch(String client) {
+        return SecurityConstant.CLIENT_HUB.equalsIgnoreCase(client);
     }
 }

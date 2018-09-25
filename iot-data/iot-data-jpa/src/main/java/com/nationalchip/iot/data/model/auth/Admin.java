@@ -2,6 +2,7 @@ package com.nationalchip.iot.data.model.auth;
 
 import com.nationalchip.iot.data.annotation.Comment;
 import com.nationalchip.iot.data.model.auth.User;
+import com.nationalchip.iot.security.authority.SecurityConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "admin")
-public class Admin extends User {
+public class Admin extends User implements IAdmin{
 
     public Admin(){
 
@@ -73,7 +74,8 @@ public class Admin extends User {
         this.mac = mac;
     }
 
-
-
-
+    @Override
+    public boolean isMatch(String client) {
+        return SecurityConstant.CLIENT_ADMIN.equalsIgnoreCase(client);
+    }
 }

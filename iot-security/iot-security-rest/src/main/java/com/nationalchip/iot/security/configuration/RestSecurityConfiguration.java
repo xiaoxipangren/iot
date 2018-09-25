@@ -88,9 +88,9 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         //web.ignoring 一般用来处理静态资源，如css/js/html等
 
-        web.ignoring()
-                .antMatchers(HttpMethod.POST, mapping(REST_CAPTCHA_MAPPING))
-                .antMatchers(HttpMethod.GET,mapping(REST_CAPTCHA_MAPPING));
+//        web.ignoring()
+//                .antMatchers(HttpMethod.POST, mapping(REST_CAPTCHA_MAPPING))
+//                .antMatchers(HttpMethod.GET,mapping(REST_CAPTCHA_MAPPING));
 
     }
 

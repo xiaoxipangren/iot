@@ -70,11 +70,12 @@ public class SecurityContextTenantAware implements ITenantAware {
         return securityContext;
     }
 
+
+
     private static final class AuthenticationDelegate implements Authentication {
-        private static final long serialVersionUID = 1L;
 
         private static final Collection<? extends GrantedAuthority> SYSTEM_AUTHORITIES = Arrays
-                .asList(new SimpleGrantedAuthority(Authority.SYSTEM));
+                .asList(new SimpleGrantedAuthority(Authority.ROLE_SYSTEM));
         private final Authentication delegate;
 
         private final String systemPrincipal;

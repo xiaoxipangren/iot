@@ -10,23 +10,23 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
  */
 public class AccountTypeAuthenticationToken extends UsernamePasswordAuthenticationToken {
 
-    private Class type;
+    private AccountTypeRequestClient client;
 
-    public Class getType() {
-        return type;
+    public AccountTypeRequestClient getClient() {
+        return client;
     }
 
-    public void setType(Class type) {
-        this.type = type;
+    public void setClient(AccountTypeRequestClient client) {
+        this.client = client;
     }
 
     public AccountTypeAuthenticationToken(Object principal, Object credentials) {
         super(principal, credentials);
     }
 
-    public AccountTypeAuthenticationToken(Object principal, Object credentials,Class type){
+    public AccountTypeAuthenticationToken(Object principal, Object credentials,AccountTypeRequestClient client){
         this(principal,credentials);
-        this.type=type;
+        this.client=client;
     }
 
 

@@ -10,9 +10,9 @@ import com.nationalchip.iot.security.authority.Authority;
  */
 public enum  CaptchaAction {
 
-    LOGIN(Authority.LOGIN,true),
-    REGISTER(Authority.REGISTER,false),
-    RESET_PASSWORD(Authority.RESET_PASSWORD,false);
+    LOGIN(Authority.AUTH_LOGIN,true),
+    REGISTER(Authority.AUTH_REGISTER,false),
+    RESET_PASSWORD(Authority.AUTH_RESET_PASSWORD,false);
 
     private String name;
     private boolean imaged;

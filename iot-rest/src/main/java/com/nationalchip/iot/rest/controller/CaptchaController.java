@@ -85,11 +85,11 @@ public class CaptchaController {
         IMailBuilder mailBuilder = new MailBuilder()
                 .to(address)
                 .html(true);
-        if(action.equals(Authority.REGISTER)){
+        if(action.equals(Authority.AUTH_REGISTER)){
             mailBuilder.content(String.format(restProperty.getValidateMail(), captcha))
                     .subject(VALIDATE_EMAIL_TITLE);
         }
-        else if(action.equals(Authority.RESET_PASSWORD)){
+        else if(action.equals(Authority.AUTH_RESET_PASSWORD)){
             mailBuilder.content(String.format(restProperty.getResetpwdMail(), captcha))
                     .subject(RESETPWD_EMAIL_TITLE);
         }

@@ -82,7 +82,7 @@ public class PreTokenAuthenticationProvider extends PreAuthenticatedAuthenticati
         final Object tokenDetails = token.getDetails();
 
         if (principal == null) {
-            throw new BadCredentialsException("The provided principal and credentials are not match");
+            throw new BadCredentialsException("The provided principal and credentials are not isMatch");
         }
 
         boolean successAuthentication = calculateAuthenticationSuccess(principal, credentials, tokenDetails);
@@ -99,7 +99,7 @@ public class PreTokenAuthenticationProvider extends PreAuthenticatedAuthenticati
 //            return successToken;
 //        }
 
-        throw new BadCredentialsException("The provided principal and credentials are not match");
+        throw new BadCredentialsException("The provided principal and credentials are not isMatch");
     }
 
     /**
