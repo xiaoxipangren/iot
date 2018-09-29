@@ -6,10 +6,13 @@ import com.nationalchip.iot.data.model.IDocument;
 import com.nationalchip.iot.rest.resource.DocumentRequest;
 import com.nationalchip.iot.rest.resource.DocumentResponse;
 import com.nationalchip.iot.rest.resource.Response;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import static com.nationalchip.iot.security.configuration.RestMappingConstant.*;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
+import static com.nationalchip.iot.security.authority.AuthorityExpression.*;
 
 /**
  * @Author: zhenghq
@@ -37,12 +40,21 @@ public class DocumentController extends BaseController<IDocument,DocumentRespons
 
     @Override
     @RequestMapping(method = RequestMethod.PATCH,value = REST_ID_MAPPING )
+    @PreAuthorize(HAS_AUTH_UPDATE_DOCUMENT)
     public ResponseEntity<Response> update(@PathVariable Long id,@RequestBody DocumentRequest request) {
         return super.update(id, request);
     }
 
     @Override
+    @RequestMapping(method = RequestMethod.DELETE,value = REST_ID_MAPPING)
+    @PreAuthorize(HAS_AUTH_DELETE_DOCUMENT)
+    public ResponseEntity<Response> delete(@PathVariable Long id) {
+        return super.delete(id);
+    }
+
+    @Override
     @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize(HAS_AUTH_CREATE_DOCUMENT)
     public ResponseEntity<Response> create(@RequestBody DocumentRequest request) {
         return super.create(request);
     }

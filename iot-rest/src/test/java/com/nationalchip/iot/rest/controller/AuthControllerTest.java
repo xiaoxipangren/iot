@@ -57,7 +57,7 @@
 //    private static final String ACTION_VALIDATE="validate";
 //    private static final String ACTION_RESETPWD="resetpwd";
 //
-//    private String baseMapping= RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_AUTH_MAPPING;
+//    private String baseMapping= ;REST_BASE_MAPPING+ ;REST_AUTH_MAPPING;
 //
 //
 //

@@ -5,7 +5,7 @@ import com.nationalchip.iot.data.manager.IFiledManager;
 import com.nationalchip.iot.data.model.IFiledEntity;
 import com.nationalchip.iot.rest.exception.RestException;
 import com.nationalchip.iot.rest.resource.*;
-import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @Author: zhenghq
@@ -31,7 +29,7 @@ public abstract class FiledController<T extends IFiledEntity,R extends FiledResp
     @Autowired
     private ITenantAware tenantAware;
 
-    @RequestMapping(value = RestMappingConstant.REST_DOWNLOAD_ACTION,method= RequestMethod.GET)
+    @RequestMapping(value = REST_DOWNLOAD_ACTION,method= RequestMethod.GET)
     public ResponseEntity<ByteArrayResource> download(@PathVariable(value = "id")long id){
 
         T entity = getManager().findOne(id);
@@ -50,7 +48,7 @@ public abstract class FiledController<T extends IFiledEntity,R extends FiledResp
         return new ResponseEntity<>(new ByteArrayResource(getAssembler().toBytes(entity)),headers, HttpStatus.OK);
     }
 
-    @RequestMapping(value = RestMappingConstant.REST_UPLOAD_ACTION,method= RequestMethod.POST)
+    @RequestMapping(value = REST_UPLOAD_ACTION,method= RequestMethod.POST)
     public ResponseEntity<Response> upload(@PathVariable(value = "id")long id, Q request){
         return super.update(id,request);
     }

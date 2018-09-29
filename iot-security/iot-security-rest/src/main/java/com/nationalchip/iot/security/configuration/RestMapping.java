@@ -6,7 +6,7 @@ package com.nationalchip.iot.security.configuration;
  * @Date: 4/20/18 5:11 PM
  * @Modified:
  */
-public class RestMappingConstant {
+public class RestMapping {
 
     public static final String REST_BASE_MAPPING = "/rest/v1";
 
@@ -53,5 +53,7 @@ public class RestMappingConstant {
 //    public static final String REST_JWT_PREFIX = "Bearer ";
 
     public static final String REST_TEST_MAPPING = "/test";
+    public static final String REST_ROLE_MAPPING = "/roles";
+
 
 }

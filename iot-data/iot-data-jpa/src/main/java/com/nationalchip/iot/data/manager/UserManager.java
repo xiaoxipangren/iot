@@ -4,10 +4,7 @@ import com.nationalchip.iot.common.io.IFileRepository;
 import com.nationalchip.iot.data.builder.IBuilder;
 import com.nationalchip.iot.data.builder.IUserBuilder;
 import com.nationalchip.iot.data.configuration.DataProperty;
-import com.nationalchip.iot.data.model.auth.IRole;
-import com.nationalchip.iot.data.model.auth.IUser;
-import com.nationalchip.iot.data.model.auth.Status;
-import com.nationalchip.iot.data.model.auth.User;
+import com.nationalchip.iot.data.model.auth.*;
 import com.nationalchip.iot.data.repository.IRepository;
 import com.nationalchip.iot.data.repository.UserRepository;
 import com.nationalchip.iot.helper.RegexHelper;
@@ -22,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import static com.nationalchip.iot.security.authority.AuthorityExpression.*;
+import static com.nationalchip.iot.security.authority.Authority.*;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
@@ -47,7 +46,10 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
     private ITenantAware tenantAware;
 
 
-    @PreAuthorize("hasRole('SYSTEM') or hasAuthority('CREATE_USER')")
+    @Autowired
+    private IRoleManager roleManager;
+
+    @PreAuthorize(HAS_ROLE_SYSTEM + OR + HAS_AUTH_CREATE_USER)
     @Override
     public void createUser(UserDetails userDetails) {
         User user = (User) userDetails;
@@ -73,6 +75,11 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         update((IUser) user);
     }
 
+
+
+
+
+
     @Override
     protected void preUpdate(IUser iUser) {
         super.preUpdate(iUser);
@@ -91,7 +98,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         String username = tenantAware.getCurrentTenant();
         User user = loadUser(username);
 
-        if(passwordEncoder.matches(oldPassword,user.getPassword()   )){
+        if(passwordEncoder.matches(oldPassword,user.getPassword())){
             user.setPassword(passwordEncoder.encode(newPassword));
             update(user);
         }
@@ -253,6 +260,7 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         User user = (User)iUser;
         user.setStatus(Status.ACTIVED);
 
+        applyRole(iUser);
         encryptPassword(iUser);
     }
 
@@ -300,6 +308,20 @@ public class UserManager extends NamedManager<IUser,User> implements IUserManage
         return password.startsWith("$2a$10$");
     }
 
+
+    private void applyRole(IUser iUser){
+        IRole role = null;
+
+        if(iUser instanceof IAdmin)
+            role = roleManager.findByName(ADMIN);
+        if(iUser instanceof IDeveloper)
+            role = roleManager.findByName(DEVELOPER);
+        if(iUser instanceof IConsumer)
+            role = roleManager.findByName(CONSUMER);
+
+        if(role!=null)
+            iUser.addRole(role);
+    }
 
     private void encryptPassword(IUser user){
         if(user.getPassword()!=null && !isEncrypted(user.getPassword())){

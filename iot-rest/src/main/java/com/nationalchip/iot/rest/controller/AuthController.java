@@ -12,21 +12,23 @@ import com.nationalchip.iot.security.authentication.AccountTypeAuthenticationTok
 import com.nationalchip.iot.security.authentication.AccountTypeRequestClient;
 import com.nationalchip.iot.security.authentication.IAuthenticationService;
 import com.nationalchip.iot.security.authority.SecurityConstant;
-import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import com.nationalchip.iot.security.exception.AccountTypeNotMatchedException;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import static com.nationalchip.iot.security.authority.AuthorityExpression.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 @RestController
-@RequestMapping(value = RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_AUTH_MAPPING)
+@RequestMapping(value = REST_BASE_MAPPING+ REST_AUTH_MAPPING)
 @Api(tags = "鉴权API")
 public class AuthController{
 
@@ -42,6 +44,7 @@ public class AuthController{
 
 
     @PostMapping
+    @PreAuthorize(HAS_AUTH_LOGIN)
     public ResponseEntity<Response> login(@RequestBody AuthRequest request,HttpServletRequest httpServletRequest){
 
 

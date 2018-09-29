@@ -6,14 +6,17 @@ import com.nationalchip.iot.data.model.IAsset;
 import com.nationalchip.iot.rest.resource.AssetRequest;
 import com.nationalchip.iot.rest.resource.AssetResponse;
 import com.nationalchip.iot.rest.resource.Response;
-import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+
 import static com.nationalchip.iot.rest.resource.Response.ok;
+import static com.nationalchip.iot.security.authority.AuthorityExpression.*;
 
 /**
  * @Author: zhenghq
@@ -22,7 +25,7 @@ import static com.nationalchip.iot.rest.resource.Response.ok;
  * @Modified:
  */
 @RestController
-@RequestMapping(value = RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_ASSET_MAPPING)
+@RequestMapping(value = REST_BASE_MAPPING+ REST_ASSET_MAPPING)
 @Api(tags = "下载资源API")
 public class AssetController extends FiledController<IAsset,AssetResponse,IAssetBuilder,AssetRequest> {
 
@@ -32,6 +35,7 @@ public class AssetController extends FiledController<IAsset,AssetResponse,IAsset
 
     @Override
     @RequestMapping(method = RequestMethod.POST)
+    @PreAuthorize(HAS_AUTH_CREATE_ASSET)
     public ResponseEntity<Response> create(AssetRequest request) {
         return super.create(request);
     }
@@ -65,10 +69,26 @@ public class AssetController extends FiledController<IAsset,AssetResponse,IAsset
         return super.getAll(page,pagesize,filter,sort);
     }
 
-    @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method = RequestMethod.PATCH)
+    @RequestMapping(value =REST_ID_MAPPING,method = RequestMethod.PATCH)
     @Override
+    @PreAuthorize(HAS_AUTH_UPDATE_ASSET)
     public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody AssetRequest request) {
         return super.update(id, request);
+    }
+
+
+    @Override
+    @RequestMapping(method = RequestMethod.DELETE,value = REST_ID_MAPPING)
+    @PreAuthorize(HAS_AUTH_DELETE_ASSET)
+    public ResponseEntity<Response> delete(@PathVariable Long id) {
+        return super.delete(id);
+    }
+
+    @Override
+    @PreAuthorize(HAS_AUTH_UPDATE_ASSET)
+    @RequestMapping(value = REST_UPLOAD_ACTION,method= RequestMethod.POST)
+    public ResponseEntity<Response> upload(@PathVariable(value = "id")long id, AssetRequest request) {
+        return super.upload(id, request);
     }
 
     @Override

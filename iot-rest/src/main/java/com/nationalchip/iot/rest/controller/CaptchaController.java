@@ -14,7 +14,7 @@ import com.nationalchip.iot.rest.configuration.RestProperty;
 import com.nationalchip.iot.rest.exception.RestException;
 import com.nationalchip.iot.rest.resource.*;
 import com.nationalchip.iot.security.authority.Authority;
-import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import com.nationalchip.iot.security.jwt.ClaimsBuilder;
 import com.nationalchip.iot.security.jwt.IClaimsBuilder;
 import com.nationalchip.iot.security.jwt.IJwtProvider;
@@ -34,14 +34,14 @@ import java.util.Collections;
  * @Modified:
  */
 @RestController
-@RequestMapping(RestMappingConstant.REST_BASE_MAPPING+RestMappingConstant.REST_CAPTCHA_MAPPING)
+@RequestMapping(REST_BASE_MAPPING+ REST_CAPTCHA_MAPPING)
 public class CaptchaController {
 
     private static final String VALIDATE_EMAIL_TITLE ="国芯开发者账号注册验证码";
     private static final String RESETPWD_EMAIL_TITLE ="国芯开发者账号重置密码验证码";
 
     @Autowired
-    private ICaptchaService captchaServcie;
+    private ICaptchaService captchaService;
 
     @Autowired
     private IMailService mailService;
@@ -64,7 +64,7 @@ public class CaptchaController {
 
         ICaptcha captcha;
         try{
-            captcha = captchaServcie.create(builder);
+            captcha = captchaService.create(builder);
         }catch (CaptchaException e){
             throw new RestException(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
@@ -85,11 +85,11 @@ public class CaptchaController {
         IMailBuilder mailBuilder = new MailBuilder()
                 .to(address)
                 .html(true);
-        if(action.equals(Authority.AUTH_REGISTER)){
+        if(Authority.AUTH_REGISTER.equalsIgnoreCase(action)){
             mailBuilder.content(String.format(restProperty.getValidateMail(), captcha))
                     .subject(VALIDATE_EMAIL_TITLE);
         }
-        else if(action.equals(Authority.AUTH_RESET_PASSWORD)){
+        else if(Authority.AUTH_RESET_PASSWORD.equalsIgnoreCase(action)){
             mailBuilder.content(String.format(restProperty.getResetpwdMail(), captcha))
                     .subject(RESETPWD_EMAIL_TITLE);
         }
@@ -98,10 +98,10 @@ public class CaptchaController {
     }
 
 
-    @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method = RequestMethod.GET)
+    @RequestMapping(value = REST_ID_MAPPING,method = RequestMethod.GET)
     public ResponseEntity<byte[]> get(@PathVariable(value = "id")String id){
         try {
-            byte[] bytes = captchaServcie.toImage(id);
+            byte[] bytes = captchaService.toImage(id);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_PNG);
             return new ResponseEntity<>(bytes,headers,HttpStatus.OK);
@@ -130,7 +130,7 @@ public class CaptchaController {
         ICaptcha captcha=null;
 
         try{
-            captcha = captchaServcie.validate(builder);
+            captcha = captchaService.validate(builder);
         }catch (CaptchaExpiredException e){
             throw new RestException(e.getMessage(),HttpStatus.BAD_REQUEST);
         }

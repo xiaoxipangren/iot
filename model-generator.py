@@ -248,7 +248,8 @@ def response(name,fields,super):
     directory = dir(path(type_response),pack_name)
     write(directory,response,content)
 
-
+#TODO:
+#＠PreAuthorize()
 def controller(name):
     name = capitalize(name)
     model_interface = 'I%s' % name
@@ -263,10 +264,22 @@ def controller(name):
     content = ''
     pack_name = package(type_controller)
     content = append(content,pack(pack_name))
-    content = append(content,imports(['%s.%s' % (package(type_model_interface),model_interface),'%s.%s' % (package(type_response),response),'%s.%s' % (package(type_builder_interface),builder_interface),'%s.%s' % (package(type_request),request),'org.springframework.web.bind.annotation.*','static com.nationalchip.iot.security.configuration.RestMappingConstant.*']))
+    content = append(content,imports(['%s.%s' % (package(type_model_interface),model_interface),'%s.%s' % (package(type_response),response),'%s.%s' % (package(type_builder_interface),builder_interface),'%s.%s' % (package(type_request),request),'%s.%s' % (package(type_request),'Response'),'org.springframework.web.bind.annotation.*','org.springframework.http.ResponseEntity','org.springframework.security.access.prepost.PreAuthorize','static com.nationalchip.iot.security.configuration.RestMapping.*','static com.nationalchip.iot.security.authority.AuthorityExpression.*']))
+
 
     content = append(content,claim('class',controller,super,None,annotations=['RestController','RequestMapping(value=%s)' % mapping]))
 
+    content = append(content,method_claim('ResponseEntity<Response>','create',[('%sRequest' % name.capitalize(),'request')],access='public',annotations=['Override','RequestMapping(method = RequestMethod.POST)','PreAuthorize(HAS_AUTH_CREATE_%s)' % name.upper()],end='{'))
+    content = append(content,indent('return super.create(request)',floor=2))
+    content = append(content,close(floor=1))
+
+    content = append(content,method_claim('ResponseEntity<Response>','update',[('@PathVariable final Long','id'),('@RequestBody %sRequest' % name.capitalize(),'request')],access='public',annotations=['Override','RequestMapping(method = RequestMethod.PATCH,value = REST_ID_MAPPING)','PreAuthorize(HAS_AUTH_UPDATE_%s)' % name.upper()],end='{'))
+    content = append(content,indent('return super.update(id,request)',floor=2))
+    content = append(content,close(floor=1))
+
+    content = append(content,method_claim('ResponseEntity<Response>','delete',[('@PathVariable final Long','id')],access='public',annotations=['Override','RequestMapping(method = RequestMethod.DELETE,value = REST_ID_MAPPING)','PreAuthorize(HAS_AUTH_DELETE_%s)' % name.upper()],end='{'))
+    content = append(content,indent('return super.delete(id)',floor=2))
+    content = append(content,close(floor=1))
 
     content = append(content,close())
     directory = dir(path(type_controller),pack_name)
@@ -320,7 +333,7 @@ def assembler(name,fields,super):
     write(directory,assembler,content)
 
 def mapping(name,map=None):
-    constant = 'RestMappingConstant'
+    constant = 'RestMapping'
 
     if not map:
         map = name.lower()
@@ -368,6 +381,12 @@ def authority(name,model=''):
         content.append(indent('%s AUTH_%s_%s = OP_%s + SEPARATOR + EN_%s' % (claim,op,name,op,model),floor=1))
     file = 'Authority'
 
+    add(directory,file,contents=content,reverse=False)
+
+    content = []
+    for op in ops:
+        content.append(indent('%s HAS_AUTH_%s_%s =HAS_AUTH_PREFIX + AUTH_%s_%s + HAS_SUFFIX' % (claim,op,name,op,model)))
+    file = 'AuthorityExpression'
     add(directory,file,contents=content,reverse=False)
 
 def pack(package):
@@ -532,29 +551,28 @@ def test_append(str,content):
     str = str + content
 
 
-#处理restmappingconstant
+#处理restmapping
 #处理builderfactory
 if __name__ == '__main__':
-    names = ['User','Role','Asset',"Document","News","Product"]
-    # super = 'Named'
-    # fields=[('String','alias','别名'),('int','count','数量','num')]
+    name = 'Role'
+    super = 'Named'
+    fields=[]
     #
     #
     # model_interface(name,fields,super)
     # model_class(name,fields,super)
     # builder_interface(name,fields,super)
-    # builder_class(name,fields,super)
+    #builder_class(name,fields,super)
     # repository_interface(name,fields,super)
     # manager_interface(name,fields,super)
     # request(name,fields,super)
     # response(name,fields,super)
-    # controller(name)
+    controller(name)
     # assembler(name,fields,super)
-    # mapping(name)
+    # mapping(name,'roles')
     # factory(name)
+    authority(name)
 
-    for name in names:
-        authority(name)
 
 
 

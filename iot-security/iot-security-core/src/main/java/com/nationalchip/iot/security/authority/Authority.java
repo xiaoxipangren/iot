@@ -33,6 +33,12 @@ public class Authority {
     public static final String SYSTEM ="SYSTEM";
     public static final String ROLE_SYSTEM=ROLE_PREFIX+SYSTEM;
     public static final String ADMIN="ADMIN";
+    public static final String ROLE_ADMIN=ROLE_PREFIX+ADMIN;
+    public static final String DEVELOPER="DEVELOPER";
+    public static final String ROLE_DEVELOPER=ROLE_PREFIX+DEVELOPER;
+    public static final String CONSUMER="CONSUMER";
+    public static final String ROLE_CONSUMER=ROLE_PREFIX+CONSUMER;
+
 
 
     public static final String AUTH_REGISTER = "REGISTER";
@@ -74,10 +80,24 @@ public class Authority {
 
     }
 
-    public static final String EN_ADMIN = "ADMIN";
-    public static final String EN_DEVELOPER = "DEVELOPER";
-    public static final String EN_CONSUMER = "CONSUMER";
+    public static final String EN_ADMIN = "USER";
+    public static final String AUTH_READ_ADMIN = OP_READ + SEPARATOR + EN_ADMIN;
+    public static final String AUTH_CREATE_ADMIN = OP_CREATE + SEPARATOR + EN_ADMIN;
+    public static final String AUTH_DELETE_ADMIN = OP_DELETE + SEPARATOR + EN_ADMIN;
+    public static final String AUTH_UPDATE_ADMIN = OP_UPDATE + SEPARATOR + EN_ADMIN;
 
+
+    public static final String EN_DEVELOPER = "DEVELOPER";
+    public static final String AUTH_READ_DEVELOPER = OP_READ + SEPARATOR + EN_DEVELOPER;
+    public static final String AUTH_CREATE_DEVELOPER = OP_CREATE + SEPARATOR + EN_DEVELOPER;
+    public static final String AUTH_DELETE_DEVELOPER = OP_DELETE + SEPARATOR + EN_DEVELOPER;
+    public static final String AUTH_UPDATE_DEVELOPER = OP_UPDATE + SEPARATOR + EN_DEVELOPER;
+
+    public static final String EN_CONSUMER = "CONSUMER";
+    public static final String AUTH_READ_CONSUMER = OP_READ + SEPARATOR + EN_CONSUMER;
+    public static final String AUTH_CREATE_CONSUMER = OP_CREATE + SEPARATOR + EN_CONSUMER;
+    public static final String AUTH_DELETE_CONSUMER = OP_DELETE + SEPARATOR + EN_CONSUMER;
+    public static final String AUTH_UPDATE_CONSUMER = OP_UPDATE + SEPARATOR + EN_CONSUMER;
 
     public static final String EN_USER = "USER";
     public static final String AUTH_READ_USER = OP_READ + SEPARATOR + EN_USER;

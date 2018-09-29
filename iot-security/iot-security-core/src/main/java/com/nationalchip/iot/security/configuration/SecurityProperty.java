@@ -1,5 +1,6 @@
 package com.nationalchip.iot.security.configuration;
 
+import com.nationalchip.iot.security.authority.Authority;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -11,20 +12,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("iot.security")
 public class SecurityProperty {
 
-    private Admin admin;
+    private System system;
 
-    public Admin getAdmin() {
-        return admin;
+    public System getSystem() {
+        return system;
     }
 
-    public void setAdmin(Admin admin) {
-        this.admin = admin;
+    public void setSystem(System system) {
+        this.system = system;
     }
 
-    public static class Admin{
+    public static class System {
 
-        private static final String ADMIN="admin";
-        private static final String PASSWORD="admin";
+        private static final String USER = Authority.SYSTEM;
+        private static final String PASSWORD=Authority.SYSTEM;
 
         private String username;
         private String password;
@@ -49,7 +50,7 @@ public class SecurityProperty {
 
         public String getUsername() {
             if (username==null || username.isEmpty())
-                return ADMIN;
+                return USER;
             return username;
         }
 

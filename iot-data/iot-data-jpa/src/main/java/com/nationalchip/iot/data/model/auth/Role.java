@@ -3,6 +3,7 @@ package com.nationalchip.iot.data.model.auth;
 import com.nationalchip.iot.data.model.NamedEntity;
 import org.eclipse.persistence.annotations.CascadeOnDelete;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import static com.nationalchip.iot.security.authority.Authority.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -74,6 +75,23 @@ public class Role extends NamedEntity implements IRole {
 
 
     public static Role SystemRole(){
-        return new Role(com.nationalchip.iot.security.authority.Authority.SYSTEM);
+        return new Role(SYSTEM);
     }
+
+    public static Role AdminRole(){
+        Role role = new Role(ADMIN);
+        return role;
+    }
+
+    public static Role DeveloperRole(){
+        Role role = new Role(DEVELOPER);
+        return role;
+    }
+
+
+    public static Role ConsumerRole(){
+        Role role = new Role(CONSUMER);
+        return role;
+    }
+
 }

@@ -2,32 +2,24 @@ package com.nationalchip.iot.security.configuration;
 
 import com.nationalchip.iot.annotation.AutoLogger;
 import com.nationalchip.iot.cache.redis.IRedisService;
-import com.nationalchip.iot.security.authentication.AccountTypeAuthenticationProvider;
 import com.nationalchip.iot.security.authentication.JwtAuthenticationFilter;
 import com.nationalchip.iot.security.jwt.IJwtProvider;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.nationalchip.iot.security.configuration.RestMappingConstant.*;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 
 /**
  * @Author: zhenghq
@@ -73,10 +65,10 @@ public class RestSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() //禁用session
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST,mapping(REST_CAPTCHA_MAPPING)).permitAll()
-                .antMatchers(HttpMethod.GET, REST_GENERIC_MAPPING).permitAll()
-                .antMatchers(HttpMethod.HEAD, REST_GENERIC_MAPPING).permitAll()
-                .antMatchers(REST_GENERIC_MAPPING).authenticated()
+                .antMatchers(HttpMethod.POST,mapping(REST_CAPTCHA_MAPPING)).permitAll()//请求生成验证码开放访问
+                .antMatchers(HttpMethod.GET, REST_GENERIC_MAPPING).permitAll()//所有的GET请求开放访问
+                .antMatchers(HttpMethod.HEAD, REST_GENERIC_MAPPING).permitAll()//对资源的计数API开放访问
+                .antMatchers(REST_GENERIC_MAPPING).authenticated()//其他所有的API至少需要进行登录，进一步的权限控制，交由Controller控制
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

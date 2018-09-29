@@ -10,5 +10,7 @@ public interface IBuilderFactory {
     IUserBuilder user();
     IAssetBuilder asset();
     INewsBuilder news();
+    IRoleBuilder role();
+
     IDocumentBuilder document();
 }

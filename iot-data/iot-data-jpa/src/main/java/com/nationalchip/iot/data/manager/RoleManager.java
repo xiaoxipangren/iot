@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
  */
 
 @Component
-public class RoleManager extends NamedManager<IRole,Role> {
+public class RoleManager extends NamedManager<IRole,Role> implements IRoleManager {
 
 }

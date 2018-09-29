@@ -1,21 +1,18 @@
 package com.nationalchip.iot.rest.controller;
 
 import com.nationalchip.iot.data.builder.IBuilder;
-import com.nationalchip.iot.data.builder.IBuilderFactory;
 import com.nationalchip.iot.data.manager.IManager;
 import com.nationalchip.iot.data.model.IEntity;
 import com.nationalchip.iot.data.specification.SortParser;
 import com.nationalchip.iot.rest.configuration.RestProperty;
 import com.nationalchip.iot.rest.exception.ResourceNotFoundException;
 import com.nationalchip.iot.rest.resource.*;
-import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -118,7 +115,7 @@ public abstract class BaseController<T extends IEntity,R extends BaseResponse,B 
 
 
     @Override
-    @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method= RequestMethod.PATCH)
+    @RequestMapping(value = REST_ID_MAPPING,method= RequestMethod.PATCH)
     public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody final Q request) {
 
         B builder = getAssembler().fromRequest(request);

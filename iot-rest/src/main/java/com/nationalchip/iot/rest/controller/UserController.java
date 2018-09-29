@@ -10,7 +10,7 @@ import com.nationalchip.iot.rest.resource.UserRequest;
 import com.nationalchip.iot.rest.resource.UserResponse;
 import com.nationalchip.iot.security.authentication.IAuthenticationService;
 import com.nationalchip.iot.security.authority.AuthorityExpression;
-import com.nationalchip.iot.security.configuration.RestMappingConstant;
+import static com.nationalchip.iot.security.configuration.RestMapping.*;
 import com.nationalchip.iot.tenancy.ITenantAware;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import static com.nationalchip.iot.security.authority.Authority.*;
  */
 
 @RestController
-@RequestMapping(value = RestMappingConstant.REST_BASE_MAPPING+ RestMappingConstant.REST_USER_MAPPING)
+@RequestMapping(value = REST_BASE_MAPPING+ REST_USER_MAPPING)
 @Api(tags = "用户API")
 public class UserController extends BaseController<IUser,UserResponse,IUserBuilder,UserRequest>{
 
@@ -49,32 +49,33 @@ public class UserController extends BaseController<IUser,UserResponse,IUserBuild
             @ExampleProperty(mediaType = "application/json",value = "{\"username\":\"username\"}")
     }))
     @RequestMapping(method= RequestMethod.POST,consumes="application/json",produces="application/json;charset=UTF-8")
-    @PreAuthorize(HAS_AUTH_REGISTER+ OR +HAS_AUTH_CREATE_USER)
     public ResponseEntity<Response> create(@RequestBody UserRequest request){
 
-        if(request.isRegister()) {
+        if(request.isRegister()) {//禁止管理员用户注册
             if (request.getType() == TYPE_ADMIN)
                 throw new RestException("权限不足，禁止访问", HttpStatus.FORBIDDEN);
 
             return register(request);
         }
 
-        if(request.getType()==TYPE_ADMIN)
-            return createAdmin(request);
 
-
-        return super.create(request);
+        return createOther(request);
     }
 
 
-
-    @PreAuthorize(HAS_ROLE_ADMIN)
-    private ResponseEntity<Response> createAdmin(UserRequest request){
+    /**
+     * 后台管理系统只能通过超级管理员进行新用户创建
+     * @param request
+     * @return
+     */
+    @PreAuthorize(HAS_ROLE_SYSTEM + OR + HAS_AUTH_CREATE_USER)
+    private ResponseEntity<Response> createOther(UserRequest request){
         return super.create(request);
     }
 
 
     @RequestMapping(method= RequestMethod.POST,value = "avatar")
+    @PreAuthorize(HAS_AUTH_UPDATE_USER)
     public ResponseEntity<Response> avatar(@RequestParam(value = "avatar")MultipartFile avatar){
         try {
             String url = getManager().changeAvatar(avatar.getInputStream());
@@ -91,18 +92,30 @@ public class UserController extends BaseController<IUser,UserResponse,IUserBuild
 
 
     @Override
-    @RequestMapping(value = RestMappingConstant.REST_ID_MAPPING,method= {RequestMethod.PATCH,RequestMethod.POST})
+    @RequestMapping(value = REST_ID_MAPPING,method= {RequestMethod.PATCH,RequestMethod.POST})
     public ResponseEntity<Response> update(@PathVariable final Long id,@RequestBody UserRequest request) {
         if(id<=0){
-            return update(request);
+            return updateSelf(request);
         }
 
-        return super.update(id, request);
+        return updateOther(id, request);
+    }
+
+    /**
+     * TODO:
+     * 测试能否通过后台管理系统直接重置用户密码
+     * @param id
+     * @param request
+     * @return
+     */
+    @PreAuthorize(HAS_ROLE_SYSTEM)
+    private ResponseEntity<Response> updateOther(Long id,UserRequest request){
+        return super.update(id,request);
     }
 
 
 
-    private ResponseEntity<Response> update(UserRequest request) {
+    private ResponseEntity<Response> updateSelf(UserRequest request) {
 
         //密码相关，需要特殊处理
         if(request.getPassword().isPresent()){
@@ -115,13 +128,13 @@ public class UserController extends BaseController<IUser,UserResponse,IUserBuild
             }
         }//非密码相关，标准流程
         else{
-            return update(request,tenantAware.getCurrentTenant());
+            return updateSelf(request,tenantAware.getCurrentTenant());
         }
     }
 
 
-
-    private ResponseEntity<Response> update(UserRequest request,String currentUser){
+    @PreAuthorize(HAS_AUTH_UPDATE_USER)
+    private ResponseEntity<Response> updateSelf(UserRequest request, String currentUser){
         IUserBuilder builder = getAssembler().fromRequest(request);
         builder.name(currentUser);
 
@@ -145,9 +158,19 @@ public class UserController extends BaseController<IUser,UserResponse,IUserBuild
         });
     }
 
+
+    @PreAuthorize(HAS_AUTH_UPDATE_USER)
     private ResponseEntity<Response> changePassword(final String oldpwd,final String password){
         getManager().changePassword(oldpwd,password);
         return Response.ok("密码修改成功",true);
+    }
+
+
+    @Override
+    @RequestMapping(method = RequestMethod.DELETE,value = REST_ID_MAPPING)
+    @PreAuthorize(HAS_AUTH_DELETE_USER)
+    public ResponseEntity<Response> delete(@PathVariable Long id) {
+        return super.delete(id);
     }
 
     @Override

@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * 抽象的用户类
  * 共有四种不同的用户和系统发生交互
- * Admin:系统管理员
+ * System:系统管理员
  * Developer:厂商用户
  * Consumer:消费者(app用户)
  *

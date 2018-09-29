@@ -32,4 +32,11 @@ public class BuilderFactory implements IBuilderFactory {
     }
 
 
+    @Override
+    public IRoleBuilder role(){
+        return new RoleBuilder();
+    }
+
+
+
 }
